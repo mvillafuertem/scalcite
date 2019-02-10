@@ -1,7 +1,7 @@
 = Scalcite
 
 ****
-Scalcite is a library to query and update JSON data.
+Scalcite is a library to query 💬 and update ✏️ JSON data 📄
 
 This library use https://github.com/mvillafuertem/mapflablup and https://github.com/apache/calcite
 
