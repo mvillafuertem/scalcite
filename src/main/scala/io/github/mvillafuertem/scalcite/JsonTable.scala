@@ -8,15 +8,14 @@ import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeFactory}
 import org.apache.calcite.schema.impl.AbstractTable
 import org.apache.calcite.schema.{ScannableTable, Statistic, Statistics}
 import org.apache.calcite.util.Pair
+
 import scala.collection.JavaConverters._
 
-import scala.collection.mutable
-
 object JsonTable {
-  def apply(map: mutable.Map[String, Any]): JsonTable = new JsonTable(map)
+  def apply(map: Map[String, Any]): JsonTable = new JsonTable(map)
 }
 
-final class JsonTable(map: mutable.Map[String, Any]) extends AbstractTable with ScannableTable {
+final class JsonTable(map: Map[String, Any]) extends AbstractTable with ScannableTable {
 
   private val javaMap = map.asJava
 

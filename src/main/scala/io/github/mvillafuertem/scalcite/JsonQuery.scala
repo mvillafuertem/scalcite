@@ -16,14 +16,14 @@ final class JsonQuery(connection: Connection) {
     map
   }
 
-  def sql(sql: String): mutable.Map[String, Any] = {
+  def sql(sql: String): Map[String, Any] = {
     val statement = connection.createStatement
     val resultSet = statement.executeQuery(sql)
     resultSetToMap(resultSet)
   }
 
   @throws[SQLException]
-  private def resultSetToMap(resultSet: ResultSet): mutable.Map[String, Any] = {
+  private def resultSetToMap(resultSet: ResultSet): Map[String, Any] = {
     val map: mutable.Map[String, Any] = new mutable.LinkedHashMap[String, Any]
     if (resultSet.next()) {
       for (i <- 1 to resultSet.getMetaData.getColumnCount) {
@@ -31,7 +31,7 @@ final class JsonQuery(connection: Connection) {
       }
     }
     resultSet.close()
-    map
+    map.toMap
   }
 
 }
