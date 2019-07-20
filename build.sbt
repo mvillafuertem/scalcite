@@ -1,18 +1,39 @@
-name := "scalcite"
+lazy val `scalcite` = (project in file("."))
+  .aggregate(
+    `scalcite-core`,
+    `scalcite-example`,
+    docs
+  )
+  .settings(Settings.value)
+  .settings(Settings.noPublish)
+  .settings(Settings.noAssemblyTest)
 
-version := "0.1.1"
 
-scalaVersion := "2.12.8"
+lazy val `scalcite-core` = (project in file("scalcite-core"))
+  .configs(IntegrationTest extend Test)
+  // S E T T I N G S
+  .settings(Settings.noAssemblyTest)
+  .settings(Settings.value)
+  .settings(libraryDependencies ++= Dependencies.`scalcite-core`)
+  // P L U G I N S
 
-libraryDependencies += "org.apache.calcite" % "calcite-core" % "1.18.0"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % Test
-libraryDependencies += "io.github.mvillafuertem" %% "mapflablup" % "0.1.1"
-libraryDependencies += "org.scalikejdbc" %% "scalikejdbc-streams" % "3.3.5" % Test
-libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.23" % Test
-libraryDependencies += "com.typesafe.akka" %% "akka-stream-testkit" % "2.5.23" % Test
+lazy val `scalcite-example` = (project in file("scalcite-example"))
+  .configs(IntegrationTest extend Test)
+  // S E T T I N G S
+  .settings(Settings.value)
+  .settings(Settings.noPublish)
+  .settings(Settings.noAssemblyTest)
+  .settings(Defaults.itSettings)
+  .settings(libraryDependencies ++= Dependencies.`scalcite-example`)
+  // P L U G I N S
 
-// L O G B A C K
-libraryDependencies +=  "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
-// S C A L A  L O G G I N G
-libraryDependencies +=  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2" % Test
+lazy val docs = (project in file("docs"))
+  //  .dependsOn(`asset-seed-service` % "compile->test")
+  // S E T T I N G S
+  .settings(Settings.value)
+  .settings(Settings.noPublish)
+//  .settings(MdocSettings.value)
+//  .settings(libraryDependencies ++= Dependencies.docs)
+//  // P L U G I N S
+//  .enablePlugins(MdocPlugin)
