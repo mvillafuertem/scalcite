@@ -28,7 +28,7 @@ final class RelationalSqlRepository(h2ConfigurationProperties: H2ConfigurationPr
       driverName = h2ConfigurationProperties.driverName)
   )
 
-  override def findById() = Source.fromPublisher[Map[String, Any]] {
+  override def findById(id: Long) = Source.fromPublisher[Map[String, Any]] {
     NamedDB('sqldb) readOnlyStream {
       SQL("")
         .map(_.toMap())

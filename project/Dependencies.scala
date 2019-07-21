@@ -23,8 +23,13 @@ object Dependencies {
     h2,
 
     // T E S T
-    akkaStreamsTesKit % "it, test",
-    scalaTest % "it, test"
+    akkaStreamsTesKit % Test,
+    scalaTest % Test,
+    scalaMock % Test,
+    
+    // I N T E G R A T I O N  T E S T
+    akkaStreamsTesKit % IntegrationTest,
+    scalaTest % IntegrationTest,
 
   )
 
@@ -45,6 +50,7 @@ object Dependencies {
   lazy val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % Version.scalaLogging
   lazy val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest
   lazy val scalikejdbc = "org.scalikejdbc" %% "scalikejdbc-streams" % Version.scalikejdbc
+  lazy val scalaMock = "org.scalamock" %% "scalamock" % Version.scalaMock
   lazy val h2 = "com.h2database" % "h2" % Version.h2
 
 
