@@ -8,4 +8,4 @@ set -o xtrace
 BASE="$(cd "$(dirname "${0}")" && pwd)"
 source ${BASE}/../.env
 
-sbt ";clean;coverage;test;coverageReport"
+sbt ";clean;coverage;test;coverageReport;"
