@@ -31,7 +31,7 @@ class RelationalSqlRepositorySpec extends TestKit(ActorSystem("ScalciteStreamApp
   it should "insert" in {
 
     // G I V E N
-    val scalciteSql: ScalciteSql = ScalciteSql(1, "SELECT * FROM person")
+    val scalciteSql: ScalciteSql = ScalciteSql(2, "SELECT * FROM person")
     val testSink = TestSink.probe[Map[String, Any]]
 
     // W H E N

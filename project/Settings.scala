@@ -5,7 +5,7 @@ object Settings {
 
   val value: Seq[Def.Setting[_]] = Seq(
 
-    //scalaVersion := "2.13.0",
+    scalaVersion := "2.12.8",
 
     scalacOptions := {
       val default = Seq(

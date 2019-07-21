@@ -10,7 +10,6 @@ lazy val `scalcite` = (project in file("."))
 
 
 lazy val `scalcite-core` = (project in file("scalcite-core"))
-  .configs(IntegrationTest extend Test)
   // S E T T I N G S
   .settings(Settings.noAssemblyTest)
   .settings(Settings.value)
@@ -18,7 +17,7 @@ lazy val `scalcite-core` = (project in file("scalcite-core"))
   // P L U G I N S
 
 lazy val `scalcite-example` = (project in file("scalcite-example"))
-  .configs(IntegrationTest extend Test)
+  .configs(IntegrationTest)
   // S E T T I N G S
   .settings(Settings.value)
   .settings(Settings.noPublish)

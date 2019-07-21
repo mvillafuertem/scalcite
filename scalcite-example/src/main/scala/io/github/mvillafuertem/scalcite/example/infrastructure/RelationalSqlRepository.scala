@@ -11,16 +11,12 @@ import scalikejdbc.{ConnectionPool, ConnectionPoolSettings, DB, SQL}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
-case class Sql(id: Long, sql: String)
-
-
 /**
   * @author Miguel Villafuerte
   */
 final class RelationalSqlRepository(h2ConfigurationProperties: H2ConfigurationProperties) extends SqlRepository[Source] {
 
-  ConnectionPool.singleton(
+  ConnectionPool.add('sqldb,
     h2ConfigurationProperties.url,
     h2ConfigurationProperties.user,
     h2ConfigurationProperties.password,
@@ -33,7 +29,7 @@ final class RelationalSqlRepository(h2ConfigurationProperties: H2ConfigurationPr
   )
 
   override def findById() = Source.fromPublisher[Map[String, Any]] {
-    DB readOnlyStream {
+    NamedDB('sqldb) readOnlyStream {
       SQL("")
         .map(_.toMap())
         .iterator()
@@ -57,11 +53,13 @@ final class RelationalSqlRepository(h2ConfigurationProperties: H2ConfigurationPr
     }
   }
 
-  implicit val session = AutoSession
-
   def insert2(scalciteSql: ScalciteSql) =
-    sql"INSERT INTO scalcitesql VALUES (${scalciteSql.id}, ${scalciteSql.sql})"
+
+    NamedDB('sqldb) autoCommit { implicit session =>
+      sql"INSERT INTO scalcitesql VALUES (${scalciteSql.id}, ${scalciteSql.sql})"
         .update.apply()
+    }
+
 
 
 

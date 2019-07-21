@@ -1,5 +1,6 @@
+DROP TABLE IF EXISTS scalcitesql;
 CREATE TABLE IF NOT EXISTS scalcitesql (
   id INT,
   sql VARCHAR(100) NOT NULL,
   PRIMARY KEY(id)
-)
+);

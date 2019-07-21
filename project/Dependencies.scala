@@ -20,12 +20,11 @@ object Dependencies {
     scalaLogging,
     scalikejdbc,
     scalcite,
-    mapflablup,
     h2,
 
     // T E S T
-    akkaStreamsTesKit % Test,
-    scalaTest % Test
+    akkaStreamsTesKit % "it, test",
+    scalaTest % "it, test"
 
   )
 
@@ -60,6 +59,6 @@ object Dependencies {
     val scalikejdbc = "3.3.5"
     val mapflablup = "0.1.1"
     val scalcite = "0.1.1"
-    val calcite = "1.20.0"
+    val calcite = "1.18.0"
   }
 }
