@@ -17,6 +17,8 @@ lazy val `scalcite-core` = (project in file("scalcite-core"))
   // P L U G I N S
 
 lazy val `scalcite-example` = (project in file("scalcite-example"))
+  .dependsOn(`scalcite-core`)
+  // C O N F I N G S
   .configs(IntegrationTest)
   // S E T T I N G S
   .settings(Settings.value)

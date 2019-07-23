@@ -25,3 +25,22 @@ final class JsonEnumerator(array: Array[AnyRef]) extends Enumerator[Array[AnyRef
     this.enumerator.close()
   }
 }
+
+object JsonEnumerator {
+
+  def identityList(n: Int) = {
+    val integers = new Array[Int](n)
+    var i = 0
+    while ( {
+      i < n
+    }) {
+      integers(i) = i
+
+      {
+        i += 1; i - 1
+      }
+    }
+    integers
+  }
+
+}

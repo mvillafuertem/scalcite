@@ -1,4 +1,4 @@
-= Scalcite
+# Scalcite
 
 [![Build Status](https://travis-ci.com/mvillafuertem/scalcite.svg?branch=master)](https://travis-ci.com/mvillafuertem/scalcite)
 
@@ -9,3 +9,20 @@ This library use https://github.com/mvillafuertem/mapflablup and https://github.
 
 See ScalciteApplication.scala
 ****
+
+
+```bash
+
+./scalcite-example/sqlline
+
+!connect jdbc:calcite:model=scalcite-example/target/scala-2.12/test-classes/model.json admin admin
+
+!tables
+
+!describe PERSON
+
+SELECT "favoriteFruit" FROM PERSON;
+
+SELECT "personalinfo.address" FROM PERSON;
+
+```
