@@ -14,7 +14,7 @@ final class ScalcitePerformance extends FlatSpec {
 
   it should "performance" in {
 
-    for (n <- 1 to 100000) {
+    for (n <- 1 to 1) {
 
       Class.forName("org.apache.calcite.jdbc.Driver")
       val properties = new Properties

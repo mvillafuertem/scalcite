@@ -2,6 +2,7 @@ package io.github.mvillafuertem.scalcite.example.infrastructure
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source
+import io.github.mvillafuertem.scalcite.JsonTable
 import io.github.mvillafuertem.scalcite.example.configuration.CalciteConfigurationProperties
 import io.github.mvillafuertem.scalcite.example.domain.repository.ScalciteRepository
 import org.apache.calcite.jdbc.CalciteConnection

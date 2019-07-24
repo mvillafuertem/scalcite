@@ -6,9 +6,10 @@ object Dependencies {
 
     // P R O D U C T I O N
     calcite,
-    mapflablup
+    mapflablup,
 
     // T E S T
+    scalaTest % Test,
 
   )
 
