@@ -17,10 +17,14 @@ class JsonTable(map: Map[String, Any]) extends AbstractTable {
 
   private val javaMap = map.asJava
 
+  var types: util.List[RelDataType] = _
+  var names: util.List[String] = _
+
   override def getRowType(typeFactory: RelDataTypeFactory): RelDataType = {
 
-    val types: util.List[RelDataType] = new util.ArrayList[RelDataType]
-    val names: util.List[String] = new util.ArrayList[String]
+    types = new util.ArrayList[RelDataType]
+    names = new util.ArrayList[String]
+
     val var5 = javaMap.keySet.iterator
     while (var5.hasNext) {
       val string: String = var5.next

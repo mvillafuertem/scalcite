@@ -4,11 +4,11 @@ import java.util
 
 import org.apache.calcite.adapter.enumerable.{EnumerableConvention, EnumerableRel, EnumerableRelImplementor, PhysTypeImpl}
 import org.apache.calcite.linq4j.tree.{Blocks, Expressions, Primitive}
-import org.apache.calcite.plan.{RelOptCluster, RelOptCost, RelOptPlanner, RelOptTable, RelTraitSet}
-import org.apache.calcite.rel.{RelNode, RelWriter}
+import org.apache.calcite.plan._
 import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeFactory, RelDataTypeField}
 import org.apache.calcite.rel.core.TableScan
 import org.apache.calcite.rel.metadata.RelMetadataQuery
+import org.apache.calcite.rel.{RelNode, RelWriter}
 
 final class JsonTableScan(cluster: RelOptCluster,
                           table: RelOptTable,
@@ -23,7 +23,7 @@ final class JsonTableScan(cluster: RelOptCluster,
   }
 
   override def explainTerms(pw: RelWriter): RelWriter =
-    super.explainTerms(pw).item("fields", Primitive.asList(fields));
+    super.explainTerms(pw).item("fields", Primitive.asList(fields))
 
 
   override def deriveRowType(): RelDataType = {

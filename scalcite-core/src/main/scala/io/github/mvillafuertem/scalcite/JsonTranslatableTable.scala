@@ -29,7 +29,7 @@ final class JsonTranslatableTable(map: Map[String, Any])
   override def asQueryable[T](queryProvider: QueryProvider, schema: SchemaPlus, tableName: String) =
     throw new UnsupportedOperationException
 
-  override def getElementType: Type = classOf[Array[AnyRef]]
+  override def getElementType: Type = classOf[AnyRef]
 
 
   override def getExpression(schema: SchemaPlus, tableName: String, clazz: Class[_]): Expression =

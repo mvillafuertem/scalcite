@@ -7,7 +7,7 @@ import org.apache.calcite.linq4j.{Enumerator, Linq4j}
 
 final class JsonEnumerator(array: Array[AnyRef]) extends Enumerator[Array[AnyRef]] {
 
-  var enumerator: Enumerator[Array[AnyRef]] = {
+  val enumerator: Enumerator[Array[AnyRef]] = {
     val objs = new util.ArrayList[Array[AnyRef]]
     objs.add(array)
     Linq4j.enumerator(objs)
