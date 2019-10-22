@@ -3,9 +3,13 @@ import sbt.{Def, Tests, _}
 
 object Settings {
 
+  lazy val scala213 = "2.13.1"
+  lazy val scala212 = "2.12.10"
+  lazy val supportedScalaVersions = List(scala213, scala212)
+
   val value: Seq[Def.Setting[_]] = Seq(
 
-    scalaVersion := "2.12.8",
+    scalaVersion := scala213,
 
     scalacOptions := {
       val default = Seq(
@@ -16,7 +20,7 @@ object Settings {
         "-language:postfixOps",
         "-unchecked",
         // "-Xfatal-warnings",
-        "-Xlint",
+        "-Xlint"
       )
       if (version.value.endsWith("SNAPSHOT")) {
         default :+ "-Xcheckinit"

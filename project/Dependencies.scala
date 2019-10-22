@@ -9,7 +9,7 @@ object Dependencies {
     mapflablup,
 
     // T E S T
-    scalaTest % Test,
+    scalaTest % Test
 
   )
 
@@ -30,11 +30,11 @@ object Dependencies {
     
     // I N T E G R A T I O N  T E S T
     akkaStreamsTesKit % IntegrationTest,
-    scalaTest % IntegrationTest,
+    scalaTest % IntegrationTest
 
   )
 
-  val docs: Seq[ModuleID] = Seq(
+  val `scalcite-docs`: Seq[ModuleID] = Seq(
 
     // P R O D U C T I O N
 

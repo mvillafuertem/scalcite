@@ -2,17 +2,19 @@ lazy val `scalcite` = (project in file("."))
   .aggregate(
     `scalcite-core`,
     `scalcite-example`,
-    docs
+    `scalcite-docs`
   )
   .settings(Settings.value)
   .settings(Settings.noPublish)
   .settings(Settings.noAssemblyTest)
+  .settings(crossScalaVersions := Nil)
 
 
 lazy val `scalcite-core` = (project in file("scalcite-core"))
   // S E T T I N G S
-  .settings(Settings.noAssemblyTest)
   .settings(Settings.value)
+  .settings(Settings.noAssemblyTest)
+  .settings(crossScalaVersions := Settings.supportedScalaVersions)
   .settings(libraryDependencies ++= Dependencies.`scalcite-core`)
   // P L U G I N S
 
@@ -25,16 +27,19 @@ lazy val `scalcite-example` = (project in file("scalcite-example"))
   .settings(Settings.noPublish)
   .settings(Settings.noAssemblyTest)
   .settings(Defaults.itSettings)
+  .settings(crossScalaVersions := Nil)
   .settings(libraryDependencies ++= Dependencies.`scalcite-example`)
   // P L U G I N S
 
 
-lazy val docs = (project in file("docs"))
-  //  .dependsOn(`asset-seed-service` % "compile->test")
+lazy val `scalcite-docs` = (project in file("scalcite-docs"))
+  .dependsOn(`scalcite-example` % "compile->test")
   // S E T T I N G S
+  .settings(scalaSource in Compile := baseDirectory.value / "src/main/mdoc")
   .settings(Settings.value)
   .settings(Settings.noPublish)
-//  .settings(MdocSettings.value)
-//  .settings(libraryDependencies ++= Dependencies.docs)
-//  // P L U G I N S
-//  .enablePlugins(MdocPlugin)
+  .settings(MdocSettings.value)
+  .settings(crossScalaVersions := Nil)
+  .settings(libraryDependencies ++= Dependencies.`scalcite-docs`)
+  // P L U G I N S
+  .enablePlugins(MdocPlugin)
