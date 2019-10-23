@@ -23,7 +23,6 @@ lazy val `scalcite-core` = (project in file("scalcite-core"))
   .dependsOn(`scalcite-flattener`)
 
 lazy val `scalcite-example` = (project in file("scalcite-example"))
-  .dependsOn(`scalcite-core`)
   // C O N F I N G S
   .configs(IntegrationTest)
   // S E T T I N G S
@@ -33,6 +32,8 @@ lazy val `scalcite-example` = (project in file("scalcite-example"))
   .settings(Defaults.itSettings)
   .settings(crossScalaVersions := Nil)
   .settings(libraryDependencies ++= Dependencies.`scalcite-example`)
+  // D E P E N D S  O N
+  .dependsOn(`scalcite-core`)
 
 
 lazy val `scalcite-docs` = (project in file("scalcite-docs"))
