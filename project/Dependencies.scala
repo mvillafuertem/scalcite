@@ -44,6 +44,8 @@ object Dependencies {
 
     // P R O D U C T I O N
     json4s,
+    circeCore,
+    circeParser,
 
     // T E S T
     scalaTest % Test
@@ -54,12 +56,16 @@ object Dependencies {
 
     // P R O D U C T I O N
     json4s,
+    circeCore,
 
     // T E S T
     scalaTest % Test
 
   )
 
+  lazy val circeCore = "io.circe" %% "circe-core" % Version.circe
+  lazy val circeGeneric = "io.circe" %% "circe-generic" % Version.circe
+  lazy val circeParser = "io.circe" %% "circe-parser" % Version.circe
   lazy val akkaStreams = "com.typesafe.akka" %% "akka-stream" % Version.akka
   lazy val akkaStreamsTesKit= "com.typesafe.akka" %% "akka-stream-testkit" % Version.akka
   lazy val calcite = "org.apache.calcite" % "calcite-core" % Version.calcite
@@ -90,5 +96,6 @@ object Dependencies {
     val calcite = "1.21.0"
     val sqlline = "1.9.0"
     val json4s = "3.6.7"
+    val circe = "0.12.3"
   }
 }
