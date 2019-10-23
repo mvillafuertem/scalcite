@@ -6,8 +6,8 @@ import akka.stream.scaladsl.Keep
 import akka.stream.testkit.TestSubscriber
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
-import io.github.mvillafuertem.scalcite.blower.JsonFlattener
 import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
+import io.github.mvillafuertem.scalcite.flattener.core.JsonFlattener
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
 
 import scala.concurrent.duration._
