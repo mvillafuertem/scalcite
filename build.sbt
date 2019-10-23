@@ -1,6 +1,8 @@
 lazy val `scalcite` = (project in file("."))
   .aggregate(
     `scalcite-core`,
+    `scalcite-blower`,
+    `scalcite-flattener`,
     `scalcite-example`,
     `scalcite-docs`
   )
@@ -16,7 +18,9 @@ lazy val `scalcite-core` = (project in file("scalcite-core"))
   .settings(Settings.noAssemblyTest)
   .settings(crossScalaVersions := Settings.supportedScalaVersions)
   .settings(libraryDependencies ++= Dependencies.`scalcite-core`)
-  // P L U G I N S
+  // D E P E N D S  O N
+  .dependsOn(`scalcite-blower`)
+  .dependsOn(`scalcite-flattener`)
 
 lazy val `scalcite-example` = (project in file("scalcite-example"))
   .dependsOn(`scalcite-core`)
@@ -29,7 +33,6 @@ lazy val `scalcite-example` = (project in file("scalcite-example"))
   .settings(Defaults.itSettings)
   .settings(crossScalaVersions := Nil)
   .settings(libraryDependencies ++= Dependencies.`scalcite-example`)
-  // P L U G I N S
 
 
 lazy val `scalcite-docs` = (project in file("scalcite-docs"))
@@ -43,3 +46,17 @@ lazy val `scalcite-docs` = (project in file("scalcite-docs"))
   .settings(libraryDependencies ++= Dependencies.`scalcite-docs`)
   // P L U G I N S
   .enablePlugins(MdocPlugin)
+
+lazy val `scalcite-blower` = (project in file("scalcite-blower"))
+  // S E T T I N G S
+  .settings(Settings.value)
+  .settings(Settings.noPublish)
+  .settings(crossScalaVersions := Settings.supportedScalaVersions)
+  .settings(libraryDependencies ++= Dependencies.`scalcite-blower`)
+
+lazy val `scalcite-flattener` = (project in file("scalcite-flattener"))
+  // S E T T I N G S
+  .settings(Settings.value)
+  .settings(Settings.noPublish)
+  .settings(crossScalaVersions := Settings.supportedScalaVersions)
+  .settings(libraryDependencies ++= Dependencies.`scalcite-blower`)

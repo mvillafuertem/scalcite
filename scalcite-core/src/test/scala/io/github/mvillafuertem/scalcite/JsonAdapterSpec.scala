@@ -1,21 +1,15 @@
 package io.github.mvillafuertem.scalcite
 
-import java.math.BigDecimal
 import java.util
 
-import io.github.mvillafuertem.mapflablup.JsonFlatten
-import org.apache.calcite.adapter.enumerable.{EnumerableConvention, EnumerableTableScan}
+import io.github.mvillafuertem.blower.JsonFlattener
+import org.apache.calcite.adapter.enumerable.EnumerableTableScan
 import org.apache.calcite.plan._
-import org.apache.calcite.rel.RelNode
 import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeFactory}
-import org.apache.calcite.rel.logical.{LogicalFilter, LogicalTableScan}
-import org.apache.calcite.rex.{RexBuilder, RexNode}
 import org.apache.calcite.schema.SchemaPlus
 import org.apache.calcite.schema.impl.AbstractTable
-import org.apache.calcite.sql.fun.SqlStdOperatorTable
 import org.apache.calcite.sql.{SqlExplainFormat, SqlExplainLevel}
 import org.apache.calcite.tools.Frameworks
-import org.apache.calcite.tools.Frameworks.PlannerAction
 import org.apache.calcite.util.{Pair, Util}
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -29,7 +23,7 @@ final class JsonAdapterSpec extends FlatSpec with Matchers {
     override def getRowType(typeFactory: RelDataTypeFactory): RelDataType = {
 
       val asset = """{"_id":"5c5f1f313fcc6e3084fbe65e","index":0,"guid":"f3b5960b-f3e1-4556-9a5d-f552afe204e7","isActive":true,"balance":"$2,809.92","picture":"http://placehold.it/32x32","age":28,"eyeColor":"blue","personalinfo":{"name":"Elliott Kaufman","gender":"male","phone":"+1 (858) 421-2925","email":"elliottkaufman@spacewax.com","address":"952 Cropsey Avenue, Tyro, Guam, 1787","company":{"name":"SPACEWAX"}},"about":"Labore tempor cupidatat nulla veniam ea veniam aliqua ea. Ad id id dolor enim quis amet irure ad occaecat. Quis enim enim esse mollit. Et officia officia ea consectetur deserunt eiusmod nisi ex culpa consectetur.\r\n","registered":"2015-03-28T06:35:33 -01:00","location":{"latitude":78.370719,"longitude":-137.117139},"greeting":"Hello, Elliott Kaufman! You have 5 unread messages.","favoriteFruit":"strawberry"}"""
-      val flatten = new JsonFlatten toMap asset
+      val flatten = new JsonFlattener toMap asset
       val javaMap = flatten.asJava
 
       val types: util.List[RelDataType] = new util.ArrayList[RelDataType]

@@ -3,7 +3,7 @@ package io.github.mvillafuertem.scalcite
 import java.io.File
 import java.util
 
-import io.github.mvillafuertem.mapflablup.{JsonParser, MapFlatten}
+import io.github.mvillafuertem.blower.{JsonParser, MapFlattener}
 import org.apache.calcite.model.ModelHandler
 import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeImpl}
 import org.apache.calcite.schema.{SchemaPlus, TableFactory}
@@ -23,7 +23,7 @@ final class JsonTableFactory extends TableFactory[JsonTable] {
     val _ = if (rowType != null) RelDataTypeImpl.proto(rowType) else null
     val json = scala.io.Source.fromInputStream(source.openStream()).getLines().mkString
     val map: Map[String, Any] = JsonParser.parse(json)
-    val flatten = new MapFlatten(map).flatten
+    val flatten = new MapFlattener(map).flatten
     JsonTranslatableTable(flatten)
 
   }

@@ -6,8 +6,7 @@ import io.github.mvillafuertem.scalcite.example.configuration.H2ConfigurationPro
 import io.github.mvillafuertem.scalcite.example.domain.model.ScalciteSql
 import io.github.mvillafuertem.scalcite.example.domain.repository.SqlRepository
 import scalikejdbc.streams._
-import scalikejdbc._
-import scalikejdbc.{ConnectionPool, ConnectionPoolSettings, DB, SQL}
+import scalikejdbc.{ConnectionPool, ConnectionPoolSettings, DB, SQL, _}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

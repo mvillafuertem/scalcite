@@ -10,8 +10,6 @@ import org.apache.calcite.plan.RelOptTable
 import org.apache.calcite.rel.RelNode
 import org.apache.calcite.schema.{QueryableTable, SchemaPlus, Schemas, TranslatableTable}
 
-import scala.collection.JavaConverters._
-
 final class JsonTranslatableTable(map: Map[String, Any])
   extends JsonTable(map)
     with QueryableTable
@@ -21,7 +19,7 @@ final class JsonTranslatableTable(map: Map[String, Any])
   def project(root: DataContext, fields: Array[Int]) = {
     val cancelFlag: AtomicBoolean = DataContext.Variable.CANCEL_FLAG.get(root)
     new AbstractEnumerable[Array[AnyRef]]() {
-      override def enumerator: Enumerator[Array[AnyRef]] = new JsonEnumerator(map.asJava.values.toArray)
+      override def enumerator: Enumerator[Array[AnyRef]] = new JsonEnumerator(map.values.toArray).asInstanceOf[Enumerator[Array[AnyRef]]]
     }
   }
 

@@ -17,7 +17,7 @@ class BeatlesTable extends AbstractTable with ScannableTable {
 
   override def scan(root: DataContext): Enumerable[Array[AnyRef]] = new AbstractEnumerable[Array[AnyRef]]() {
     override def enumerator: Enumerator[Array[AnyRef]] =
-      new BeatlesEnumerator(new StringBuilder, null, null)
+      new BeatlesEnumerator(new StringBuilder, null, null).asInstanceOf[Enumerator[Array[AnyRef]]]
   }
 
 }

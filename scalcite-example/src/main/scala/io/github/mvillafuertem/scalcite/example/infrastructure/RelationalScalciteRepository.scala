@@ -7,7 +7,7 @@ import io.github.mvillafuertem.scalcite.example.configuration.CalciteConfigurati
 import io.github.mvillafuertem.scalcite.example.domain.repository.ScalciteRepository
 import org.apache.calcite.jdbc.CalciteConnection
 import scalikejdbc.streams._
-import scalikejdbc.{ConnectionPool, ConnectionPoolSettings, DB, NamedDB, SQL}
+import scalikejdbc.{ConnectionPool, ConnectionPoolSettings, NamedDB, SQL}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -22,7 +22,7 @@ final class RelationalScalciteRepository(calciteConfigurationProperties: Calcite
   //      singleLineMode = true,
   //    )
 
-  ConnectionPool.add('calcitedb,
+  ConnectionPool.add(Symbol("calcitedb"),
     calciteConfigurationProperties.url,
     calciteConfigurationProperties.user,
     calciteConfigurationProperties.password,
@@ -35,7 +35,7 @@ final class RelationalScalciteRepository(calciteConfigurationProperties: Calcite
   )
 
   override def queryForMap(map: Map[String, Any], sql: String): Source[Map[String, Any], NotUsed] = Source.fromPublisher[Map[String, Any]] {
-    NamedDB('calcitedb) readOnlyStream {
+    NamedDB(Symbol("calcitedb")) readOnlyStream {
       SQL(sql)
         .map(_.toMap())
         .iterator()

@@ -1,6 +1,6 @@
+import mdoc.MdocPlugin.autoImport._
 import sbt.Keys.{baseDirectory, sbtVersion, scalaVersion, version}
 import sbt._
-import mdoc.MdocPlugin.autoImport._
 
 object MdocSettings {
 

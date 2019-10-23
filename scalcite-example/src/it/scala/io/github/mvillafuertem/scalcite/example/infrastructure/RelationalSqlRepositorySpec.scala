@@ -2,15 +2,11 @@ package io.github.mvillafuertem.scalcite.example.infrastructure
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Keep
-import akka.stream.testkit.TestSubscriber
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
 import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
 import io.github.mvillafuertem.scalcite.example.domain.model.ScalciteSql
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
-
-import scala.concurrent.duration._
 
 /**
   * @author Miguel Villafuerte
