@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 final class RelationalSqlRepository(h2ConfigurationProperties: H2ConfigurationProperties) extends SqlRepository[Source] {
 
-  ConnectionPool.add('sqldb,
+  ConnectionPool.add(Symbol("sqldb"),
     h2ConfigurationProperties.url,
     h2ConfigurationProperties.user,
     h2ConfigurationProperties.password,
@@ -28,7 +28,7 @@ final class RelationalSqlRepository(h2ConfigurationProperties: H2ConfigurationPr
   )
 
   override def findById(id: Long) = Source.fromPublisher[Map[String, Any]] {
-    NamedDB('sqldb) readOnlyStream {
+    NamedDB(Symbol("sqldb")) readOnlyStream {
       SQL("")
         .map(_.toMap())
         .iterator()
@@ -54,7 +54,7 @@ final class RelationalSqlRepository(h2ConfigurationProperties: H2ConfigurationPr
 
   def insert2(scalciteSql: ScalciteSql) =
 
-    NamedDB('sqldb) autoCommit { implicit session =>
+    NamedDB(Symbol("sqldb")) autoCommit { implicit session =>
       sql"INSERT INTO scalcitesql VALUES (${scalciteSql.id}, ${scalciteSql.sql})"
         .update.apply()
     }

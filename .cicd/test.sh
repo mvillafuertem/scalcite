@@ -9,4 +9,5 @@ BASE="$(cd "$(dirname "${0}")" && pwd)"
 source ${BASE}/../.env
 
 
-sbt -batch clean coverage test coverageReport dependencyUpdates
+sbt + clean test dependencyUpdates
+#sbt ++2.13.0 clean coverage test coverageAggregate
