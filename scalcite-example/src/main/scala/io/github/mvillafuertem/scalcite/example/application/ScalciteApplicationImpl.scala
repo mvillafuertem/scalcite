@@ -1,9 +1,10 @@
 package io.github.mvillafuertem.scalcite.example.application
 
 import akka.stream.scaladsl.{Flow, Source}
-import io.github.mvillafuertem.blower.{JsonBlower, JsonFlattener, JsonParser}
+import io.github.mvillafuertem.scalcite.blower.core.JsonBlower
 import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
 import io.github.mvillafuertem.scalcite.example.domain.repository.{ScalciteRepository, SqlRepository}
+import io.github.mvillafuertem.scalcite.flattener.core.{JsonFlattener, JsonParser}
 
 /**
   * @author Miguel Villafuerte

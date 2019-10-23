@@ -3,7 +3,7 @@ package io.github.mvillafuertem.scalcite
 import java.io.File
 import java.util
 
-import io.github.mvillafuertem.blower.{JsonParser, MapFlattener}
+import io.github.mvillafuertem.scalcite.flattener.core.{JsonParser, MapFlattener}
 import org.apache.calcite.model.ModelHandler
 import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeImpl}
 import org.apache.calcite.schema.{SchemaPlus, TableFactory}

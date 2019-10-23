@@ -2,7 +2,7 @@ package io.github.mvillafuertem.scalcite
 
 import java.util
 
-import io.github.mvillafuertem.blower.JsonFlattener
+import io.github.mvillafuertem.scalcite.flattener.core.JsonFlattener
 import org.apache.calcite.adapter.enumerable.EnumerableTableScan
 import org.apache.calcite.plan._
 import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeFactory}

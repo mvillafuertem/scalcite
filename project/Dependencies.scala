@@ -40,10 +40,19 @@ object Dependencies {
 
   )
 
-  val `scalcite-blower`: Seq[ModuleID] = Seq(
+  val `scalcite-blower-core`: Seq[ModuleID] = Seq(
 
     // P R O D U C T I O N
     json4s,
+
+    // T E S T
+    scalaTest % Test
+
+  )
+
+  val `scalcite-blower-circe`: Seq[ModuleID] = Seq(
+
+    // P R O D U C T I O N
     circeCore,
     circeParser,
 
@@ -52,11 +61,21 @@ object Dependencies {
 
   )
 
-  val `scalcite-flattener`: Seq[ModuleID] = Seq(
+  val `scalcite-flattener-core`: Seq[ModuleID] = Seq(
 
     // P R O D U C T I O N
     json4s,
+
+    // T E S T
+    scalaTest % Test
+
+  )
+
+  val `scalcite-flattener-circe`: Seq[ModuleID] = Seq(
+
+    // P R O D U C T I O N
     circeCore,
+    circeParser,
 
     // T E S T
     scalaTest % Test

@@ -3,8 +3,8 @@ package io.github.mvillafuertem.scalcite.example.application
 import java.sql.DriverManager
 import java.util.Properties
 
-import io.github.mvillafuertem.blower.JsonFlattener
 import io.github.mvillafuertem.scalcite.JsonTranslatableTable
+import io.github.mvillafuertem.scalcite.flattener.core.JsonFlattener
 import org.apache.calcite.config.{CalciteConnectionProperty, Lex}
 import org.apache.calcite.jdbc.CalciteConnection
 import org.scalatest.{FlatSpec, Matchers}

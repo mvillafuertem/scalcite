@@ -3,7 +3,7 @@ package io.github.mvillafuertem.scalcite
 import java.sql.DriverManager
 import java.util.Properties
 
-import io.github.mvillafuertem.blower.{JsonFlattener, JsonParser}
+import io.github.mvillafuertem.scalcite.flattener.core.{JsonFlattener, JsonParser}
 import org.apache.calcite.config.{CalciteConnectionProperty, Lex}
 import org.apache.calcite.jdbc.CalciteConnection
 
