@@ -5,7 +5,7 @@ addSbtPlugin("org.jmotor.sbt" % "sbt-dependency-updates" % "1.2.1")
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
 
 // S C O V E R A G E
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.0")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
 
 // M D O C
-addSbtPlugin("org.scalameta" % "sbt-mdoc" % "1.3.6" )
+addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.0.2" )
