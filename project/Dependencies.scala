@@ -101,7 +101,7 @@ object Dependencies {
 
 
   object Version {
-    val akka = "2.6.0"
+    val akka = "2.6.1"
     val akkaHttp = "10.1.9"
     val h2 = "1.4.200"
     val logback = "1.2.3"
