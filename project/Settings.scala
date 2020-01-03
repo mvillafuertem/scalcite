@@ -53,5 +53,6 @@ object Settings {
     //assembly / test := {}
   )
 
+  ThisBuild / useCoursier := false
 
 }
