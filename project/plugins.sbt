@@ -8,4 +8,4 @@ addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
 
 // M D O C
-addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.0.3" )
+addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.1.1" )
