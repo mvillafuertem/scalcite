@@ -7,10 +7,11 @@ import io.github.mvillafuertem.scalcite.beatles.BeatlesTable
 import org.apache.calcite.jdbc.CalciteConnection
 import org.apache.calcite.schema.Table
 import org.apache.calcite.schema.impl.AbstractSchema
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 
-final class BeatlesTableSpec extends FlatSpec with Matchers {
+final class BeatlesTableSpec extends AnyFlatSpec with Matchers {
 
 
   behavior of "BeatlesTableSpec"

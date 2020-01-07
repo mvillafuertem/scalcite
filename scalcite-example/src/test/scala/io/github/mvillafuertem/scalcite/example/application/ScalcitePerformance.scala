@@ -7,11 +7,12 @@ import io.github.mvillafuertem.scalcite.JsonTranslatableTable
 import io.github.mvillafuertem.scalcite.flattener.core.JsonFlattener
 import org.apache.calcite.config.{CalciteConnectionProperty, Lex}
 import org.apache.calcite.jdbc.CalciteConnection
-import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.mutable
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-final class ScalcitePerformance extends FlatSpec with Matchers {
+final class ScalcitePerformance extends AnyFlatSpec with Matchers {
 
 
   ignore should "performance" in {

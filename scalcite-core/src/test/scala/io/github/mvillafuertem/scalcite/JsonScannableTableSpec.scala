@@ -6,9 +6,10 @@ import java.util.Properties
 import org.apache.calcite.jdbc.CalciteConnection
 import org.apache.calcite.schema.Table
 import org.apache.calcite.schema.impl.AbstractSchema
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-final class JsonScannableTableSpec extends FlatSpec with Matchers {
+final class JsonScannableTableSpec extends AnyFlatSpec with Matchers {
 
 
 

@@ -108,7 +108,7 @@ object Dependencies {
     val scalaLogging = "3.9.2"
     // TODO sustituir por mockito
     val scalaMock = "4.4.0"
-    val scalaTest = "3.0.8"
+    val scalaTest = "3.1.0"
     val scalikejdbc = "3.4.0"
     val mapflablup = "0.1.1"
     val scalcite = "0.1.1"

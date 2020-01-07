@@ -1,12 +1,13 @@
 package io.github.mvillafuertem.scalcite.flattener.circe
 
 import io.circe.Json
-import org.scalatest.{FlatSpecLike, Matchers}
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatest.matchers.should.Matchers
 
 /**
  * @author Miguel Villafuerte
  */
-final class CirceFlattenerSpec extends FlatSpecLike with Matchers {
+final class CirceFlattenerSpec extends AnyFlatSpecLike with Matchers {
 
   behavior of "Circe Flattener"
 

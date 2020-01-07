@@ -1,12 +1,13 @@
 package io.github.mvillafuertem.scalcite.blower.circe
 
 import io.circe.Json
-import org.scalatest.{FlatSpecLike, Matchers}
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatest.matchers.should.Matchers
 
 /**
  * @author Miguel Villafuerte
  */
-class CirceBlowerSpec extends FlatSpecLike with Matchers {
+class CirceBlowerSpec extends AnyFlatSpecLike with Matchers {
 
   behavior of "Circe Blower"
 

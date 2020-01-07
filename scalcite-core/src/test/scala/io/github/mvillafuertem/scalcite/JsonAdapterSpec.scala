@@ -11,12 +11,13 @@ import org.apache.calcite.schema.impl.AbstractTable
 import org.apache.calcite.sql.{SqlExplainFormat, SqlExplainLevel}
 import org.apache.calcite.tools.Frameworks
 import org.apache.calcite.util.{Pair, Util}
-import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.JavaConverters._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 
-final class JsonAdapterSpec extends FlatSpec with Matchers {
+final class JsonAdapterSpec extends AnyFlatSpec with Matchers {
 
   val table: AbstractTable = new AbstractTable() {
 

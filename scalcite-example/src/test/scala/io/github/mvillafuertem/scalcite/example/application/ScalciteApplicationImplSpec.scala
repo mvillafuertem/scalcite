@@ -9,15 +9,17 @@ import akka.testkit.TestKit
 import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
 import io.github.mvillafuertem.scalcite.example.domain.repository.{ScalciteRepository, SqlRepository}
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import org.scalatest.BeforeAndAfterAll
 
 import scala.concurrent.duration._
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatest.matchers.should.Matchers
 
 /**
  * @author Miguel Villafuerte
  */
 class ScalciteApplicationImplSpec extends TestKit(ActorSystem("ScalciteStreamApplication"))
-  with FlatSpecLike
+  with AnyFlatSpecLike
   with BeforeAndAfterAll
   with Matchers
   with MockFactory{

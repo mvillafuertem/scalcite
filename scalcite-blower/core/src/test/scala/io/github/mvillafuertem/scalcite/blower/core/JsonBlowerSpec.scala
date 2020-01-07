@@ -2,11 +2,12 @@ package io.github.mvillafuertem.scalcite.blower.core
 
 import java.net.URL
 
-import org.scalatest.{FlatSpecLike, Matchers}
 
 import scala.io.Source
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatest.matchers.should.Matchers
 
-class JsonBlowerSpec extends FlatSpecLike with Matchers {
+class JsonBlowerSpec extends AnyFlatSpecLike with Matchers {
 
   it should "blowUp a json string" in {
 
