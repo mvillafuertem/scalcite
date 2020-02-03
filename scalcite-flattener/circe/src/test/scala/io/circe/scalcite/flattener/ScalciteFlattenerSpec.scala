@@ -1,5 +1,8 @@
 package io.circe.scalcite.flattener
 
+import java.nio.charset.StandardCharsets
+
+import com.github.plokhotnyuk.jsoniter_scala.core.readFromArray
 import io.circe.Json
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
@@ -14,7 +17,7 @@ final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
     val json: String = """{"id":"c730433b-082c-4984-9d66-855c243266f0","name":"Foo","values":{"bar":true,"baz":100.001,"qux":"a"}}"""
 
     // w h e n
-    val actual = flatten(json)
+    val actual = readFromArray(json.getBytes(StandardCharsets.UTF_8))
 
     // t h e n
     val expected = Json.obj(
@@ -25,7 +28,7 @@ final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
       ("values.qux", Json.fromString("a"))
     )
 
-    actual.map(a => a shouldBe expected)
+    actual shouldBe expected
   }
 
   it should "flatten a json of circe" in {
