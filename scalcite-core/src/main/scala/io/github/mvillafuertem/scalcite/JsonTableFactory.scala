@@ -9,12 +9,12 @@ import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeImpl}
 import org.apache.calcite.schema.{SchemaPlus, TableFactory}
 import org.apache.calcite.util.Sources
 
-final class JsonTableFactory extends TableFactory[JsonTable] {
+final class JsonTableFactory extends TableFactory[MapTable] {
 
   override def create(schema: SchemaPlus,
                       name: String,
                       operand: util.Map[String, AnyRef],
-                      rowType: RelDataType): JsonTable = {
+                      rowType: RelDataType): MapTable = {
 
 
     val fileName = operand.get("file").asInstanceOf[String]
@@ -24,7 +24,7 @@ final class JsonTableFactory extends TableFactory[JsonTable] {
     val json = scala.io.Source.fromInputStream(source.openStream()).getLines().mkString
     val map: Map[String, Any] = JsonParser.parse(json)
     val flatten = new MapFlattener(map).flatten
-    JsonTranslatableTable(flatten)
+    MapTranslatableTable(flatten)
 
   }
 

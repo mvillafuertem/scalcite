@@ -5,7 +5,7 @@ import java.util
 import org.apache.calcite.linq4j.{Enumerator, Linq4j}
 
 
-final class JsonEnumerator(array: Array[Any]) extends Enumerator[Array[Any]] {
+final class ScalciteEnumerator(array: Array[Any]) extends Enumerator[Array[Any]] {
 
   val enumerator: Enumerator[Array[Any]] = {
     val objs = new util.ArrayList[Array[Any]]
@@ -26,7 +26,7 @@ final class JsonEnumerator(array: Array[Any]) extends Enumerator[Array[Any]] {
   }
 }
 
-object JsonEnumerator {
+object ScalciteEnumerator {
 
   def identityList(n: Int) = {
     val integers = new Array[Int](n)

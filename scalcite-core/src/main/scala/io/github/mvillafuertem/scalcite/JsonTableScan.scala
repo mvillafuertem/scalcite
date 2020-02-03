@@ -12,7 +12,7 @@ import org.apache.calcite.rel.{RelNode, RelWriter}
 
 final class JsonTableScan(cluster: RelOptCluster,
                           table: RelOptTable,
-                          val jsonTable: JsonTranslatableTable,
+                          val jsonTable: MapTranslatableTable,
                           fields: Array[Int])
   extends TableScan(cluster, cluster.traitSetOf(EnumerableConvention.INSTANCE), table)
     with EnumerableRel {
@@ -43,9 +43,9 @@ final class JsonTableScan(cluster: RelOptCluster,
   override def implement(implementor: EnumerableRelImplementor, pref: EnumerableRel.Prefer): EnumerableRel.Result = {
     val physType = PhysTypeImpl.of(implementor.getTypeFactory, getRowType, pref.preferArray)
 
-    if (table.isInstanceOf[JsonTable]) return implementor.result(physType, Blocks.toBlock(Expressions.call(table.getExpression(classOf[JsonTable]), "enumerable")))
+    if (table.isInstanceOf[MapTable]) return implementor.result(physType, Blocks.toBlock(Expressions.call(table.getExpression(classOf[MapTable]), "enumerable")))
 
-    implementor.result(physType, Blocks.toBlock(Expressions.call(table.getExpression(classOf[JsonTranslatableTable]), "project", implementor.getRootExpression, Expressions.constant(fields))))
+    implementor.result(physType, Blocks.toBlock(Expressions.call(table.getExpression(classOf[MapTranslatableTable]), "project", implementor.getRootExpression, Expressions.constant(fields))))
 
   }
 

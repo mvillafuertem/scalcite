@@ -9,11 +9,11 @@ import org.apache.calcite.schema.impl.AbstractTable
 import org.apache.calcite.schema.{ScannableTable, Statistic, Statistics}
 import org.apache.calcite.util.Pair
 
-object JsonTable {
-  def apply(map: Map[String, Any]): JsonTable = new JsonTable(map)
+object MapTable {
+  def apply(map: Map[String, Any]): MapTable = new MapTable(map)
 }
 
-class JsonTable(map: Map[String, Any]) extends AbstractTable with ScannableTable {
+class MapTable(map: Map[String, Any]) extends AbstractTable with ScannableTable {
 
   override def getRowType(typeFactory: RelDataTypeFactory): RelDataType = {
 
@@ -35,6 +35,6 @@ class JsonTable(map: Map[String, Any]) extends AbstractTable with ScannableTable
 
   override def scan(root: DataContext): Enumerable[Array[AnyRef]] =
     new AbstractEnumerable[Array[AnyRef]]() {
-      override def enumerator: Enumerator[Array[AnyRef]] = new JsonEnumerator(map.values.toArray).asInstanceOf[Enumerator[Array[AnyRef]]]
+      override def enumerator: Enumerator[Array[AnyRef]] = new ScalciteEnumerator(map.values.toArray).asInstanceOf[Enumerator[Array[AnyRef]]]
     }
 }

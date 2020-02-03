@@ -3,7 +3,7 @@ package io.github.mvillafuertem.scalcite.example.application
 import java.sql.DriverManager
 import java.util.Properties
 
-import io.github.mvillafuertem.scalcite.JsonTranslatableTable
+import io.github.mvillafuertem.scalcite.MapTranslatableTable
 import io.github.mvillafuertem.scalcite.flattener.core.JsonFlattener
 import org.apache.calcite.config.{CalciteConnectionProperty, Lex}
 import org.apache.calcite.jdbc.CalciteConnection
@@ -31,7 +31,7 @@ final class ScalcitePerformance extends FlatSpec with Matchers {
 
       println(flatten)
 
-      rootSchema.add("person", JsonTranslatableTable(flatten))
+      rootSchema.add("person", MapTranslatableTable(flatten))
 
 
       val statement = connection.createStatement

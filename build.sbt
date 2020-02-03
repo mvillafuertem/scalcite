@@ -36,7 +36,8 @@ lazy val `scalcite-example` = (project in file("scalcite-example"))
   .settings(libraryDependencies ++= Dependencies.`scalcite-example`)
   // D E P E N D S  O N
   .dependsOn(`scalcite-core`)
-
+  .dependsOn(`scalcite-blower-circe`)
+  .dependsOn(`scalcite-flattener-circe`)
 
 lazy val `scalcite-docs` = (project in file("scalcite-docs"))
   .dependsOn(`scalcite-example` % "compile->test")

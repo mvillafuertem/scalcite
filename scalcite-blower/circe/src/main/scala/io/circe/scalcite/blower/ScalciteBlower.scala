@@ -1,8 +1,9 @@
 package io.circe.scalcite.blower
 
+import java.nio.charset.StandardCharsets
 import java.util
 
-import com.github.plokhotnyuk.jsoniter_scala.core.{JsonReader, JsonReaderException, JsonValueCodec, JsonWriter}
+import com.github.plokhotnyuk.jsoniter_scala.core.{JsonReader, JsonReaderException, JsonValueCodec, JsonWriter, readFromArray}
 import io.circe.Json.{JArray, JBoolean, JNull, JNumber, JObject, JString}
 import io.circe.{Json, JsonDouble, JsonLong, JsonObject}
 import io.github.mvillafuertem.scalcite.blower.core.Blower
@@ -13,6 +14,11 @@ object ScalciteBlower {
 
   implicit val blow: Blower[Json, Either[Throwable, Json]] =
     (blownUp: Json) => Right(blowup(blownUp))
+
+  def blow(flattend: String): Either[Throwable, Json] = {
+    val json = readFromArray(flattend.getBytes(StandardCharsets.UTF_8))
+    blow.apply(json)
+  }
 
   private def blowup(flattened: Json): Json = flattened match {
 

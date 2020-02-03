@@ -16,7 +16,7 @@ final class JsonScannableTableSpec extends FlatSpec with Matchers {
 
     // G I V E N
     val map: Map[String, Any] = Map("name" -> "Pepe", "age" -> "60")
-    val connection = createConnection("s", "beatles", new JsonScannableTable(map))
+    val connection = createConnection("s", "beatles", new MapScannableTable(map))
 
     // W H E N
     val statement = connection.createStatement()
@@ -36,7 +36,7 @@ final class JsonScannableTableSpec extends FlatSpec with Matchers {
 
     // G I V E N
     val map: Map[String, Any] = Map("name" -> "Pepe", "age" -> "60")
-    val connection = createConnection("s", "beatles", new JsonScannableTable(map))
+    val connection = createConnection("s", "beatles", new MapScannableTable(map))
 
     // W H E N
     val statement = connection.createStatement()

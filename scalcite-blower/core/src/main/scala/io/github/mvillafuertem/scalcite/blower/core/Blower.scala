@@ -2,7 +2,7 @@ package io.github.mvillafuertem.scalcite.blower.core
 
 trait Blower[A, B] {
 
-  def blow(a: A): B
+  def apply(a: A): B
 
 }
 
@@ -12,7 +12,7 @@ object Blower {
 
   implicit class BlowerOps[A, B](a: A)(implicit blower: Blower[A, B]) {
 
-    def blow: B = Blower[A, B].blow(a)
+    def blow: B = Blower[A, B].apply(a)
 
   }
 

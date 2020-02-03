@@ -10,8 +10,8 @@ import org.apache.calcite.plan.RelOptTable
 import org.apache.calcite.rel.RelNode
 import org.apache.calcite.schema.{QueryableTable, SchemaPlus, Schemas, TranslatableTable}
 
-final class JsonTranslatableTable(map: Map[String, Any])
-  extends JsonTable(map)
+final class MapTranslatableTable(map: Map[String, Any])
+  extends MapTable(map)
     with QueryableTable
     with TranslatableTable {
 
@@ -19,7 +19,7 @@ final class JsonTranslatableTable(map: Map[String, Any])
   def project(root: DataContext, fields: Array[Int]) = {
     val cancelFlag: AtomicBoolean = DataContext.Variable.CANCEL_FLAG.get(root)
     new AbstractEnumerable[Array[AnyRef]]() {
-      override def enumerator: Enumerator[Array[AnyRef]] = new JsonEnumerator(map.values.toArray).asInstanceOf[Enumerator[Array[AnyRef]]]
+      override def enumerator: Enumerator[Array[AnyRef]] = new ScalciteEnumerator(map.values.toArray).asInstanceOf[Enumerator[Array[AnyRef]]]
     }
   }
 
@@ -37,14 +37,14 @@ final class JsonTranslatableTable(map: Map[String, Any])
   override def toRel(context: RelOptTable.ToRelContext, relOptTable: RelOptTable): RelNode = {
 
     val fieldCount = relOptTable.getRowType.getFieldCount
-    val fields = JsonEnumerator.identityList(fieldCount)
+    val fields = ScalciteEnumerator.identityList(fieldCount)
     new JsonTableScan(context.getCluster, relOptTable, this, fields)
   }
 
 }
 
-object JsonTranslatableTable {
+object MapTranslatableTable {
 
-  def apply(map: Map[String, Any]): JsonTranslatableTable = new JsonTranslatableTable(map)
+  def apply(map: Map[String, Any]): MapTranslatableTable = new MapTranslatableTable(map)
 
 }

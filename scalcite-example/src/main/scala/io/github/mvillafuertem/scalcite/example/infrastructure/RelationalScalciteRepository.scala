@@ -2,9 +2,11 @@ package io.github.mvillafuertem.scalcite.example.infrastructure
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source
-import io.github.mvillafuertem.scalcite.JsonTable
+import io.circe.Json
+import io.circe.scalcite.example.ScalciteTypeImpl
 import io.github.mvillafuertem.scalcite.example.configuration.CalciteConfigurationProperties
 import io.github.mvillafuertem.scalcite.example.domain.repository.ScalciteRepository
+import io.github.mvillafuertem.scalcite.{MapTable, ScalciteTable}
 import org.apache.calcite.jdbc.CalciteConnection
 import scalikejdbc.streams._
 import scalikejdbc.{ConnectionPool, ConnectionPoolSettings, NamedDB, SQL}
@@ -43,9 +45,26 @@ final class RelationalScalciteRepository(calciteConfigurationProperties: Calcite
           println(session)
           session.connection.unwrap(classOf[CalciteConnection])
             .getRootSchema
-            .add("person", JsonTable(map))
+            .add("person", MapTable(map))
         })
     }
   }
 
+  override def queryForJson(json: Json, sql: String): Source[Map[String, Any], NotUsed] = Source.fromPublisher[Map[String, Any]] {
+    NamedDB(Symbol("calcitedb")) readOnlyStream {
+      SQL(sql)
+        .map(_.toMap)
+        .iterator()
+        .withDBSessionForceAdjuster(session => {
+          session.connection.unwrap(classOf[CalciteConnection])
+            .getRootSchema
+            .add("person", ScalciteTable(ScalciteTypeImpl(json)))
+        })
+    }
+  }
+
+}
+
+object RelationalScalciteRepository {
+  def apply(calciteConfigurationProperties: CalciteConfigurationProperties): RelationalScalciteRepository = new RelationalScalciteRepository(calciteConfigurationProperties)
 }
