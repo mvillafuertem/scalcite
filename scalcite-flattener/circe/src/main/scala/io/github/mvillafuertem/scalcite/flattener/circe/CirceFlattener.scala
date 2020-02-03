@@ -1,5 +1,6 @@
 package io.github.mvillafuertem.scalcite.flattener.circe
 
+import io.circe.{Json, ParsingFailure}
 import io.github.mvillafuertem.scalcite.flattener.core.{Flattener, JsonParser, MapFlattener}
 
 /**

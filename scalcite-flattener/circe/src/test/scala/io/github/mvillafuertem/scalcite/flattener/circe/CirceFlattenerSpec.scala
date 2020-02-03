@@ -1,5 +1,6 @@
 package io.github.mvillafuertem.scalcite.flattener.circe
 
+import io.circe.Json
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
 

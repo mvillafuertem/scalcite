@@ -1,5 +1,6 @@
 package io.circe.scalcite.flattener
 
+import io.circe.Json
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
 
@@ -9,6 +10,7 @@ final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
 
   it should "flatten a json string of circe" in {
     // g i v e n
+    import io.circe.scalcite.flattener.ScalciteFlattener._
     val json: String = """{"id":"c730433b-082c-4984-9d66-855c243266f0","name":"Foo","values":{"bar":true,"baz":100.001,"qux":"a"}}"""
 
     // w h e n
@@ -28,6 +30,7 @@ final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
 
   it should "flatten a json of circe" in {
     // g i v e n
+    import io.circe.scalcite.flattener.ScalciteFlattener._
     import io.github.mvillafuertem.scalcite.flattener.core.Flattener._
     val json = Json.obj(
       ("id", Json.fromString("c730433b-082c-4984-9d66-855c243266f0")),
