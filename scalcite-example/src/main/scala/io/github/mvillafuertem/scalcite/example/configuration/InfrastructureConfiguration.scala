@@ -1,7 +1,7 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
 import io.github.mvillafuertem.scalcite.example.configuration.properties.{CalciteConfigurationProperties, H2ConfigurationProperties}
-import io.github.mvillafuertem.scalcite.example.infrastructure.{RelationalScalciteRepository, RelationalSqlRepository}
+import io.github.mvillafuertem.scalcite.example.infrastructure.{RelationalScalciteRepository, RelationalQueriesRepository}
 
 trait InfrastructureConfiguration {
 
@@ -13,7 +13,7 @@ trait InfrastructureConfiguration {
 
   lazy val scalciteRepository = new RelationalScalciteRepository(calciteConfigurationProperties)
 
-  lazy val sqlRepository = new RelationalSqlRepository(h2ConfigurationProperties)
+  lazy val queriesRepository = new RelationalQueriesRepository(h2ConfigurationProperties)
 
 }
 

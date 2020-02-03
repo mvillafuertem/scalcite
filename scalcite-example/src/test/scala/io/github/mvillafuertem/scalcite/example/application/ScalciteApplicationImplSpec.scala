@@ -7,7 +7,7 @@ import akka.stream.testkit.TestSubscriber
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
 import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
-import io.github.mvillafuertem.scalcite.example.domain.repository.{ScalciteRepository, SqlRepository}
+import io.github.mvillafuertem.scalcite.example.domain.repository.{ScalciteRepository, QueriesRepository}
 import io.github.mvillafuertem.scalcite.example.infrastructure.RelationalScalciteRepository
 import io.github.mvillafuertem.scalcite.flattener.core.JsonFlattener
 import org.scalamock.scalatest.MockFactory
@@ -26,7 +26,7 @@ class ScalciteApplicationImplSpec extends TestKit(ActorSystem("ScalciteStreamApp
   with Matchers
   with MockFactory{
 
-  private lazy val sqlRepository = mock[SqlRepository[Source]]
+  private lazy val sqlRepository = mock[QueriesRepository[Source]]
   private lazy val scalciteApplication = ScalciteApplicationImpl(sqlRepository, ScalciteServiceConfiguration.scalciteRepository)
 
   override def afterAll(): Unit = TestKit.shutdownActorSystem(system)

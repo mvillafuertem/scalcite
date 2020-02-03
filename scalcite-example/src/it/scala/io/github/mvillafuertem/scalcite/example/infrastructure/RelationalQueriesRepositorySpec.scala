@@ -10,11 +10,11 @@ import org.scalatest.flatspec.AnyFlatSpecLike
 /**
   * @author Miguel Villafuerte
   */
-class RelationalSqlRepositorySpec extends TestKit(ActorSystem("ScalciteStreamApplication"))
+class RelationalQueriesRepositorySpec extends TestKit(ActorSystem("ScalciteStreamApplication"))
   with AnyFlatSpecLike
   with BeforeAndAfterAll {
 
-  private val sqlRepository = ScalciteServiceConfiguration.sqlRepository
+  private val sqlRepository = ScalciteServiceConfiguration.queriesRepository
 
   override def afterAll(): Unit = TestKit.shutdownActorSystem(system)
 

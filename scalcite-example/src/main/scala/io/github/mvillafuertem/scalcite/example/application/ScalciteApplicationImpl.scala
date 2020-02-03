@@ -5,14 +5,14 @@ import io.circe.scalcite.blower.ScalciteBlower
 import io.circe.scalcite.flattener.ScalciteFlattener
 import io.github.mvillafuertem.scalcite.blower.core.JsonBlower
 import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
-import io.github.mvillafuertem.scalcite.example.domain.repository.{ScalciteRepository, SqlRepository}
+import io.github.mvillafuertem.scalcite.example.domain.repository.{ScalciteRepository, QueriesRepository}
 import io.github.mvillafuertem.scalcite.flattener.core.{JsonFlattener, JsonParser}
 
 /**
   * @author Miguel Villafuerte
   */
-final class ScalciteApplicationImpl(sqlRepository: SqlRepository[Source],
-                                     scalciteRepository: ScalciteRepository[Source]) extends ScalciteApplication[Source] {
+final class ScalciteApplicationImpl(sqlRepository: QueriesRepository[Source],
+                                    scalciteRepository: ScalciteRepository[Source]) extends ScalciteApplication[Source] {
 
 
   def perform(id: Long, json: String): Source[String, _] = {
@@ -48,6 +48,6 @@ final class ScalciteApplicationImpl(sqlRepository: SqlRepository[Source],
 }
 
 object ScalciteApplicationImpl {
-  def apply(sqlRepository: SqlRepository[Source],
+  def apply(sqlRepository: QueriesRepository[Source],
             scalciteRepository: ScalciteRepository[Source]): ScalciteApplicationImpl = new ScalciteApplicationImpl(sqlRepository, scalciteRepository)
 }

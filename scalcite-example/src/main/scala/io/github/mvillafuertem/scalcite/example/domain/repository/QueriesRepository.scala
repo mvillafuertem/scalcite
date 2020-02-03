@@ -5,7 +5,7 @@ import io.github.mvillafuertem.scalcite.example.domain.model.ScalciteSql
 /**
   * @author Miguel Villafuerte
   */
-trait SqlRepository[F[_,_]] {
+trait QueriesRepository[F[_,_]] {
 
   def findById(id: Long): F[Map[String, Any], _]
 

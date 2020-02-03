@@ -4,7 +4,7 @@ import akka.NotUsed
 import akka.stream.scaladsl.Source
 import io.github.mvillafuertem.scalcite.example.configuration.properties.H2ConfigurationProperties
 import io.github.mvillafuertem.scalcite.example.domain.model.ScalciteSql
-import io.github.mvillafuertem.scalcite.example.domain.repository.SqlRepository
+import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
 import scalikejdbc.streams._
 import scalikejdbc.{ConnectionPool, ConnectionPoolSettings, DB, SQL, _}
 
@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * @author Miguel Villafuerte
   */
-final class RelationalSqlRepository(h2ConfigurationProperties: H2ConfigurationProperties) extends SqlRepository[Source] {
+final class RelationalQueriesRepository(h2ConfigurationProperties: H2ConfigurationProperties) extends QueriesRepository[Source] {
 
   ConnectionPool.add(Symbol("sqldb"),
     h2ConfigurationProperties.url,
