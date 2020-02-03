@@ -1,23 +1,20 @@
 package io.github.mvillafuertem.scalcite.example.infrastructure
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
 import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
 import io.github.mvillafuertem.scalcite.example.domain.model.ScalciteSql
-import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.flatspec.AnyFlatSpecLike
 
 /**
   * @author Miguel Villafuerte
   */
 class RelationalSqlRepositorySpec extends TestKit(ActorSystem("ScalciteStreamApplication"))
-  with FlatSpecLike
+  with AnyFlatSpecLike
   with BeforeAndAfterAll {
 
   private val sqlRepository = ScalciteServiceConfiguration.sqlRepository
-
-  private implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   override def afterAll(): Unit = TestKit.shutdownActorSystem(system)
 
@@ -28,7 +25,7 @@ class RelationalSqlRepositorySpec extends TestKit(ActorSystem("ScalciteStreamApp
 
     // G I V E N
     val scalciteSql: ScalciteSql = ScalciteSql(2, "SELECT * FROM person")
-    val testSink = TestSink.probe[Map[String, Any]]
+    //val testSink = TestSink.probe[Map[String, Any]]
 
     // W H E N
     sqlRepository.insert2(scalciteSql)

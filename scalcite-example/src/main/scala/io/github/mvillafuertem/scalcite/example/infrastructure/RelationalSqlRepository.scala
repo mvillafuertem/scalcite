@@ -2,7 +2,7 @@ package io.github.mvillafuertem.scalcite.example.infrastructure
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source
-import io.github.mvillafuertem.scalcite.example.configuration.H2ConfigurationProperties
+import io.github.mvillafuertem.scalcite.example.configuration.properties.H2ConfigurationProperties
 import io.github.mvillafuertem.scalcite.example.domain.model.ScalciteSql
 import io.github.mvillafuertem.scalcite.example.domain.repository.SqlRepository
 import scalikejdbc.streams._

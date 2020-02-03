@@ -4,7 +4,7 @@ import akka.NotUsed
 import akka.stream.scaladsl.Source
 import io.circe.Json
 import io.circe.scalcite.example.ScalciteTypeImpl
-import io.github.mvillafuertem.scalcite.example.configuration.CalciteConfigurationProperties
+import io.github.mvillafuertem.scalcite.example.configuration.properties.CalciteConfigurationProperties
 import io.github.mvillafuertem.scalcite.example.domain.repository.ScalciteRepository
 import io.github.mvillafuertem.scalcite.{MapTable, ScalciteTable}
 import org.apache.calcite.jdbc.CalciteConnection

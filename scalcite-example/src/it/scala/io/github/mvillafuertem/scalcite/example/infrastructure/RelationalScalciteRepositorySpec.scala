@@ -8,7 +8,8 @@ import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
 import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
 import io.github.mvillafuertem.scalcite.flattener.core.JsonFlattener
-import org.scalatest.{BeforeAndAfterAll, FlatSpecLike}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.flatspec.AnyFlatSpecLike
 
 import scala.concurrent.duration._
 
@@ -16,7 +17,7 @@ import scala.concurrent.duration._
   * @author Miguel Villafuerte
   */
 class RelationalScalciteRepositorySpec extends TestKit(ActorSystem("ScalciteStreamApplication"))
-  with FlatSpecLike
+  with AnyFlatSpecLike
   with BeforeAndAfterAll {
 
   private val scalciteRepository = ScalciteServiceConfiguration.scalciteRepository
