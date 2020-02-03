@@ -1,20 +1,17 @@
-package io.github.mvillafuertem.scalcite.blower.circe
+package io.circe.scalcite.blower
 
 import io.circe.Json
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
 
-/**
- * @author Miguel Villafuerte
- */
-class CirceBlowerSpec extends AnyFlatSpecLike with Matchers {
+final class ScalciteBlowerSpec extends AnyFlatSpecLike with Matchers {
 
-  behavior of "Circe Blower"
+  behavior of "Scalcite Blower"
 
   it should "blow a json of circe" in {
     // g i v e n
+    import io.circe.scalcite.blower.ScalciteBlower._
     import io.github.mvillafuertem.scalcite.blower.core.Blower._
-    import io.github.mvillafuertem.scalcite.blower.circe.CirceBlower._
 
     val json: Json = Json.obj(
       ("id", Json.fromString("c730433b-082c-4984-9d66-855c243266f0")),

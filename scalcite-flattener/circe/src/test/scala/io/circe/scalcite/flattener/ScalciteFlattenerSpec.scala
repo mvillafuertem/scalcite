@@ -1,20 +1,34 @@
-package io.github.mvillafuertem.scalcite.flattener.circe
+package io.circe.scalcite.flattener
 
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
 
-/**
- * @author Miguel Villafuerte
- */
-final class CirceFlattenerSpec extends AnyFlatSpecLike with Matchers {
+final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
 
-  behavior of "Circe Flattener"
+  behavior of "Scalcite Flattener"
+
+  it should "flatten a json string of circe" in {
+    // g i v e n
+    val json: String = """{"id":"c730433b-082c-4984-9d66-855c243266f0","name":"Foo","values":{"bar":true,"baz":100.001,"qux":"a"}}"""
+
+    // w h e n
+    val actual = flatten(json)
+
+    // t h e n
+    val expected = Json.obj(
+      ("id", Json.fromString("c730433b-082c-4984-9d66-855c243266f0")),
+      ("name", Json.fromString("Foo")),
+      ("values.bar", Json.fromBoolean(true)),
+      ("values.baz", Json.fromDoubleOrNull(100.001)),
+      ("values.qux", Json.fromString("a"))
+    )
+
+    actual.map(a => a shouldBe expected)
+  }
 
   it should "flatten a json of circe" in {
     // g i v e n
-    import io.github.mvillafuertem.scalcite.flattener.circe.CirceFlattener._
     import io.github.mvillafuertem.scalcite.flattener.core.Flattener._
-
     val json = Json.obj(
       ("id", Json.fromString("c730433b-082c-4984-9d66-855c243266f0")),
       ("name", Json.fromString("Foo")),
@@ -26,7 +40,6 @@ final class CirceFlattenerSpec extends AnyFlatSpecLike with Matchers {
         )
       )
     )
-
     // w h e n
     val actual = json.flatten
 
@@ -38,6 +51,7 @@ final class CirceFlattenerSpec extends AnyFlatSpecLike with Matchers {
       ("values.baz", Json.fromDoubleOrNull(100.001)),
       ("values.qux", Json.fromString("a"))
     )
+
     actual.map(a => a shouldBe expected)
   }
 

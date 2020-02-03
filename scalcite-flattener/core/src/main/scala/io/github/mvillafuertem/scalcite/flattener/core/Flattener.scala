@@ -2,7 +2,7 @@ package io.github.mvillafuertem.scalcite.flattener.core
 
 trait Flattener[A, B] {
 
-  def flatten(a: A): B
+  def apply(a: A): B
 
 }
 
@@ -12,7 +12,7 @@ object Flattener {
 
   implicit class FlattenerOps[A, B](a: A)(implicit blower: Flattener[A, B]) {
 
-    def flatten: B = Flattener[A, B].flatten(a)
+    def flatten: B = Flattener[A, B].apply(a)
 
   }
 
