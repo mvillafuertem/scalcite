@@ -5,8 +5,9 @@ import akka.stream.scaladsl.Source
 import io.github.mvillafuertem.scalcite.example.configuration.properties.H2ConfigurationProperties
 import io.github.mvillafuertem.scalcite.example.domain.model.ScalciteSql
 import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
+import org.reactivestreams.Subscriber
 import scalikejdbc.streams._
-import scalikejdbc.{ConnectionPool, ConnectionPoolSettings, DB, SQL, _}
+import scalikejdbc.{ConnectionPool, ConnectionPoolSettings, SQL, _}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -29,7 +30,7 @@ final class RelationalQueriesRepository(h2ConfigurationProperties: H2Configurati
 
   override def findById(id: Long) = Source.fromPublisher[Map[String, Any]] {
     NamedDB(Symbol("sqldb")) readOnlyStream {
-      SQL("")
+      sql"SELECT * FROM scalcitesql WHERE id = ${id}"
         .map(_.toMap())
         .iterator()
         .withDBSessionForceAdjuster(session => {
@@ -39,31 +40,24 @@ final class RelationalQueriesRepository(h2ConfigurationProperties: H2Configurati
     }
   }
 
-  override def insert(scalciteSql: ScalciteSql): Source[Map[String, Any], NotUsed] = Source.fromPublisher[Map[String, Any]] {
-    DB readOnlyStream {
+  override def insert(scalciteSql: ScalciteSql) = Source.fromPublisher[Map[String, Any]] {
+    (s: Subscriber[_ >: Map[String, Any]]) => { NamedDB(Symbol("sqldb")) autoCommit  { implicit session =>
 
-      sql"INSERT INTO scalcitesql VALUES (${scalciteSql.id}, ${scalciteSql.sql})"
-        .map(_.toMap())
-        .iterator()
-        .withDBSessionForceAdjuster(session => {
-          println(session)
-          //session.connection.setAutoCommit(true)
-        })
+      val bool = sql"INSERT INTO scalcitesql VALUES (${scalciteSql.id}, ${scalciteSql.sql})"
+        .update()
+        .apply()
+      println(s"RESULTR $bool" )
+      if (bool == 1) {
+        s.onNext(Map("SQL" -> scalciteSql.sql))
+        s.onComplete()
+      } else s.onComplete()
+    }
     }
   }
 
-  def insert2(scalciteSql: ScalciteSql) =
-
-    NamedDB(Symbol("sqldb")) autoCommit { implicit session =>
-      sql"INSERT INTO scalcitesql VALUES (${scalciteSql.id}, ${scalciteSql.sql})"
-        .update.apply()
-    }
-
-
-
 
   override def delete() = Source.fromPublisher[Map[String, Any]] {
-    DB readOnlyStream {
+    NamedDB(Symbol("sqldb")) readOnlyStream {
       SQL("")
         .map(_.toMap())
         .iterator()

@@ -33,7 +33,7 @@ final class ScalciteApplicationImpl(sqlRepository: QueriesRepository[Source],
         case Left(value) => throw value
         case Right(value) => value
       }
-      val value = scalciteRepository.queryForJson(flattenedJson, String.valueOf(sql("sql")))
+      val value = scalciteRepository.queryForJson(flattenedJson, String.valueOf(sql("SQL")))
       flattenedJson = null
       value
     })

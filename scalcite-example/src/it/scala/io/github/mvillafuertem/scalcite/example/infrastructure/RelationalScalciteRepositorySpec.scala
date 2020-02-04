@@ -1,12 +1,11 @@
 package io.github.mvillafuertem.scalcite.example.infrastructure
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Keep
 import akka.stream.testkit.TestSubscriber
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
-import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.properties.CalciteConfigurationProperties
 import io.github.mvillafuertem.scalcite.flattener.core.JsonFlattener
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpecLike
@@ -20,9 +19,7 @@ class RelationalScalciteRepositorySpec extends TestKit(ActorSystem("ScalciteStre
   with AnyFlatSpecLike
   with BeforeAndAfterAll {
 
-  private val scalciteRepository = ScalciteServiceConfiguration.scalciteRepository
-
-  private implicit val materializer: ActorMaterializer = ActorMaterializer()
+  private val scalciteRepository = new RelationalScalciteRepository(CalciteConfigurationProperties())
 
   override def afterAll(): Unit = TestKit.shutdownActorSystem(system)
 

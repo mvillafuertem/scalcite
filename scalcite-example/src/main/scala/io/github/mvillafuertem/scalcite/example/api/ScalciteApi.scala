@@ -24,15 +24,27 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication[Source], querie
       complete("PONG!\n")
     }
 
-  } ~ queriesRoute
+  } ~ queriesRoute ~ simulateRoute
 
-  private lazy val queriesRoute: Route = ScalciteEndpoint.queriesEndpoint.toRoute { q =>
+  private lazy val queriesRoute: Route = ScalciteEndpoint.queriesEndpoint.toRoute { case (id, q) =>
     Future.successful {
-      val value: Source[Map[String, Any], _] = queriesRepository.insert(ScalciteSql(1L, q.queries.head))
+      val value: Source[Map[String, Any], _] = queriesRepository.insert(ScalciteSql(id, q.queries.head))
       Right(
         value
           .map(e => Queries(Seq(e.values.head.toString)))
           .map(e => ByteString(e.asJson.noSpaces))
+          .map(e => ByteString(e) ++ ByteString("\n"))
+          .intersperse(ByteString("["), ByteString(","), ByteString("]"))
+      )
+    }
+  }
+
+  private lazy val simulateRoute: Route = ScalciteEndpoint.simulateEndpoint.toRoute { case (id, j) =>
+    Future.successful {
+      val value: Source[String, _] = scalciteApplication.performJson(id, j.noSpaces)
+      Right(
+        value
+          .map(e => ByteString(e))
           .map(e => ByteString(e) ++ ByteString("\n"))
           .intersperse(ByteString("["), ByteString(","), ByteString("]"))
       )

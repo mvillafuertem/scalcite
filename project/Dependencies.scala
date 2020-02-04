@@ -135,7 +135,7 @@ object Dependencies {
   object Version {
     // TODO sustituir por mockito
     val akka = "2.6.3"
-    val akkaHttp = "10.1.9"
+    val akkaHttp = "10.1.11"
     val calcite = "1.21.0"
     val circe = "0.12.3"
     val h2 = "1.4.200"
@@ -149,7 +149,7 @@ object Dependencies {
     val scalcite = "0.1.1"
     val scalikejdbc = "3.4.0"
     val sqlline = "1.9.0"
-    val tapir = "0.12.18"
+    val tapir = "0.12.19"
     val zio = "1.0.0-RC17"
     val zioInteropReactiveStreams = "1.0.3.4-RC1"
   }

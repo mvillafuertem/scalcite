@@ -14,7 +14,8 @@ trait SwaggerApi {
     // A C T U A T O R  E N D P O I N T
     ActuatorEndpoint.healthEndpoint,
     // S C A L C I T E E N D P O I N T
-    ScalciteEndpoint.queriesEndpoint
+    ScalciteEndpoint.queriesEndpoint,
+    ScalciteEndpoint.simulateEndpoint
   ).toOpenAPI(BuildInfo.name, BuildInfo.version)
     .toYaml
 

@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext
 trait ScalciteServiceConfiguration extends ApiConfiguration
   with  InfrastructureConfiguration {
 
-  val executionContext: ExecutionContext
+  implicit val executionContext: ExecutionContext
 
   val actorSystem: Task[ActorSystem[Done]] = Task(
     ActorSystem[Done](
@@ -66,8 +66,4 @@ trait ScalciteServiceConfiguration extends ApiConfiguration
 
   }
 
-}
-
-object ScalciteServiceConfiguration extends ScalciteServiceConfiguration {
-  override val executionContext: ExecutionContext = null
 }

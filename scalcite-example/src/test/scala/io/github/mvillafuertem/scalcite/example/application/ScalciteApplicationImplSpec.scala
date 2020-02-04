@@ -1,15 +1,13 @@
 package io.github.mvillafuertem.scalcite.example.application
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Keep, Source}
 import akka.stream.testkit.TestSubscriber
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.TestKit
-import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
-import io.github.mvillafuertem.scalcite.example.domain.repository.{ScalciteRepository, QueriesRepository}
+import io.github.mvillafuertem.scalcite.example.configuration.properties.CalciteConfigurationProperties
+import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.RelationalScalciteRepository
-import io.github.mvillafuertem.scalcite.flattener.core.JsonFlattener
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpecLike
@@ -27,7 +25,7 @@ class ScalciteApplicationImplSpec extends TestKit(ActorSystem("ScalciteStreamApp
   with MockFactory{
 
   private lazy val sqlRepository = mock[QueriesRepository[Source]]
-  private lazy val scalciteApplication = ScalciteApplicationImpl(sqlRepository, ScalciteServiceConfiguration.scalciteRepository)
+  private lazy val scalciteApplication = ScalciteApplicationImpl(sqlRepository, new RelationalScalciteRepository(CalciteConfigurationProperties()))
 
   override def afterAll(): Unit = TestKit.shutdownActorSystem(system)
 
@@ -42,7 +40,7 @@ class ScalciteApplicationImplSpec extends TestKit(ActorSystem("ScalciteStreamApp
 
     (sqlRepository.findById _)
       .expects(id)
-      .returns(Source(List(Map("sql" -> "SELECT `personalinfo.phone` FROM person"))))
+      .returns(Source(List(Map("SQL" -> "SELECT `personalinfo.phone` FROM person"))))
       .once()
 
     // W H E N
@@ -65,7 +63,7 @@ class ScalciteApplicationImplSpec extends TestKit(ActorSystem("ScalciteStreamApp
 
     (sqlRepository.findById _)
       .expects(id)
-      .returns(Source(List(Map("sql" -> "SELECT `personalinfo.phone` FROM person"))))
+      .returns(Source(List(Map("SQL" -> "SELECT `personalinfo.phone` FROM person"))))
       .once()
 
     // W H E N

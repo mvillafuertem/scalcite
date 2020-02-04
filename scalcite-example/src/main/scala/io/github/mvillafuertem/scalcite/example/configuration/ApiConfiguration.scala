@@ -6,9 +6,9 @@ import io.github.mvillafuertem.scalcite.example.api.{ActuatorApi, ScalciteApi, S
 import io.github.mvillafuertem.scalcite.example.application.ScalciteApplicationImpl
 
 trait ApiConfiguration {
-  self: InfrastructureConfiguration =>
+  self: ScalciteServiceConfiguration with InfrastructureConfiguration =>
 
-  private lazy val scalciteApplication = ScalciteApplicationImpl(queriesRepository, ScalciteServiceConfiguration.scalciteRepository)
+  private lazy val scalciteApplication = ScalciteApplicationImpl(queriesRepository, scalciteRepository)
 
 
   val route: Route = SwaggerApi.route ~
