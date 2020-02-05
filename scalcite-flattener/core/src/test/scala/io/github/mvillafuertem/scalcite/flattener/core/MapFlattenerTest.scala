@@ -1,10 +1,11 @@
 package io.github.mvillafuertem.scalcite.flattener.core
 
-import org.scalatest.{FlatSpecLike, Matchers}
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatest.matchers.should.Matchers
 
 import scala.collection.mutable
 
-class MapFlattenerTest extends FlatSpecLike with Matchers {
+class MapFlattenerTest extends AnyFlatSpecLike with Matchers {
 
   behavior of "Map Flattener"
 
