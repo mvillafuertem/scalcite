@@ -3,15 +3,15 @@ package io.github.mvillafuertem.scalcite.example.configuration
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import io.github.mvillafuertem.scalcite.example.api.{ActuatorApi, ScalciteApi, SwaggerApi}
-import io.github.mvillafuertem.scalcite.example.application.ScalciteApplicationImpl
+
+import scala.concurrent.ExecutionContext
 
 trait ApiConfiguration {
-  self: ScalciteServiceConfiguration with InfrastructureConfiguration =>
+  self: ApplicationConfiguration =>
 
-  private lazy val scalciteApplication = ScalciteApplicationImpl(queriesRepository, scalciteRepository)
-
+  implicit val executionContext: ExecutionContext
 
   val route: Route = SwaggerApi.route ~
     ActuatorApi.route ~
-    ScalciteApi(scalciteApplication, queriesRepository).ping
+    ScalciteApi(scalciteApplication).route
 }

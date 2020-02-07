@@ -14,8 +14,8 @@ object Dependencies {
   val `scalcite-example`: Seq[ModuleID] = Seq(
 
     // P R O D U C T I O N
+    akkaActorTyped,
     akkaHttp,
-    akkaStreams,
     h2,
     logback,
     scalaLogging,
@@ -34,14 +34,8 @@ object Dependencies {
 
     // T E S T
     akkaHttpTestkit % Test,
-    akkaStreamsTesKit % Test,
-    scalaMock % Test,
     scalaTest % Test,
     sqlline % Test,
-    
-    // I N T E G R A T I O N  T E S T
-    akkaStreamsTesKit % IntegrationTest,
-    scalaTest % IntegrationTest
 
   )
 
@@ -99,6 +93,7 @@ object Dependencies {
 
   )
 
+  lazy val akkaActorTyped = "com.typesafe.akka" %% "akka-actor-typed" % Version.akka
   lazy val akkaHttp = "com.typesafe.akka" %% "akka-http" % Version.akkaHttp
   lazy val akkaHttpTestkit = "com.typesafe.akka" %% "akka-http-testkit" % Version.akkaHttp
   lazy val akkaStreams = "com.typesafe.akka" %% "akka-stream-typed" % Version.akka

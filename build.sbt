@@ -56,7 +56,6 @@ lazy val `scalcite-example` = (project in file("scalcite-example"))
   .settings(Settings.noPublish)
   .settings(Settings.noAssemblyTest)
   .settings(BuildInfoSettings.value)
-  .settings(Defaults.itSettings)
   .settings(crossScalaVersions := Nil)
   .settings(libraryDependencies ++= Dependencies.`scalcite-example`)
   // D E P E N D S  O N

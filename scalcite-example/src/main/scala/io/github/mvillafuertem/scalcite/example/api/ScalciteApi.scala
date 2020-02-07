@@ -3,36 +3,35 @@ package io.github.mvillafuertem.scalcite.example.api
 import akka.http.scaladsl.server.Directives.{complete, get, path, _}
 import akka.http.scaladsl.server.Route
 import akka.stream.scaladsl.Source
-import io.github.mvillafuertem.scalcite.example.api.documentation.ApiJsonCodec
+import akka.util.ByteString
+import io.circe.generic.auto._
+import io.circe.syntax._
+import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiJsonCodec, ScalciteEndpoint}
 import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
-import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
-import io.github.mvillafuertem.scalcite.example.infrastructure.RelationalQueriesRepository.TypeZStream
+import sttp.tapir.server.akkahttp._
+import zio.DefaultRuntime
+import zio.interop.reactiveStreams._
 
-final class ScalciteApi(scalciteApplication: ScalciteApplication[Source], queriesRepository: QueriesRepository[TypeZStream])
-    extends ApiJsonCodec {
+import scala.concurrent.ExecutionContext
 
-  val ping: Route =
+final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit executionContext: ExecutionContext) extends ApiJsonCodec with DefaultRuntime {
+
+  val route: Route =
   get {
     path("ping") {
       complete("PONG!\n")
     }
-
   } ~ queriesRoute ~ simulateRoute
 
-  private lazy val queriesRoute: Route = ???
+  private lazy val queriesRoute: Route = ScalciteEndpoint.queriesEndpoint.toRoute { query =>
+      unsafeRunToFuture(scalciteApplication.createQuery(query)
+        .map(_.asJson.noSpaces)
+        .map(query => ByteString(query) ++ ByteString("\n")).toPublisher)
+        .map(publisher =>
+          Right(Source.fromPublisher(publisher)
+            .intersperse(ByteString("["), ByteString(","), ByteString("]"))))
+    }
 
-//  ScalciteEndpoint.queriesEndpoint.toRoute { case (id, q) =>
-//    Future.successful {
-//      val value: Source[Map[String, Any], _] = queriesRepository.insert(Query(id, q.queries.head))
-//      Right(
-//        value
-//          .map(e => Queries(Seq(e.values.head.toString)))
-//          .map(e => ByteString(e.asJson.noSpaces))
-//          .map(e => ByteString(e) ++ ByteString("\n"))
-//          .intersperse(ByteString("["), ByteString(","), ByteString("]"))
-//      )
-//    }
-//  }
 
   private lazy val simulateRoute: Route = ???
 //  ScalciteEndpoint.simulateEndpoint.toRoute { case (id, j) =>
@@ -50,7 +49,5 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication[Source], querie
 }
 
 object ScalciteApi {
-  def apply(scalciteApplication: ScalciteApplication[Source],
-            queriesRepository: QueriesRepository[TypeZStream]): ScalciteApi =
-    new ScalciteApi(scalciteApplication, queriesRepository)
+  def apply(scalciteApplication: ScalciteApplication)(implicit executionContext: ExecutionContext): ScalciteApi = new ScalciteApi(scalciteApplication)(executionContext)
 }

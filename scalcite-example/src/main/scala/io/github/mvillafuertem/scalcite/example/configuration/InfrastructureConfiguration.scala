@@ -1,7 +1,7 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
-import io.github.mvillafuertem.scalcite.example.configuration.properties.{CalciteConfigurationProperties, H2ConfigurationProperties}
-import io.github.mvillafuertem.scalcite.example.infrastructure.{RelationalQueriesRepository, RelationalScalciteRepository}
+import io.github.mvillafuertem.scalcite.example.configuration.properties.{CalciteConfigurationProperties, H2ConfigurationProperties, ScalciteConfigurationProperties}
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
 
 import scala.concurrent.ExecutionContext
 
@@ -15,8 +15,7 @@ trait InfrastructureConfiguration {
 
   lazy val scalciteConfigurationProperties: ScalciteConfigurationProperties = ScalciteConfigurationProperties()
 
-  lazy val scalciteRepository = new RelationalScalciteRepository(calciteConfigurationProperties)
+  lazy val calciteRepository = new RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
 
-  lazy val queriesRepository = new RelationalQueriesRepository(h2ConfigurationProperties)
-
+  lazy val queriesRepository = new RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
 }

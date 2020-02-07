@@ -10,10 +10,10 @@ import org.apache.calcite.schema.{ScannableTable, Statistic, Statistics}
 import org.apache.calcite.util.Pair
 
 object MapTable {
-  def apply(map: Map[String, Any]): MapTable = new MapTable(map)
+  def apply(map: collection.Map[String, Any]): MapTable = new MapTable(map)
 }
 
-class MapTable(map: Map[String, Any]) extends AbstractTable with ScannableTable {
+class MapTable(map: collection.Map[String, Any]) extends AbstractTable with ScannableTable {
 
   override def getRowType(typeFactory: RelDataTypeFactory): RelDataType = {
 

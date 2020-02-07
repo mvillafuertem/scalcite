@@ -1,8 +1,7 @@
 package io.github.mvillafuertem.scalcite.example.api.documentation
 
+import io.circe.Json
 import io.circe.parser.parse
-import io.circe.syntax._
-import io.circe.{Decoder, Encoder, HCursor, Json}
 import sttp.tapir.Codec.JsonCodec
 import sttp.tapir.json.circe._
 

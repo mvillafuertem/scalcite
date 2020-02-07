@@ -22,8 +22,8 @@ See ScalciteApplication.scala
 
 !describe PERSON
 
-SELECT "favoriteFruit" FROM PERSON;
+SELECT "favoriteFruit" FROM scalcite;
 
-SELECT "personalinfo.address" FROM PERSON;
+SELECT "personalinfo.address" FROM scalcite;
 
 ```

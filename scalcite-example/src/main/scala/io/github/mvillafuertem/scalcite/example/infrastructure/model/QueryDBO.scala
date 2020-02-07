@@ -1,4 +1,4 @@
-package io.github.mvillafuertem.scalcite.example.infrastructure
+package io.github.mvillafuertem.scalcite.example.infrastructure.model
 
 import java.util.UUID
 

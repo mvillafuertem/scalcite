@@ -13,7 +13,7 @@ import zio.{Task, UIO, ZIO}
 import scala.concurrent.ExecutionContext
 
 trait ScalciteServiceConfiguration extends ApiConfiguration
-  with  InfrastructureConfiguration {
+  with  InfrastructureConfiguration with  ApplicationConfiguration {
 
   implicit val executionContext: ExecutionContext
 

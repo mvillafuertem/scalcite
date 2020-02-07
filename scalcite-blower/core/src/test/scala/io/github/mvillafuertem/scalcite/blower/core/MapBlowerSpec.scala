@@ -1,10 +1,12 @@
 package io.github.mvillafuertem.scalcite.blower.core
 
-import org.scalatest.{FlatSpecLike, Matchers}
+
+import org.scalatest.flatspec.AnyFlatSpecLike
+import org.scalatest.matchers.should.Matchers
 
 import scala.collection.mutable
 
-class MapBlowerSpec extends FlatSpecLike with Matchers {
+class MapBlowerSpec extends AnyFlatSpecLike with Matchers {
 
   behavior of "Map Blower"
 

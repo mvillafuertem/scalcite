@@ -1,7 +1,7 @@
-package io.github.mvillafuertem.scalcite.example.configuration
+package io.github.mvillafuertem.scalcite.example.configuration.properties
 
 import com.typesafe.config.ConfigFactory
-import io.github.mvillafuertem.scalcite.example.configuration.ScalciteConfigurationProperties._
+import io.github.mvillafuertem.scalcite.example.configuration.properties.ScalciteConfigurationProperties._
 
 final case class ScalciteConfigurationProperties(
     name: String = ConfigFactory.load().getString(s"$path.name"),
