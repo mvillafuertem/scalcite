@@ -1,14 +1,13 @@
 package io.github.mvillafuertem.scalcite.example.infrastructure.repository
 
-import java.util.UUID
-
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.configuration.properties.H2ConfigurationProperties
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepositorySpec.RelationalQueriesRepositoryConfigurationSpec
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
-import scalikejdbc.{ConnectionPool, ConnectionPoolSettings}
+import scalikejdbc._
 import zio.DefaultRuntime
 
 import scala.concurrent.ExecutionContext
@@ -78,26 +77,10 @@ final class RelationalQueriesRepositorySpec
 
 object RelationalQueriesRepositorySpec {
 
-  trait RelationalQueriesRepositoryConfigurationSpec extends DefaultRuntime
-    with AnyFlatSpecLike
-    with Matchers with BaseData {
+  trait RelationalQueriesRepositoryConfigurationSpec extends BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
-    private val h2ConfigurationProperties: H2ConfigurationProperties = H2ConfigurationProperties()
     val repository = new RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
-
-    ConnectionPool.add(Symbol(h2ConfigurationProperties.databaseName),
-      h2ConfigurationProperties.url,
-      h2ConfigurationProperties.user,
-      h2ConfigurationProperties.password,
-      ConnectionPoolSettings(
-        initialSize = h2ConfigurationProperties.initialSize,
-        maxSize = h2ConfigurationProperties.maxSize,
-        connectionTimeoutMillis = h2ConfigurationProperties.connectionTimeoutMillis,
-        validationQuery = h2ConfigurationProperties.validationQuery,
-        driverName = h2ConfigurationProperties.driverName
-      )
-    )
 
   }
 

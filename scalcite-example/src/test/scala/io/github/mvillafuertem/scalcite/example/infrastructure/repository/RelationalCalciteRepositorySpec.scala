@@ -44,26 +44,10 @@ final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryC
 
 object RelationalCalciteRepositorySpec {
 
-  trait RelationalCalciteRepositoryConfigurationSpec extends DefaultRuntime
-    with AnyFlatSpecLike
-    with Matchers
-    with BaseData {
+  trait RelationalCalciteRepositoryConfigurationSpec extends BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
-    private val calciteConfigurationProperties: CalciteConfigurationProperties = CalciteConfigurationProperties()
     val calcite = new RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
-
-    ConnectionPool.add(Symbol(calciteConfigurationProperties.databaseName),
-      calciteConfigurationProperties.url,
-      calciteConfigurationProperties.user,
-      calciteConfigurationProperties.password,
-      ConnectionPoolSettings(
-        initialSize = calciteConfigurationProperties.initialSize,
-        maxSize = calciteConfigurationProperties.maxSize,
-        connectionTimeoutMillis = calciteConfigurationProperties.connectionTimeoutMillis,
-        validationQuery = calciteConfigurationProperties.validationQuery,
-        driverName = calciteConfigurationProperties.driverName)
-    )
 
   }
 }
