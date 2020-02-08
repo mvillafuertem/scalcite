@@ -25,7 +25,7 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit execu
     }
   } ~ queriesRoute //~ simulateRoute
 
-  private lazy val queriesRoute: Route = ScalciteEndpoint.queriesEndpoint.toRoute { dto =>
+  private lazy val queriesRoute: Route = ScalciteEndpoint.queriesPostEndpoint.toRoute { dto =>
       val value = unsafeRun(scalciteApplication.createQuery(Query(value = dto.value))
         .map(_.asJson.noSpaces)
         .map(query => ByteString(query) ++ ByteString("\n")).toPublisher)
