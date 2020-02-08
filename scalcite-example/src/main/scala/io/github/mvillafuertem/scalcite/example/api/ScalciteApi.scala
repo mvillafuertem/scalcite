@@ -8,8 +8,9 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiJsonCodec, ScalciteEndpoint}
 import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
+import io.github.mvillafuertem.scalcite.example.domain.model.Query
 import sttp.tapir.server.akkahttp._
-import zio.DefaultRuntime
+import zio.{DefaultRuntime, UIO}
 import zio.interop.reactiveStreams._
 
 import scala.concurrent.ExecutionContext
@@ -21,10 +22,10 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit execu
     path("ping") {
       complete("PONG!\n")
     }
-  } ~ queriesRoute ~ simulateRoute
+  } ~ queriesRoute //~ simulateRoute
 
-  private lazy val queriesRoute: Route = ScalciteEndpoint.queriesEndpoint.toRoute { query =>
-      unsafeRunToFuture(scalciteApplication.createQuery(query)
+  private lazy val queriesRoute: Route = ScalciteEndpoint.queriesEndpoint.toRoute { dto =>
+      unsafeRunToFuture(scalciteApplication.createQuery(Query(value = dto.value))
         .map(_.asJson.noSpaces)
         .map(query => ByteString(query) ++ ByteString("\n")).toPublisher)
         .map(publisher =>

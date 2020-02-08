@@ -5,4 +5,4 @@ import java.util.UUID
 /**
   * @author Miguel Villafuerte
   */
-final case class Query(uuid: UUID, value: String)
+final case class Query(uuid: UUID = UUID.randomUUID(), value: String)

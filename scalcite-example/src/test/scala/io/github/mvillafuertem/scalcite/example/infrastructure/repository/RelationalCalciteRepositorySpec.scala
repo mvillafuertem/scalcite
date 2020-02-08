@@ -1,6 +1,7 @@
 package io.github.mvillafuertem.scalcite.example.infrastructure.repository
 
 import io.circe.Json
+import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.configuration.properties.CalciteConfigurationProperties
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepositorySpec.RelationalCalciteRepositoryConfigurationSpec
 import org.scalatest.flatspec.AnyFlatSpecLike
@@ -17,11 +18,10 @@ final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryC
   it should "query for map" in {
 
     // g i v e n
-    val map = collection.Map[String, Any]()
-    val query = "SELECT true AS `boolean` FROM person"
+    // see trait
 
     // w h e n
-    val actual = unsafeRun(calcite.queryForMap(map, query).runHead)
+    val actual = unsafeRun(calcite.queryForMap(map, queryBooleanValue).runHead)
 
     // t h e n
     actual shouldBe Some(Map("boolean" -> true))
@@ -31,11 +31,10 @@ final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryC
   it should "query for json" in {
 
     // g i v e n
-    val json = Json.obj("boolean" -> Json.fromBoolean(true))
-    val query = "SELECT `boolean` FROM person"
+    // see trait
 
     // w h e n
-    val actual = unsafeRun(calcite.queryForJson(json, query).runHead)
+    val actual = unsafeRun(calcite.queryForJson(json, queryBooleanValue).runHead)
 
     // t h e n
     actual shouldBe Some(Map("boolean" -> true))
@@ -47,7 +46,8 @@ object RelationalCalciteRepositorySpec {
 
   trait RelationalCalciteRepositoryConfigurationSpec extends DefaultRuntime
     with AnyFlatSpecLike
-    with Matchers {
+    with Matchers
+    with BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
     private val calciteConfigurationProperties: CalciteConfigurationProperties = CalciteConfigurationProperties()

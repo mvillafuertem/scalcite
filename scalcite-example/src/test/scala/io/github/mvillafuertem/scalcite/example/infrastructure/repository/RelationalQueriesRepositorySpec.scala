@@ -2,6 +2,7 @@ package io.github.mvillafuertem.scalcite.example.infrastructure.repository
 
 import java.util.UUID
 
+import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.configuration.properties.H2ConfigurationProperties
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepositorySpec.RelationalQueriesRepositoryConfigurationSpec
@@ -20,7 +21,7 @@ final class RelationalQueriesRepositorySpec
   it should "findById" in {
 
     // g i v e n
-    val id = 0L
+    // see trait
 
     // w h e n
     val actual: Option[QueryDBO] = unsafeRun(repository.findById(id).runHead)
@@ -33,10 +34,10 @@ final class RelationalQueriesRepositorySpec
   it should "insert" in {
 
     // g i v e n
-    val query = QueryDBO(UUID.randomUUID(), "SELECT 'personalinfo.address' FROM scalcite")
+    // see trait
 
     // w h e n
-    val actual: Option[Long] = unsafeRun(repository.insert(query).runHead)
+    val actual: Option[Long] = unsafeRun(repository.insert(queryDBO1).runHead)
 
     // t h e n
     actual shouldBe Some(1)
@@ -46,11 +47,10 @@ final class RelationalQueriesRepositorySpec
   it should "create many queries" in {
 
     // g i v e n
-    val query1 = QueryDBO(UUID.randomUUID(), "SELECT 'personalinfo.address' FROM scalcite")
-    val query2 = QueryDBO(UUID.randomUUID(), "SELECT 'favoriteFruit' FROM scalcite")
+    // see trait
 
     // w h e n
-    val actual: Seq[Long] = unsafeRun((repository.insert(query1) ++ repository.insert(query2)).runCollect)
+    val actual: Seq[Long] = unsafeRun((repository.insert(queryDBO1) ++ repository.insert(queryDBO2)).runCollect)
 
     // t h e n
     actual should have size 2
@@ -61,15 +61,12 @@ final class RelationalQueriesRepositorySpec
   it should "delete" in {
 
     // g i v e n
-    val uuid1 = UUID.randomUUID()
-    val uuid2 = UUID.randomUUID()
-    val query1 = QueryDBO(uuid1, "SELECT 'personalinfo.address' FROM scalcite")
-    val query2 = QueryDBO(uuid2, "SELECT 'personalinfo.address' FROM scalcite")
+    // see trait
 
     // w h e n
     val actual: Seq[Int] = unsafeRun(
-      (repository.insert(query1) *>
-        repository.insert(query2) *>
+      (repository.insert(queryDBO1) *>
+        repository.insert(queryDBO2) *>
         repository.deleteByUUID(uuid1)).runCollect)
 
     // t h e n
@@ -83,7 +80,7 @@ object RelationalQueriesRepositorySpec {
 
   trait RelationalQueriesRepositoryConfigurationSpec extends DefaultRuntime
     with AnyFlatSpecLike
-    with Matchers {
+    with Matchers with BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
     private val h2ConfigurationProperties: H2ConfigurationProperties = H2ConfigurationProperties()

@@ -7,7 +7,7 @@ import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
 import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
-import zio.stream
+import zio.{UIO, stream}
 
 final class ScalcitePerformer(calcite: CalciteRepository, repository: QueriesRepository) extends ScalciteApplication {
 

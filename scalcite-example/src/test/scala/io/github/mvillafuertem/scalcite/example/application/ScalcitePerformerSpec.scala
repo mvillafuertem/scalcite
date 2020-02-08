@@ -3,6 +3,7 @@ package io.github.mvillafuertem.scalcite.example.application
 import java.util.UUID
 
 import io.circe.Json
+import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformerSpec.ScalcitePerformerConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.configuration.properties.{CalciteConfigurationProperties, H2ConfigurationProperties}
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
@@ -21,7 +22,7 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
   it should "create a query" in {
 
     // g i v e n
-    val query = Query(UUID.randomUUID(), "SELECT 'favoriteFruit' FROM scalcite")
+    // see trait
 
     // w h e n
     val actual: Option[Query] = unsafeRun(scalcitePerformer.createQuery(query).runHead)
@@ -34,10 +35,10 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
   it should "delete a query by its UUID" in {
 
     // g i v e n
-    val uuid = UUID.randomUUID()
+    // see trait
 
     // w h e n
-    val actual: Option[Int] = unsafeRun(scalcitePerformer.deleteQueryByUUID(uuid).runHead)
+    val actual: Option[Int] = unsafeRun(scalcitePerformer.deleteQueryByUUID(uuid1).runHead)
 
     // t h e n
     actual shouldBe None
@@ -47,13 +48,13 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
   it should "find a query by its UUID" in {
 
     // g i v e n
-    val uuid = UUID.randomUUID()
+    // see trait
 
     // w h e n
-    val actual: Option[Query] = unsafeRun(scalcitePerformer.findQueryByUUID(uuid).runHead)
+    val actual: Option[Query] = unsafeRun(scalcitePerformer.findQueryByUUID(uuid1).runHead)
 
     // t h e n
-    actual shouldBe Some(Query(uuid, ""))
+    actual shouldBe Some(Query(uuid1, ""))
 
   }
 
@@ -93,7 +94,7 @@ object ScalcitePerformerSpec {
 
   trait ScalcitePerformerConfigurationSpec extends DefaultRuntime
     with AnyFlatSpecLike
-    with Matchers {
+    with Matchers with BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
