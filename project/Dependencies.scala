@@ -137,7 +137,7 @@ object Dependencies {
     val akka = "2.6.3"
     val akkaHttp = "10.1.11"
     val calcite = "1.21.0"
-    val circe = "0.12.3"
+    val circe = "0.13.0"
     val h2 = "1.4.200"
     val json4s = "3.6.7"
     val jsoniter = "2.1.6"
