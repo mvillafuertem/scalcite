@@ -9,11 +9,12 @@ import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiJsonCodec, ScalciteEndpoint}
 import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
+import org.reactivestreams.Publisher
 import sttp.tapir.server.akkahttp._
-import zio.{DefaultRuntime, UIO}
+import zio.{CancelableFuture, DefaultRuntime, UIO}
 import zio.interop.reactiveStreams._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit executionContext: ExecutionContext) extends ApiJsonCodec with DefaultRuntime {
 
@@ -25,11 +26,11 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit execu
   } ~ queriesRoute //~ simulateRoute
 
   private lazy val queriesRoute: Route = ScalciteEndpoint.queriesEndpoint.toRoute { dto =>
-      unsafeRunToFuture(scalciteApplication.createQuery(Query(value = dto.value))
+      val value = unsafeRun(scalciteApplication.createQuery(Query(value = dto.value))
         .map(_.asJson.noSpaces)
         .map(query => ByteString(query) ++ ByteString("\n")).toPublisher)
-        .map(publisher =>
-          Right(Source.fromPublisher(publisher)
+    Future.successful(
+          Right(Source.fromPublisher(value)
             .intersperse(ByteString("["), ByteString(","), ByteString("]"))))
     }
 
