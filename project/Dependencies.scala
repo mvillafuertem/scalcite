@@ -145,7 +145,7 @@ object Dependencies {
     val mapflablup = "0.1.1"
     val scalaLogging = "3.9.2"
     val scalaMock = "4.4.0"
-    val scalaTest = "3.1.0"
+    val scalaTest = "3.1.1"
     val scalcite = "0.1.1"
     val scalikejdbc = "3.4.0"
     val sqlline = "1.9.0"
