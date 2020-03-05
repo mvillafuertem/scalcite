@@ -136,7 +136,7 @@ object Dependencies {
     // TODO sustituir por mockito
     val akka = "2.6.3"
     val akkaHttp = "10.1.11"
-    val calcite = "1.21.0"
+    val calcite = "1.22.0"
     val circe = "0.12.3"
     val h2 = "1.4.200"
     val json4s = "3.6.7"
