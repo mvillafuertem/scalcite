@@ -26,4 +26,4 @@ addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler-sjs06" % "0.17.0")
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10")
 
 // N A T I V E  P A C K A G E R
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.4.0")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.4.1")
