@@ -14,16 +14,16 @@ See ScalciteApplication.scala
 
 ```bash
 
-./scalcite-example/sqlline
+./scalcite-example/backend/sqlline
 
-!connect jdbc:calcite:model=scalcite-example/target/scala-2.12/test-classes/model.json admin admin
+!connect jdbc:calcite:model=scalcite-example-backend/target/scala-2.13/test-classes/model.json admin admin
 
 !tables
 
 !describe PERSON
 
-SELECT "favoriteFruit" FROM PERSON;
+SELECT "favoriteFruit" FROM scalcite;
 
-SELECT "personalinfo.address" FROM PERSON;
+SELECT "personalinfo.address" FROM scalcite;
 
 ```

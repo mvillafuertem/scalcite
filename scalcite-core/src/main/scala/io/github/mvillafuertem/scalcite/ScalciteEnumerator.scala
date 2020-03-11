@@ -25,22 +25,3 @@ final class ScalciteEnumerator(array: Array[Any]) extends Enumerator[Array[Any]]
     this.enumerator.close()
   }
 }
-
-object ScalciteEnumerator {
-
-  def identityList(n: Int) = {
-    val integers = new Array[Int](n)
-    var i = 0
-    while ( {
-      i < n
-    }) {
-      integers(i) = i
-
-      {
-        i += 1; i - 1
-      }
-    }
-    integers
-  }
-
-}
