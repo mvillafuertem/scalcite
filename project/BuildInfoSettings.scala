@@ -2,7 +2,7 @@ import com.typesafe.sbt.GitPlugin.autoImport.git
 import sbt.Keys._
 import sbt.{Def, SettingKey}
 import sbtbuildinfo.BuildInfoKeys.buildInfoKeys
-import sbtbuildinfo.BuildInfoPlugin.autoImport.{BuildInfoKey, BuildInfoOption, buildInfoOptions, buildInfoPackage}
+import sbtbuildinfo.BuildInfoPlugin.autoImport.{BuildInfoKey, buildInfoObject, BuildInfoOption, buildInfoOptions, buildInfoPackage}
 
 object BuildInfoSettings {
 
@@ -10,6 +10,7 @@ object BuildInfoSettings {
 
   val value: Seq[Def.Setting[_]] = Seq(
 
+    buildInfoObject := "BuildInfoScalcite",
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, gitCommitString),
     buildInfoPackage := s"${organization.value}.scalcite",
     buildInfoOptions ++= Seq(BuildInfoOption.ToJson, BuildInfoOption.BuildTime),

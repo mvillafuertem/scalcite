@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "defaultSchema": "CUSTOM_TABLE",
+  "schemas": [
+    {
+      "name": "CUSTOM_TABLE",
+      "tables": [
+        {
+          "name": "PERSON",
+          "type": "custom",
+          "factory": "io.github.mvillafuertem.scalcite.JsonTableFactory",
+          "operand": {
+            "file": "person.json"
+          }
+        }
+      ]
+    }
+  ]
+}
