@@ -11,7 +11,7 @@ addSbtPlugin("org.jmotor.sbt" % "sbt-dependency-updates" % "1.2.1")
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
 
 // M D O C
-addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.1.3" )
+addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.1.5" )
 
 // S C O V E R A G E
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
