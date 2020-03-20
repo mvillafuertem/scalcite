@@ -5,7 +5,7 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.9.0")
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
 
 // D E P E N D E N C Y  U P D A T E
-addSbtPlugin("org.jmotor.sbt" % "sbt-dependency-updates" % "1.2.1")
+addSbtPlugin("org.jmotor.sbt" % "sbt-dependency-updates" % "1.2.2")
 
 // G I T
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
