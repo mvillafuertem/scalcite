@@ -6,6 +6,7 @@ import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.DuplicatedEntity
 import sttp.model.StatusCode
 import sttp.tapir.{EndpointOutput, _}
+import sttp.tapir.json.circe._
 
 trait ApiErrorMapping extends ApiJsonCodec {
 

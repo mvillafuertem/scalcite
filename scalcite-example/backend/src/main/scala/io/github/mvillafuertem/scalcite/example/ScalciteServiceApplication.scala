@@ -1,6 +1,7 @@
 package io.github.mvillafuertem.scalcite.example
 import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
-import zio.logging._
+import zio.logging.log
+import zio.logging.Logging
 import zio.{UIO, ZIO, ZManaged}
 
 import scala.concurrent.ExecutionContext
@@ -23,6 +24,6 @@ object ScalciteServiceApplication extends ScalciteServiceConfiguration with zio.
             _ <- httpServer(actorSystem)
           } yield 0
       )
-      .foldM(e => logThrowable(e).as(1), _ => UIO.effectTotal(0))
+      .foldM(e => log.throwable("", e).as(1), _ => UIO.effectTotal(0))
       .provideLayer(env)
 }

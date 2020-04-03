@@ -6,7 +6,7 @@ import io.github.mvillafuertem.scalcite.BuildInfoScalcite
 import sttp.model.StatusCode
 import sttp.tapir.Codec.JsonCodec
 import sttp.tapir.json.circe._
-import sttp.tapir.{Endpoint, jsonBody, _}
+import sttp.tapir.{Endpoint, _}
 
 trait ActuatorEndpoint {
 

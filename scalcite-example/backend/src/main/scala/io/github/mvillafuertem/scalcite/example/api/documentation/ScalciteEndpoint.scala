@@ -19,8 +19,8 @@ trait ScalciteEndpoint extends ApiErrorMapping {
   private[api] lazy val simulateResource: String = "simulate"
   private[api] lazy val uuidPath = path[UUID]("uuid")
   private[api] lazy val queriesIdResource: EndpointInput[UUID] = queriesResource / uuidPath
-  private[api] lazy val queriesParameter = query[Seq[UUID]]("uuid")
-    .example(Seq(
+  private[api] lazy val queriesParameter = query[List[UUID]]("uuid")
+    .example(List(
       // see schema.sql
       UUID.fromString("43bbbc0d-fa14-4003-ad15-ef5fdc6c1732"),
       UUID.fromString("ec7381a6-11a1-4261-af95-4b84a1a22bf0"),
@@ -31,7 +31,7 @@ trait ScalciteEndpoint extends ApiErrorMapping {
       UUID.fromString("696d07e5-01a2-455b-8aec-e5eaf6d54c6d"),
     ))
     .description("queries to simulate")
-  private[api] lazy val queriesSimulateResource: EndpointInput[Seq[UUID]] = queriesResource / simulateResource / queriesParameter
+  private[api] lazy val queriesSimulateResource: EndpointInput[List[UUID]] = queriesResource / simulateResource / queriesParameter
   private[api] lazy val queriesNamePostResource: String = "queries-post-resource"
   private[api] lazy val queriesNameGetResource: String = "queries-get-resource"
   private[api] lazy val queriesNameGetAllResource: String = "queries-get-all-resource"
@@ -98,13 +98,13 @@ trait ScalciteEndpoint extends ApiErrorMapping {
       .out(streamBody[Source[ByteString, Any]](schemaFor[Query], CodecFormat.Json()))
       .errorOut(oneOf(statusInternalServerError, statusDefault))
 
-  private[api] lazy val simulateEndpoint: Endpoint[(Seq[UUID], Json), ScalciteError, Source[ByteString, Any], Source[ByteString, Any]] =
+  private[api] lazy val simulateEndpoint: Endpoint[(List[UUID], Json), ScalciteError, Source[ByteString, Any], Source[ByteString, Any]] =
     ApiEndpoint.baseEndpoint.post
       .in(queriesSimulateResource)
       .name(simulateNameResource)
       .description(simulateDescriptionResource)
       .in(jsonBody[Json].example(simulateInExample))
-      .out(streamBody[Source[ByteString, Any]](schemaFor[Json], CodecFormat.Json()).example(simulateOutExample.noSpaces))
+      .out(streamBody[Source[ByteString, Any]](schemaFor[Json], CodecFormat.Json()))
       .errorOut(oneOf(statusInternalServerError, statusDefault))
 
 }
