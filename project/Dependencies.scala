@@ -37,9 +37,7 @@ object Dependencies {
     // T E S T
     akkaHttpTestkit % Test,
     akkaActorTestkitTyped % Test,
-    scalaTest % Test,
-    sqlline % Test,
-
+    scalaTest % Test
   )
 
   val `scalcite-example-frontend`: Seq[ModuleID] = Seq(
@@ -153,7 +151,7 @@ object Dependencies {
 
 
   object Version {
-    val akka = "2.6.4"
+    val akka = "2.6.1"
     val akkaHttp = "10.1.11"
     val calcite = "1.22.0"
     val circe = "0.13.0"
@@ -169,7 +167,7 @@ object Dependencies {
     val scalcite = "0.1.1"
     val scalikejdbc = "3.4.1"
     val sqlline = "1.9.0"
-    val tapir = "0.13.0"
+    val tapir = "0.12.8"
     val zio = "1.0.0-RC18-2"
     val zioLogging = "0.2.6"
     val zioInteropReactiveStreams = "1.0.3.5-RC6"
