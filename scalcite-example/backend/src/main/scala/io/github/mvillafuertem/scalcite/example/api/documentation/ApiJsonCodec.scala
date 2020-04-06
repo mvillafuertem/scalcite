@@ -5,6 +5,7 @@ import io.circe.parser.parse
 import io.circe.syntax._
 import io.circe.{Decoder, Encoder, HCursor, Json}
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
+import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.Unknown
 import sttp.tapir.Codec.JsonCodec
 import sttp.tapir.json.circe._
 
@@ -33,7 +34,7 @@ trait ApiJsonCodec {
 
   implicit def decodeScalciteError[A <: ScalciteError]: Decoder[A] = (c: HCursor) => for {
     error <- c.get[String]("code")
-  } yield ScalciteError.find(error).asInstanceOf[A]
+  } yield Unknown(error).asInstanceOf[A]
 
 
 }

@@ -31,7 +31,7 @@ final class ScalcitePerformer(calcite: CalciteRepository, repository: QueriesRep
       }
     } yield stream).mapError {
         case e: SQLException => e.getSQLState match {
-          case "23505" => DuplicatedEntity
+          case "23505" => DuplicatedEntity()
           case _ => Unknown()
         }
     }

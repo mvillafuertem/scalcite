@@ -17,8 +17,8 @@ trait ApiErrorMapping extends ApiJsonCodec {
 
   // C O N F L I C T
   private lazy val conflictDescription = model.StatusCodes.Conflict.defaultMessage
-  private[api] lazy val statusConflict: EndpointOutput.StatusMapping[error.ScalciteError.DuplicatedEntity.type] =
-    statusMapping(StatusCode.Conflict, jsonBody[error.ScalciteError.DuplicatedEntity.type].example(DuplicatedEntity).description(conflictDescription))
+  private[api] lazy val statusConflict: EndpointOutput.StatusMapping[error.ScalciteError.DuplicatedEntity] =
+    statusMapping(StatusCode.Conflict, jsonBody[error.ScalciteError.DuplicatedEntity].example(DuplicatedEntity()).description(conflictDescription))
 
   // D E F A U L T
   private lazy val defaultDescription = "Unknown Error"
