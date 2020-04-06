@@ -23,7 +23,7 @@ trait ActuatorEndpoint {
       .in(healthResource)
       .name(healthNameResource)
       .description(healthDescriptionResource)
-      .out(jsonBody[HealthInfo].example(BuildInfoScalcite.toMap))
+      .out(anyJsonBody[HealthInfo].example(BuildInfoScalcite.toMap))
       .errorOut(statusCode)
 
   // C O D E C

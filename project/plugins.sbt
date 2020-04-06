@@ -19,6 +19,9 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
 // R E V O L V E R
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.1")
 
+// S C A L A J S
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.0.1")
+
 // S C A L A J S  B U N D L E R
 addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.17.0")
 

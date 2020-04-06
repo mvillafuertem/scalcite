@@ -22,7 +22,6 @@ lazy val configurationNoPublish: Project => Project =
     .settings(Settings.value)
     .settings(Settings.noPublish)
     .settings(Settings.noAssemblyTest)
-    .settings(crossScalaVersions := Nil)
 
 lazy val `scalcite` = (project in file("."))
   .configure(configurationNoPublish)
@@ -37,7 +36,6 @@ lazy val `scalcite` = (project in file("."))
     `scalcite-example-frontend`,
     `scalcite-flattener`,
   )
-  .settings(crossScalaVersions := Nil)
   .settings(commands ++= Commands.value)
 
 lazy val `scalcite-core` = (project in file("scalcite-core"))
