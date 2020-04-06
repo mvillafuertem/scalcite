@@ -4,6 +4,7 @@ services:
 
   # S C A L C I T E
   scalcite-example-backend:
+    container_name: scalcite-example-backend
     image: mvillafuertem/scalcite-example-backend:0.1.1
     restart: always
     ports:
@@ -13,35 +14,44 @@ services:
       - JAVA_OPTS=-Xmx512m -Xms128m -XX:MaxMetaspaceSize=512m
     depends_on:
       - postgres
+    external_links:
+      - "postgres:postgres.local"
 
   # I N F R A S T R U C T U R E
   postgres:
+    container_name: postgres
+    hostname: "postgres.local"
     image: postgres:9.6.17
     restart: always
     ports:
       - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
     volumes:
       - ./backend/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/init.sql
 
   adminer:
+    container_name: adminer
     image: adminer:4.7.6
     restart: always
     ports:
       - 9001:8080
     depends_on:
       - postgres
+    external_links:
+      - "postgres:postgres.local"
 
   pgadmin:
-    image: dpage/pgadmin4:4.18
+    container_name: pgadmin
+    image: dpage/pgadmin4:4.20
     restart: always
     ports:
       - 9002:80
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: ""
-#      PGADMIN_DEFAULT_PASSWORD: ""
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root
+      PGADMIN_DEFAULT_PASSWORD: rootpassword
     depends_on:
       - postgres
-
-#networks:
-#  postgres-compose-network:
-#    driver: bridge
+    external_links:
+      - "postgres:postgres.local"

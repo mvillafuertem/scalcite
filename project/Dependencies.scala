@@ -1,4 +1,7 @@
+import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
+import sbt.Keys.libraryDependencies
 import sbt._
+import scalajsbundler.sbtplugin.ScalaJSBundlerPlugin.autoImport.{npmDependencies, npmDevDependencies}
 
 object Dependencies {
 
@@ -40,13 +43,26 @@ object Dependencies {
     scalaTest % Test
   )
 
-  val `scalcite-example-frontend`: Seq[ModuleID] = Seq(
+  val `scalcite-example-console`: Seq[ModuleID] = Seq(
 
     // P R O D U C T I O N
 
     // T E S T
-
+    sqlline % Test,
   )
+
+  val `scalcite-example-frontend`: Project => Project =
+    _.settings(Compile / npmDependencies += "react" -> "16.13.0")
+    .settings(Compile / npmDependencies += "react-dom" -> "16.13.0")
+    .settings(Compile / npmDependencies += "react-proxy" -> "1.1.8")
+    .settings(Compile / npmDevDependencies += "copy-webpack-plugin" -> "5.1.1")
+    .settings(Compile / npmDevDependencies += "css-loader" -> "3.4.2")
+    .settings(Compile / npmDevDependencies += "file-loader" -> "5.1.0")
+    .settings(Compile / npmDevDependencies += "html-webpack-plugin" -> "3.2.0")
+    .settings(Compile / npmDevDependencies += "style-loader" -> "1.1.3")
+    .settings(Compile / npmDevDependencies += "webpack-merge" -> "4.2.2")
+    .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.6.4+2-3c8aef65")
+    .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.6.4+2-3c8aef65")
 
   val `scalcite-docs`: Seq[ModuleID] = Seq(
 
@@ -170,6 +186,6 @@ object Dependencies {
     val tapir = "0.12.8"
     val zio = "1.0.0-RC18-2"
     val zioLogging = "0.2.6"
-    val zioInteropReactiveStreams = "1.0.3.5-RC6"
+    val zioInteropReactiveStreams = "1.0.3.5-RC6+4-e21787d4-SNAPSHOT"
   }
 }
