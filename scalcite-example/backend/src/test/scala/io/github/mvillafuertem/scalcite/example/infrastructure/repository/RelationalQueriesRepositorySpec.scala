@@ -2,7 +2,9 @@ package io.github.mvillafuertem.scalcite.example.infrastructure.repository
 
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.QueriesRepo
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepositorySpec.RelationalQueriesRepositoryConfigurationSpec
+import zio.{ULayer, ZLayer}
 
 import scala.concurrent.ExecutionContext
 
@@ -22,9 +24,8 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
         dbo <- RelationalQueriesRepository.findById(id)
       } yield dbo)
         .runHead
-        .provideLayer(RelationalQueriesRepository.live)
-        .provide(h2ConfigurationProperties.databaseName)
-    )
+        .provideLayer(env))
+
     // t h e n
     actual shouldBe Some(queryDBO1Expected)
 
@@ -42,8 +43,7 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
         dbo <- RelationalQueriesRepository.findByUUID(uuid1)
       } yield dbo)
         .runHead
-        .provideLayer(RelationalQueriesRepository.live)
-        .provide(h2ConfigurationProperties.databaseName))
+        .provideLayer(env))
 
     // t h e n
     actual shouldBe Some(queryDBO1Expected)
@@ -58,8 +58,7 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
     // w h e n
     val actual: Option[Long] = unsafeRun(RelationalQueriesRepository.insert(queryDBO1)
       .runHead
-      .provideLayer(RelationalQueriesRepository.live)
-      .provide(h2ConfigurationProperties.databaseName))
+      .provideLayer(env))
 
     // t h e n
     actual shouldBe Some(1)
@@ -74,8 +73,7 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
     // w h e n
     val actual: Seq[Long] = unsafeRun((RelationalQueriesRepository.insert(queryDBO1) ++ RelationalQueriesRepository.insert(queryDBO2))
       .runCollect
-      .provideLayer(RelationalQueriesRepository.live)
-      .provide(h2ConfigurationProperties.databaseName))
+      .provideLayer(env))
 
     // t h e n
     actual should have size 2
@@ -93,8 +91,7 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
         RelationalQueriesRepository.insert(queryDBO2) *>
         RelationalQueriesRepository.deleteByUUID(uuid1))
         .runCollect
-        .provideLayer(RelationalQueriesRepository.live)
-        .provide(h2ConfigurationProperties.databaseName))
+        .provideLayer(env))
 
     // t h e n
     actual should have size 1
@@ -114,8 +111,7 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
         dbos <- RelationalQueriesRepository.findAll()
       } yield dbos)
         .runCollect
-        .provideLayer(RelationalQueriesRepository.live)
-        .provide(h2ConfigurationProperties.databaseName))
+        .provideLayer(env))
 
     // t h e n
     actual should have size 2
@@ -129,6 +125,9 @@ object RelationalQueriesRepositorySpec {
   trait RelationalQueriesRepositoryConfigurationSpec extends BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
+
+    val env: ULayer[QueriesRepo] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+      RelationalQueriesRepository.live
 
   }
 

@@ -2,11 +2,13 @@ package io.github.mvillafuertem.scalcite.example.application
 
 import io.circe.Json
 import io.github.mvillafuertem.scalcite.example.BaseData
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
 import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformerSpec.ScalcitePerformerConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
 import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
+import zio.{ULayer, ZLayer}
 
 import scala.concurrent.ExecutionContext
 
@@ -26,8 +28,8 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
         effect <- scalcitePerformer.performJson(json, uuid2)
       } yield effect)
         .runHead
-        .provideLayer(RelationalQueriesRepository.live >>> QueriesService.live)
-        .provide(h2ConfigurationProperties.databaseName)
+        .provideLayer(env)
+
     )
 
     // t h e n
@@ -47,8 +49,7 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
         effect <- scalcitePerformer.performMap(map, uuid2)
       } yield effect)
         .runHead
-        .provideLayer(RelationalQueriesRepository.live >>> QueriesService.live)
-        .provide(h2ConfigurationProperties.databaseName)
+        .provideLayer(env)
     )
 
     // t h e n
@@ -67,6 +68,11 @@ object ScalcitePerformerSpec {
     private val calcite: CalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
 
     val scalcitePerformer: ScalciteApplication = ScalcitePerformer(calcite)
+
+    val env: ULayer[QueriesApp] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+      RelationalQueriesRepository.live >>>
+      QueriesService.live
+
   }
 
 }

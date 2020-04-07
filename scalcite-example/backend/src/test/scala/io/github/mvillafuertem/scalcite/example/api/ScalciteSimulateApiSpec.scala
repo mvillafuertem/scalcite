@@ -12,11 +12,10 @@ import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.api.ScalciteSimulateApiSpec.ScalciteSimulateApiConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.api.behavior.{QueriesApiBehaviorSpec, ScalciteSimulateApiBehaviorSpec}
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
-import io.github.mvillafuertem.scalcite.example.application.{QueriesService, ScalcitePerformer}
-import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
-import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
+import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformer
+import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
+import io.github.mvillafuertem.scalcite.example.domain.repository.CalciteRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository
 import org.scalatest.Succeeded
 
 import scala.concurrent.ExecutionContext
@@ -27,7 +26,7 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
   with ScalciteSimulateApiBehaviorSpec
   with QueriesApiBehaviorSpec {
 
-  override implicit val timeout = RouteTestTimeout(10.seconds.dilated)
+  override implicit val timeout: RouteTestTimeout = RouteTestTimeout(10.seconds.dilated)
 
   val scalciteApi: QueriesApi = QueriesApi()(Materializer(system))
   val scalciteSimulateApi: ScalciteSimulateApi = ScalciteSimulateApi(scalcitePerformer)(Materializer(system))

@@ -1,9 +1,11 @@
 package io.github.mvillafuertem.scalcite.example.application
 
 import io.github.mvillafuertem.scalcite.example.BaseData
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
 import io.github.mvillafuertem.scalcite.example.application.QueriesServiceSpec.QueriesServiceConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
+import zio.{ULayer, ZLayer}
 
 import scala.concurrent.ExecutionContext
 
@@ -19,8 +21,7 @@ class QueriesServiceSpec extends QueriesServiceConfigurationSpec {
     // w h e n
     val actual: Option[Query] = unsafeRun(QueriesService.create(queryString)
       .runHead
-      .provideLayer(RelationalQueriesRepository.live >>> QueriesService.live)
-      .provide(h2ConfigurationProperties.databaseName))
+      .provideLayer(env))
 
     // t h e n
     actual shouldBe Some(queryString)
@@ -39,8 +40,8 @@ class QueriesServiceSpec extends QueriesServiceConfigurationSpec {
         effect <- QueriesService.deleteByUUID(uuid1)
       } yield effect)
         .runHead
-        .provideLayer(RelationalQueriesRepository.live >>> QueriesService.live)
-        .provide(h2ConfigurationProperties.databaseName)
+        .provideLayer(env)
+
     )
 
     // t h e n
@@ -60,8 +61,7 @@ class QueriesServiceSpec extends QueriesServiceConfigurationSpec {
         effect <- QueriesService.findByUUID(uuid1)
       } yield effect)
         .runHead
-        .provideLayer(RelationalQueriesRepository.live >>> QueriesService.live)
-        .provide(h2ConfigurationProperties.databaseName)
+        .provideLayer(env)
     )
 
     // t h e n
@@ -77,6 +77,9 @@ object QueriesServiceSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
+    val env: ULayer[QueriesApp] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+      RelationalQueriesRepository.live >>>
+      QueriesService.live
   }
 
 }

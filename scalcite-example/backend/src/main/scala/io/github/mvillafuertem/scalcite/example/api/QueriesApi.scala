@@ -10,13 +10,13 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMapping, ApiJsonCodec, ScalciteEndpoint}
 import io.github.mvillafuertem.scalcite.example.application.QueriesService
-import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
 import org.reactivestreams.Publisher
 import sttp.tapir.server.akkahttp._
 import zio.interop.reactivestreams._
-import zio.{BootstrapRuntime, stream}
+import zio.{BootstrapRuntime, ULayer, ZLayer, stream}
 
 import scala.concurrent.Future
 
@@ -24,6 +24,10 @@ final class QueriesApi()(implicit materializer: Materializer)
   extends ApiJsonCodec
     with ApiErrorMapping
     with BootstrapRuntime {
+
+  private val env: ULayer[QueriesApp] = ZLayer.succeed("queriesdb") >>>
+    RelationalQueriesRepository.live >>>
+    QueriesService.live
 
   val route: Route =
   get {
@@ -36,13 +40,13 @@ final class QueriesApi()(implicit materializer: Materializer)
     queriesGetAllRoute
 
   lazy val queriesPostRoute: Route = ScalciteEndpoint.queriesPostEndpoint.toRoute {
-    query => buildScalciteResponse(QueriesService.create(query).map(_.asJson.noSpaces).provideLayer(RelationalQueriesRepository.live >>> QueriesService.live).provide("queriesdb"))}
+    query => buildScalciteResponse(QueriesService.create(query).map(_.asJson.noSpaces).provideLayer(env))}
 
   lazy val queriesGetRoute: Route = ScalciteEndpoint.queriesGetEndpoint.toRoute {
-    uuid => buildResponse(QueriesService.findByUUID(uuid).map(_.asJson.noSpaces).provideLayer(RelationalQueriesRepository.live >>> QueriesService.live).provide("queriesdb"))}
+    uuid => buildResponse(QueriesService.findByUUID(uuid).map(_.asJson.noSpaces).provideLayer(env))}
 
   lazy val queriesGetAllRoute: Route = ScalciteEndpoint.queriesGetAllEndpoint.toRoute {
-    _ => buildResponse(QueriesService.findAll().map(_.asJson.noSpaces).provideLayer(RelationalQueriesRepository.live >>> QueriesService.live).provide("queriesdb"))}
+    _ => buildResponse(QueriesService.findAll().map(_.asJson.noSpaces).provideLayer(env))}
 
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
