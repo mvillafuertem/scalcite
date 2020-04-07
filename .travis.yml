@@ -10,8 +10,8 @@ jobs:
   include:
     - stage: test
       script: ./.cicd/test.sh
-    - stage: integration test
-      script: ./.cicd/integration-test.sh
+#    - stage: integration test
+#      script: ./.cicd/integration-test.sh
 #    - stage: build
 #      script: ./.cicd/build.sh
 #    - stage: doc
