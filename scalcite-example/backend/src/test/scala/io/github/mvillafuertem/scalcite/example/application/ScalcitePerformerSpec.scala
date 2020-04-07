@@ -22,9 +22,12 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     // w h e n
     val actual: Option[Json] = unsafeRun(
       (for {
-        _ <- service.create(queryBoolean)
+        _ <- QueriesService.create(queryBoolean)
         effect <- scalcitePerformer.performJson(json, uuid2)
-      } yield effect).runHead
+      } yield effect)
+        .runHead
+        .provideLayer(RelationalQueriesRepository.live >>> QueriesService.live)
+        .provide(h2ConfigurationProperties.databaseName)
     )
 
     // t h e n
@@ -40,9 +43,12 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     // w h e n
     val actual: Option[collection.Map[String, Any]] = unsafeRun(
       (for {
-        _ <- service.create(queryBoolean)
+        _ <- QueriesService.create(queryBoolean)
         effect <- scalcitePerformer.performMap(map, uuid2)
-      } yield effect).runHead
+      } yield effect)
+        .runHead
+        .provideLayer(RelationalQueriesRepository.live >>> QueriesService.live)
+        .provide(h2ConfigurationProperties.databaseName)
     )
 
     // t h e n
@@ -58,11 +64,9 @@ object ScalcitePerformerSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    private val repository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
     private val calcite: CalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
 
-    val service: QueriesApplication = QueriesService(repository)
-    val scalcitePerformer: ScalciteApplication = ScalcitePerformer(calcite, service)
+    val scalcitePerformer: ScalciteApplication = ScalcitePerformer(calcite)
   }
 
 }

@@ -6,10 +6,6 @@ import io.github.mvillafuertem.scalcite.example.domain.{ErrorsApplication, Queri
 trait ApplicationConfiguration {
   self: InfrastructureConfiguration =>
 
-  lazy val errorsApplication: ErrorsApplication = ErrorsService(errorsRepository)
-
-  lazy val queriesApplication: QueriesApplication = QueriesService(queriesRepository)
-
-  lazy val scalciteApplication: ScalciteApplication = ScalcitePerformer(calciteRepository, queriesApplication)
+  lazy val scalciteApplication: ScalciteApplication = ScalcitePerformer(calciteRepository)
 
 }

@@ -8,6 +8,7 @@ import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMapping, ApiJsonCodec, ErrorsEndpoint}
+import io.github.mvillafuertem.scalcite.example.application.ErrorsService
 import io.github.mvillafuertem.scalcite.example.domain.ErrorsApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import sttp.tapir.server.akkahttp._
@@ -16,7 +17,7 @@ import zio.{BootstrapRuntime, stream}
 
 import scala.concurrent.Future
 
-final class ErrorsApi(errorsApplication: ErrorsApplication)(implicit materializer: Materializer)
+final class ErrorsApi()(implicit materializer: Materializer)
   extends ApiJsonCodec
     with ApiErrorMapping
     with BootstrapRuntime {
@@ -25,11 +26,14 @@ final class ErrorsApi(errorsApplication: ErrorsApplication)(implicit materialize
       errorsGetRoute ~
       errorsGetAllRoute
 
-  lazy val errorsGetRoute: Route = ErrorsEndpoint.errorsGetEndpoint.toRoute {
-    uuid => buildResponse(errorsApplication.findByUUID(uuid).map(_.asJson.noSpaces))}
+  lazy val errorsGetRoute: Route = ???
 
-  lazy val errorsGetAllRoute: Route = ErrorsEndpoint.errorsGetAllEndpoint.toRoute {
-    _ => buildResponse(errorsApplication.findAll().map(_.asJson.noSpaces))}
+//    ErrorsEndpoint.errorsGetEndpoint.toRoute {
+//    uuid => buildResponse(ErrorsService.findByUUID(uuid).map(_.asJson.noSpaces).provideLayer(ErrorsService.live))}
+
+  lazy val errorsGetAllRoute: Route = ???
+//    ErrorsEndpoint.errorsGetAllEndpoint.toRoute {
+//    _ => buildResponse(ErrorsService.findAll().map(_.asJson.noSpaces).provideLayer(ErrorsService.live))}
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
     val value = unsafeRun(
@@ -47,5 +51,5 @@ final class ErrorsApi(errorsApplication: ErrorsApplication)(implicit materialize
 }
 
 object ErrorsApi {
-  def apply(errorsApplication: ErrorsApplication)(implicit materializer: Materializer): ErrorsApi = new ErrorsApi(errorsApplication)(materializer)
+  def apply()(implicit materializer: Materializer): ErrorsApi = new ErrorsApi()(materializer)
 }

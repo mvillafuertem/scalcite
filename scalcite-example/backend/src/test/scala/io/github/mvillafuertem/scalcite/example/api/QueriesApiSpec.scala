@@ -19,7 +19,7 @@ import scala.concurrent.ExecutionContext
 
 final class QueriesApiSpec extends QueriesApiConfigurationSpec with QueriesApiBehaviorSpec {
 
-  val scalciteApi: QueriesApi = QueriesApi(service)(Materializer(system))
+  val scalciteApi: QueriesApi = QueriesApi()(Materializer(system))
 
   behavior of "Scalcite Api"
 
@@ -59,7 +59,6 @@ object QueriesApiSpec {
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
     private val repository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
-    val service: QueriesApplication = QueriesService(repository)
 
   }
 }

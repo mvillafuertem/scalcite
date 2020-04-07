@@ -14,8 +14,8 @@ trait ApiConfiguration {
 
   def route(implicit materializer: Materializer): Route = SwaggerApi.route ~
     ActuatorApi.route ~
-    ErrorsApi(errorsApplication).route ~
-    QueriesApi(queriesApplication).route ~
+    ErrorsApi().route ~
+    QueriesApi().route ~
     ScalciteSimulateApi(scalciteApplication).route
 
 }

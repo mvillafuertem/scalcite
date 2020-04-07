@@ -8,26 +8,35 @@ import io.circe.scalcite.flattener.ScalciteFlattener._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.blower.Blower._
 import io.github.mvillafuertem.scalcite.example.api.documentation.ApiJsonCodec._
+import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication.QueriesApp
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
-import io.github.mvillafuertem.scalcite.example.domain.repository.CalciteRepository
+import io.github.mvillafuertem.scalcite.example.domain.model.Query
+import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository.QueriesRepo
+import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
 import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
 import io.github.mvillafuertem.scalcite.flattener.Flattener._
 import zio.stream.ZStream
-import zio.{IO, UIO, stream}
+import zio.{IO, UIO, ZLayer, stream}
 
 
-final class ScalcitePerformer(calcite: CalciteRepository, service: QueriesApplication) extends ScalciteApplication {
+final class ScalcitePerformer(calcite: CalciteRepository) extends ScalciteApplication {
+
+
+  val liveEnv = RelationalQueriesRepository.live >>> QueriesService.live
+
 
   override def performMap(map: collection.Map[String, Any], uuid: UUID*): stream.Stream[Throwable, collection.Map[String, Any]] =
     ZStream.fromIterable(uuid)
-        .flatMapPar(10)(uuid => service.findByUUID(uuid))
+        .flatMapPar(10)(uuid => QueriesService.findByUUID(uuid).provideLayer(liveEnv).provide("queriesdb"))
         .flatMapPar(10)(query => calcite.queryForMap(map, query.value))
 
   override def performJson(json: Json, uuid: UUID*): stream.Stream[Throwable, Json] =
     for {
       flattened <- flattener(json)
       result <- ZStream.fromIterable(uuid)
-        .flatMapPar(1)(uuid => service.findByUUID(uuid).tap(_ => UIO(Thread.sleep(1000))))
+        .flatMapPar(1)(uuid => QueriesService.findByUUID(uuid).tap(_ => UIO(Thread.sleep(1000))).provideLayer(liveEnv).provide("queriesdb"))
         .flatMapPar(1)(query => performQuery(flattened, query.value))
       blowed <- blower(result)
     } yield blowed
@@ -52,5 +61,5 @@ final class ScalcitePerformer(calcite: CalciteRepository, service: QueriesApplic
 }
 
 object ScalcitePerformer {
-  def apply(calcite: CalciteRepository, service: QueriesApplication): ScalcitePerformer = new ScalcitePerformer(calcite, service)
+  def apply(calcite: CalciteRepository): ScalcitePerformer = new ScalcitePerformer(calcite)
 }
