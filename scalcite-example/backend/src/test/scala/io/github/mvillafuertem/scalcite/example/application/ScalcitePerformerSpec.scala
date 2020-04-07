@@ -3,8 +3,9 @@ package io.github.mvillafuertem.scalcite.example.application
 import io.circe.Json
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformerSpec.ScalcitePerformerConfigurationSpec
-import io.github.mvillafuertem.scalcite.example.domain.model.Query
 import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
+import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
 
 import scala.concurrent.ExecutionContext
@@ -12,55 +13,6 @@ import scala.concurrent.ExecutionContext
 final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
 
   behavior of "Scalcite Performer"
-
-  it should "create a query" in {
-
-    // g i v e n
-    // see trait
-
-    // w h e n
-    val actual: Option[Query] = unsafeRun(scalcitePerformer.createQuery(queryString).runHead)
-
-    // t h e n
-    actual shouldBe Some(queryString)
-
-  }
-
-  it should "delete a query by its UUID" in {
-
-    // g i v e n
-    // see trait
-
-    // w h e n
-    val actual: Option[Int] = unsafeRun(
-      (for {
-        _ <- scalcitePerformer.createQuery(queryString)
-        effect <- scalcitePerformer.deleteQueryByUUID(uuid1)
-      } yield effect).runHead
-    )
-
-    // t h e n
-    actual shouldBe Some(1)
-
-  }
-
-  it should "find a query by its UUID" in {
-
-    // g i v e n
-    // see trait
-
-    // w h e n
-    val actual: Option[Query] = unsafeRun(
-      (for {
-        _ <- scalcitePerformer.createQuery(queryString)
-        effect <- scalcitePerformer.findQueryByUUID(uuid1)
-      } yield effect).runHead
-    )
-
-    // t h e n
-    actual shouldBe Some(queryString)
-
-  }
 
   it should "perform a json" in {
 
@@ -70,7 +22,7 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     // w h e n
     val actual: Option[Json] = unsafeRun(
       (for {
-        _ <- scalcitePerformer.createQuery(queryBoolean)
+        _ <- service.create(queryBoolean)
         effect <- scalcitePerformer.performJson(json, uuid2)
       } yield effect).runHead
     )
@@ -88,7 +40,7 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     // w h e n
     val actual: Option[collection.Map[String, Any]] = unsafeRun(
       (for {
-        _ <- scalcitePerformer.createQuery(queryBoolean)
+        _ <- service.create(queryBoolean)
         effect <- scalcitePerformer.performMap(map, uuid2)
       } yield effect).runHead
     )
@@ -106,11 +58,11 @@ object ScalcitePerformerSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    private val repository: QueriesRepository = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
+    private val repository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
     private val calcite: CalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
 
-    val scalcitePerformer = new ScalcitePerformer(calcite, repository)
-
+    val service: QueriesApplication = QueriesService(repository)
+    val scalcitePerformer: ScalciteApplication = ScalcitePerformer(calcite, service)
   }
 
 }

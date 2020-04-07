@@ -4,13 +4,13 @@ import java.util.UUID
 
 import scalikejdbc._
 
-case class ErrorsDBO(uuid: UUID, value: String, id: Option[Long] = None)
+case class ErrorDBO(uuid: UUID, value: String, id: Option[Long] = None)
 
-object ErrorsDBO extends SQLSyntaxSupport[ErrorsDBO] {
+object ErrorDBO extends SQLSyntaxSupport[ErrorDBO] {
 
   override val tableName = "scalcitesql"
 
-  def apply(rs: WrappedResultSet) = new ErrorsDBO(
+  def apply(rs: WrappedResultSet) = new ErrorDBO(
     UUID.fromString(rs.string("uuid")),
     rs.string("value"),
     rs.longOpt("id"))

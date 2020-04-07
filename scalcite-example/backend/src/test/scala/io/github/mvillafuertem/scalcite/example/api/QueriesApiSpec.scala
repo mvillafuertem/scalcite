@@ -5,19 +5,21 @@ import akka.stream.Materializer
 import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.BaseData
-import io.github.mvillafuertem.scalcite.example.api.ScalciteApiSpec.ScalciteApiConfigurationSpec
-import io.github.mvillafuertem.scalcite.example.api.behavior.ScalciteApiBehaviorSpec
+import io.github.mvillafuertem.scalcite.example.api.QueriesApiSpec.QueriesApiConfigurationSpec
+import io.github.mvillafuertem.scalcite.example.api.behavior.QueriesApiBehaviorSpec
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
-import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformer
-import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
+import io.github.mvillafuertem.scalcite.example.application.QueriesService
+import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication
+import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
 import org.scalatest.Succeeded
 
 import scala.concurrent.ExecutionContext
 
-final class ScalciteApiSpec extends ScalciteApiConfigurationSpec with ScalciteApiBehaviorSpec {
+final class QueriesApiSpec extends QueriesApiConfigurationSpec with QueriesApiBehaviorSpec {
 
-  val scalciteApi: ScalciteApi = ScalciteApi(scalcitePerformer)(Materializer(system))
+  val scalciteApi: QueriesApi = QueriesApi(service)(Materializer(system))
 
   behavior of "Scalcite Api"
 
@@ -50,15 +52,14 @@ final class ScalciteApiSpec extends ScalciteApiConfigurationSpec with ScalciteAp
 
 }
 
-object ScalciteApiSpec {
+object QueriesApiSpec {
 
-  trait ScalciteApiConfigurationSpec extends BaseData {
+  trait QueriesApiConfigurationSpec extends BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    private val repository: QueriesRepository = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
-    private val calcite: CalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
-    val scalcitePerformer = new ScalcitePerformer(calcite, repository)
+    private val repository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
+    val service: QueriesApplication = QueriesService(repository)
 
   }
 }

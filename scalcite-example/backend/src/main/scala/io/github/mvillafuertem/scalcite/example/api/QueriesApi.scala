@@ -9,7 +9,7 @@ import akka.util.ByteString
 import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMapping, ApiJsonCodec, ScalciteEndpoint}
-import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
+import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import org.reactivestreams.Publisher
 import sttp.tapir.server.akkahttp._
@@ -18,7 +18,7 @@ import zio.{BootstrapRuntime, stream}
 
 import scala.concurrent.Future
 
-final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit materializer: Materializer)
+final class QueriesApi(queriesApplication: QueriesApplication)(implicit materializer: Materializer)
   extends ApiJsonCodec
     with ApiErrorMapping
     with BootstrapRuntime {
@@ -34,14 +34,13 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit mater
     queriesGetAllRoute
 
   lazy val queriesPostRoute: Route = ScalciteEndpoint.queriesPostEndpoint.toRoute {
-    query => buildScalciteResponse(scalciteApplication.createQuery(query).map(_.asJson.noSpaces))}
+    query => buildScalciteResponse(queriesApplication.create(query).map(_.asJson.noSpaces))}
 
   lazy val queriesGetRoute: Route = ScalciteEndpoint.queriesGetEndpoint.toRoute {
-    uuid => buildResponse(scalciteApplication.findQueryByUUID(uuid).map(_.asJson.noSpaces))}
+    uuid => buildResponse(queriesApplication.findByUUID(uuid).map(_.asJson.noSpaces))}
 
   lazy val queriesGetAllRoute: Route = ScalciteEndpoint.queriesGetAllEndpoint.toRoute {
-    _ => buildResponse(scalciteApplication.findAll().map(_.asJson.noSpaces))}
-
+    _ => buildResponse(queriesApplication.findAll().map(_.asJson.noSpaces))}
 
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
@@ -85,6 +84,6 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit mater
 
 }
 
-object ScalciteApi {
-  def apply(scalciteApplication: ScalciteApplication)(implicit materializer: Materializer): ScalciteApi = new ScalciteApi(scalciteApplication)(materializer)
+object QueriesApi {
+  def apply(queriesApplication: QueriesApplication)(implicit materializer: Materializer): QueriesApi = new QueriesApi(queriesApplication)(materializer)
 }

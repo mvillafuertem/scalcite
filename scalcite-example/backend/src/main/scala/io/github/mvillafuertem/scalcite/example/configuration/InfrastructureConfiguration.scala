@@ -1,7 +1,9 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
 import io.github.mvillafuertem.scalcite.example.configuration.properties.{CalciteConfigurationProperties, H2ConfigurationProperties, ScalciteConfigurationProperties}
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
+import io.github.mvillafuertem.scalcite.example.domain.repository.{ErrorsRepository, QueriesRepository}
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.{ErrorDBO, QueryDBO}
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import scalikejdbc.{ConnectionPool, ConnectionPoolSettings}
 
 import scala.concurrent.ExecutionContext
@@ -41,7 +43,9 @@ trait InfrastructureConfiguration {
 
   lazy val scalciteConfigurationProperties: ScalciteConfigurationProperties = ScalciteConfigurationProperties()
 
-  lazy val calciteRepository = new RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
+  lazy val calciteRepository: RelationalCalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
 
-  lazy val queriesRepository = new RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
+  lazy val queriesRepository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
+
+  lazy val errorsRepository: ErrorsRepository[ErrorDBO] = RelationalErrorsRepository()
 }

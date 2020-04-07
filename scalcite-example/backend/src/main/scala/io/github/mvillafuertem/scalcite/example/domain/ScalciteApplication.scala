@@ -16,12 +16,4 @@ trait ScalciteApplication {
 
   def performJson(json: Json, uuid: UUID*): stream.Stream[Throwable, Json]
 
-  def createQuery(query: Query): stream.Stream[ScalciteError, Query]
-
-  def deleteQueryByUUID(uuid: UUID): stream.Stream[Throwable, Int]
-
-  def findQueryByUUID(uuid: UUID): stream.Stream[Throwable, Query]
-
-  def findAll(): stream.Stream[Throwable, Query]
-
 }

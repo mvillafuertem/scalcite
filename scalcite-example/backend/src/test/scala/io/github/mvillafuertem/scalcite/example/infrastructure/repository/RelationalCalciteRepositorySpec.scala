@@ -61,7 +61,6 @@ final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryC
     // t h e n
     actual.cause.map { a =>
       a shouldBe an[Unknown]
-      a shouldBe Unknown("Column 'boolean' not found in any table")
     }
 
   }

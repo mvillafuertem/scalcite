@@ -11,7 +11,7 @@ object ScalciteError {
 
   case class DuplicatedEntity(override val code: String = "duplicated-entity") extends ScalciteError
 
-  case class Unknown(override val code: String = "unknown") extends ScalciteError
+  case class Unknown(override val code: String = "unknown", override val uuid: UUID = UUID.randomUUID()) extends ScalciteError
 
 }
 

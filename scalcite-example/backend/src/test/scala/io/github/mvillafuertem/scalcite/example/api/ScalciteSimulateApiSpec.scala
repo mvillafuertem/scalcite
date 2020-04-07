@@ -10,10 +10,12 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.api.ScalciteSimulateApiSpec.ScalciteSimulateApiConfigurationSpec
-import io.github.mvillafuertem.scalcite.example.api.behavior.{ScalciteApiBehaviorSpec, ScalciteSimulateApiBehaviorSpec}
+import io.github.mvillafuertem.scalcite.example.api.behavior.{QueriesApiBehaviorSpec, ScalciteSimulateApiBehaviorSpec}
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
-import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformer
+import io.github.mvillafuertem.scalcite.example.application.{QueriesService, ScalcitePerformer}
+import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
 import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
 import org.scalatest.Succeeded
 
@@ -23,11 +25,11 @@ import scala.concurrent.duration._
 
 final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
   with ScalciteSimulateApiBehaviorSpec
-  with ScalciteApiBehaviorSpec {
+  with QueriesApiBehaviorSpec {
 
   override implicit val timeout = RouteTestTimeout(10.seconds.dilated)
 
-  val scalciteApi: ScalciteApi = ScalciteApi(scalcitePerformer)(Materializer(system))
+  val scalciteApi: QueriesApi = QueriesApi(service)(Materializer(system))
   val scalciteSimulateApi: ScalciteSimulateApi = ScalciteSimulateApi(scalcitePerformer)(Materializer(system))
 
   behavior of "Scalcite Simulate Api"
@@ -105,10 +107,10 @@ object ScalciteSimulateApiSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    private val repository: QueriesRepository = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
+    private val repository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
     private val calcite: CalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
-    val scalcitePerformer = new ScalcitePerformer(calcite, repository)
-
+    val service: QueriesApplication = QueriesService(repository)
+    val scalcitePerformer: ScalciteApplication = ScalcitePerformer(calcite, service)
   }
 
 }

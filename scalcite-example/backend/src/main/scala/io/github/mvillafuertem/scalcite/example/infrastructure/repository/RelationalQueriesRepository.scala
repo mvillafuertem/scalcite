@@ -17,7 +17,7 @@ import scala.concurrent.ExecutionContext
  */
 final class RelationalQueriesRepository(databaseName: String)(
     implicit executionContext: ExecutionContext
-) extends QueriesRepository {
+) extends QueriesRepository[QueryDBO] {
 
   implicit def executeOperation(sqlUpdateWithGeneratedKey: SQLUpdateWithGeneratedKey): stream.Stream[Throwable, Long] =
     ZStream.fromEffect(
