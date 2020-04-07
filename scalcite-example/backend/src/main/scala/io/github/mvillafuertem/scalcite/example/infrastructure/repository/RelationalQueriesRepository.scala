@@ -56,16 +56,19 @@ final class RelationalQueriesRepository(databaseName: String)(
   override def findByUUID(uuid: UUID): stream.Stream[Throwable, QueryDBO] =
     queryFindByUUID(uuid)
       .map(rs => QueryDBO(rs))
+      // https://github.com/scalikejdbc/scalikejdbc/issues/1050
       //.iterator()
 
   override def findAll(): stream.Stream[Throwable, QueryDBO] =
     queryFindAll
       .map(rs => QueryDBO(rs))
+      // https://github.com/scalikejdbc/scalikejdbc/issues/1050
       //.iterator()
 
   override def findById(id: Long): stream.Stream[Throwable, QueryDBO] =
     queryFindById(id)
       .map(rs => QueryDBO(rs))
+      // https://github.com/scalikejdbc/scalikejdbc/issues/1050
       //.iterator()
 
   override def insert(query: QueryDBO): stream.Stream[Throwable, Long] =
