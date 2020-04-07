@@ -25,7 +25,7 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
   with ScalciteSimulateApiBehaviorSpec
   with ScalciteApiBehaviorSpec {
 
-  override implicit val timeout = RouteTestTimeout(5.seconds.dilated)
+  override implicit val timeout = RouteTestTimeout(10.seconds.dilated)
 
   val scalciteApi: ScalciteApi = ScalciteApi(scalcitePerformer)(Materializer(system))
   val scalciteSimulateApi: ScalciteSimulateApi = ScalciteSimulateApi(scalcitePerformer)(Materializer(system))
