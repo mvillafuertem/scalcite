@@ -7,7 +7,7 @@ import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeFactory}
 import org.apache.calcite.schema.{Statistic, Statistics}
 import org.apache.calcite.util.Pair
 
-final class ScalciteMapType(map: collection.Map[String, Any]) extends ScalciteTable {
+final class ScalciteMapTable(map: collection.Map[String, Any]) extends ScalciteTable {
 
   override def getRowType(typeFactory: RelDataTypeFactory): RelDataType = {
     val types: util.List[RelDataType] = new util.ArrayList[RelDataType]
@@ -29,6 +29,6 @@ final class ScalciteMapType(map: collection.Map[String, Any]) extends ScalciteTa
   override def array: Array[Any] = map.values.toArray
 }
 
-object ScalciteMapType {
-  def apply(map: collection.Map[String, Any]): ScalciteMapType = new ScalciteMapType(map)
+object ScalciteMapTable {
+  def apply(map: collection.Map[String, Any]): ScalciteMapTable = new ScalciteMapTable(map)
 }

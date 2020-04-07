@@ -34,7 +34,7 @@ final class RelationalCalciteRepository(databaseName: String)(
           session.connection
             .unwrap(classOf[CalciteConnection])
             .getRootSchema
-            .add("scalcite", ScalciteMapType(map))
+            .add("scalcite", ScalciteMapTable(map))
         })
 
     }).toStream()

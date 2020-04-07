@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import io.github.mvillafuertem.scalcite.BuildInfoScalcite
-import io.github.mvillafuertem.scalcite.example.api.documentation.{ActuatorEndpoint, ApiEndpoint, ScalciteEndpoint}
+import io.github.mvillafuertem.scalcite.example.api.documentation.{ActuatorEndpoint, ApiEndpoint, ErrorsEndpoint, ScalciteEndpoint}
 import sttp.tapir.docs.openapi._
 import sttp.tapir.openapi.circe.yaml._
 
@@ -13,6 +13,9 @@ trait SwaggerApi {
   private lazy val openApi: String = Seq(
     // A C T U A T O R  E N D P O I N T
     ActuatorEndpoint.healthEndpoint,
+    // E R R O R S  E N D P O I N T
+    ErrorsEndpoint.errorsGetAllEndpoint,
+    ErrorsEndpoint.errorsGetEndpoint,
     // S C A L C I T E  E N D P O I N T
     ScalciteEndpoint.queriesPostEndpoint,
     ScalciteEndpoint.queriesGetEndpoint,
