@@ -45,7 +45,5 @@ trait InfrastructureConfiguration {
 
   lazy val calciteRepository: RelationalCalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
 
-  lazy val queriesRepository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
-
   lazy val errorsRepository: ErrorsRepository[ErrorDBO] = RelationalErrorsRepository()
 }

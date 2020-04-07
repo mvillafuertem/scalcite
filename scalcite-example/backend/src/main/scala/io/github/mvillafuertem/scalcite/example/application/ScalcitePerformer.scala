@@ -8,17 +8,13 @@ import io.circe.scalcite.flattener.ScalciteFlattener._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.blower.Blower._
 import io.github.mvillafuertem.scalcite.example.api.documentation.ApiJsonCodec._
-import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication.QueriesApp
+import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
-import io.github.mvillafuertem.scalcite.example.domain.model.Query
-import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository.QueriesRepo
-import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
-import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
+import io.github.mvillafuertem.scalcite.example.domain.repository.CalciteRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
 import io.github.mvillafuertem.scalcite.flattener.Flattener._
 import zio.stream.ZStream
-import zio.{IO, UIO, ZLayer, stream}
+import zio.{IO, UIO, stream}
 
 
 final class ScalcitePerformer(calcite: CalciteRepository) extends ScalciteApplication {

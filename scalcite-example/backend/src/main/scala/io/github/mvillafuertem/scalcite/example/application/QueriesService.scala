@@ -3,13 +3,11 @@ package io.github.mvillafuertem.scalcite.example.application
 import java.sql.SQLException
 import java.util.UUID
 
-import io.github.mvillafuertem.scalcite.example.domain.ErrorsApplication.ErrorsApp
 import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication
 import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication.QueriesApp
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.{DuplicatedEntity, Unknown}
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
-import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
 import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository.QueriesRepo
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
 import zio.stream.ZStream
