@@ -51,15 +51,14 @@ final class ScalcitePerformer(calcite: CalciteRepository, repository: QueriesRep
         .flatMapPar(10)(uuid => findQueryByUUID(uuid))
         .flatMapPar(10)(query => calcite.queryForMap(map, query.value))
 
-  override def performJson(json: Json, uuid: UUID*): stream.Stream[Throwable, Json] = {
-
-    (for {
+  override def performJson(json: Json, uuid: UUID*): stream.Stream[Throwable, Json] =
+    for {
       flattened <- flattener(json)
       result <- ZStream.fromIterable(uuid)
         .flatMapPar(1)(uuid => findQueryByUUID(uuid).tap(_ => UIO(Thread.sleep(1000))))
         .flatMapPar(1)(query => performQuery(flattened, query.value))
       blowed <- blower(result)
-    } yield blowed)}
+    } yield blowed
 
 
   private def performQuery(json: Json, query: String): stream.Stream[Nothing, Json] =

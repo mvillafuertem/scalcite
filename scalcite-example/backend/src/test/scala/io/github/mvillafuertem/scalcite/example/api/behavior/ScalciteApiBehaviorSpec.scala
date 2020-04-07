@@ -29,19 +29,6 @@ trait ScalciteApiBehaviorSpec extends ScalatestRouteTest with Matchers {
 
       }
 
-  def postQueriesSimulate(entity: String, expectedStatus: StatusCode, expectedEntity: String, api: => ScalciteApi): Assertion =
-    Post(s"/api/v1.0/queries/simulate")
-      .withEntity(entity) ~>
-      addHeader(`Content-Type`(`application/json`)) ~> api.queriesSimulateRoute ~>
-      check {
-
-        // t h e n
-        status shouldBe expectedStatus
-        responseAs[String] should not be empty
-        responseAs[String] shouldBe s"$expectedEntity"
-
-      }
-
   def getQueries(uuid: String, expectedStatus: StatusCode, expectedEntity: String, api: => ScalciteApi): Assertion =
     Get(s"/api/v1.0/queries/$uuid") ~>
       addHeader(`Content-Type`(`application/json`)) ~> api.queriesGetRoute ~>

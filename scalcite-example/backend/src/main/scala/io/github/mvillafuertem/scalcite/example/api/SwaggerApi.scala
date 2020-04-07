@@ -13,10 +13,11 @@ trait SwaggerApi {
   private lazy val openApi: String = Seq(
     // A C T U A T O R  E N D P O I N T
     ActuatorEndpoint.healthEndpoint,
-    // S C A L C I T E E N D P O I N T
+    // S C A L C I T E  E N D P O I N T
     ScalciteEndpoint.queriesPostEndpoint,
     ScalciteEndpoint.queriesGetEndpoint,
     ScalciteEndpoint.queriesGetAllEndpoint,
+    // S C A L C I T E  S I M U L A T E  E N D P O I N T
     ScalciteEndpoint.simulateEndpoint
   ).toOpenAPI(BuildInfoScalcite.name, BuildInfoScalcite.version)
     .toYaml

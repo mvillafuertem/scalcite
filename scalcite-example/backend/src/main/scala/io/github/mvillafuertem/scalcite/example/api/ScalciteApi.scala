@@ -31,8 +31,7 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit mater
   } ~
     queriesPostRoute ~
     queriesGetRoute ~
-    queriesGetAllRoute ~
-    queriesSimulateRoute
+    queriesGetAllRoute
 
   lazy val queriesPostRoute: Route = ScalciteEndpoint.queriesPostEndpoint.toRoute {
     query => buildScalciteResponse(scalciteApplication.createQuery(query).map(_.asJson.noSpaces))}
@@ -43,8 +42,7 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit mater
   lazy val queriesGetAllRoute: Route = ScalciteEndpoint.queriesGetAllEndpoint.toRoute {
     _ => buildResponse(scalciteApplication.findAll().map(_.asJson.noSpaces))}
 
-  lazy val queriesSimulateRoute: Route = ScalciteEndpoint.simulateEndpoint.toRoute {
-    case (uuids, json) => buildResponse(scalciteApplication.performJson(json, uuids:_*).map(_.noSpaces))}
+
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
     val value = unsafeRun(
@@ -66,9 +64,6 @@ final class ScalciteApi(scalciteApplication: ScalciteApplication)(implicit mater
         .either
         .toPublisher
     )
-
-    Source
-      .fromPublisher(value)
 
     Source
       .fromPublisher(value)

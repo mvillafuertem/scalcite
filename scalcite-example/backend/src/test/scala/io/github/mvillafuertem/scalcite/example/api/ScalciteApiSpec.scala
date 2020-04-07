@@ -1,8 +1,6 @@
 package io.github.mvillafuertem.scalcite.example.api
 
-import akka.http.scaladsl.model.ContentTypes.`application/json`
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.model.headers.`Content-Type`
 import akka.stream.Materializer
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -48,71 +46,6 @@ final class ScalciteApiSpec extends ScalciteApiConfigurationSpec with ScalciteAp
       ScalciteEndpoint.queriesExample.asJson.noSpaces,
       scalciteApi
     )
-  }
-
-  it should "simulate a query" in {
-
-    // g i v e n
-    // see trait
-    postQueries(
-      ScalciteEndpoint.queriesExample.asJson.noSpaces,
-      StatusCodes.OK,
-      ScalciteEndpoint.queriesExample.asJson.noSpaces,
-      scalciteApi
-    ) shouldBe Succeeded
-
-    // w h e n
-    postQueriesSimulate(
-      "{}",
-      StatusCodes.OK,
-      "[]",
-      scalciteApi
-    )
-
-  }
-
-  it should "simulate many queries" in {
-
-    // g i v e n
-    // see trait
-    Seq(
-      postQueries(
-        queryString.asJson.noSpaces,
-        StatusCodes.OK,
-        queryString.asJson.noSpaces,
-        scalciteApi
-      ),
-      postQueries(
-        queryBoolean.asJson.noSpaces,
-        StatusCodes.OK,
-        queryBoolean.asJson.noSpaces,
-        scalciteApi
-      ),
-      postQueries(
-        queryInteger.asJson.noSpaces,
-        StatusCodes.OK,
-        queryInteger.asJson.noSpaces,
-        scalciteApi
-      )
-    ) shouldBe Seq(Succeeded, Succeeded, Succeeded)
-
-    // w h e n
-    Post(s"/api/v1.0/queries/simulate?uuid=$uuid1&uuid=$uuid2&uuid=$uuid3")
-      .withEntity(ScalciteEndpoint.simulateInExample.noSpaces) ~>
-    addHeader(`Content-Type`(`application/json`)) ~> scalciteApi.queriesSimulateRoute ~>
-    check {
-
-      // t h e n
-      status shouldBe StatusCodes.OK
-      responseAs[String] should not be empty
-      responseAs[String] shouldBe
-        s"""[{"string":"true"}
-           |,{"boolean":true}
-           |,{"integer":0}
-           |]""".stripMargin
-
-    }
-
   }
 
 }
