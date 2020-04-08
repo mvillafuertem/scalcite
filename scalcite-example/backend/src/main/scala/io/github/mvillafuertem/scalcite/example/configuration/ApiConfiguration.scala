@@ -3,7 +3,7 @@ package io.github.mvillafuertem.scalcite.example.configuration
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
-import io.github.mvillafuertem.scalcite.example.api.{ActuatorApi, ErrorsApi, QueriesApi, ScalciteSimulateApi, SwaggerApi}
+import io.github.mvillafuertem.scalcite.example.api._
 
 import scala.concurrent.ExecutionContext
 
@@ -12,10 +12,11 @@ trait ApiConfiguration {
 
   implicit val executionContext: ExecutionContext
 
-  def route(implicit materializer: Materializer): Route = SwaggerApi.route ~
+  def route(implicit materializer: Materializer): Route =
+    SwaggerApi.route ~
     ActuatorApi.route ~
-    ErrorsApi.route ~
-    QueriesApi().route ~
-    ScalciteSimulateApi.route
+    ErrorsApi(errorsApplicationLayer).route ~
+    QueriesApi(queriesApplicationLayer).route ~
+    ScalciteSimulateApi(scalciteApplicationLayer).route
 
 }

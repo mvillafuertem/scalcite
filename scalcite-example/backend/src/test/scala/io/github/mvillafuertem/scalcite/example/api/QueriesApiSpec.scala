@@ -8,13 +8,17 @@ import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.api.QueriesApiSpec.QueriesApiConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.api.behavior.QueriesApiBehaviorSpec
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
+import io.github.mvillafuertem.scalcite.example.application.QueriesService
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
 import org.scalatest.Succeeded
+import zio.{ULayer, ZLayer}
 
 import scala.concurrent.ExecutionContext
 
 final class QueriesApiSpec extends QueriesApiConfigurationSpec with QueriesApiBehaviorSpec {
 
-  val scalciteApi: QueriesApi = QueriesApi()(Materializer(system))
+  val scalciteApi: QueriesApi = QueriesApi(queriesApplicationLayer)(Materializer(system))
 
   behavior of "Scalcite Api"
 
@@ -52,6 +56,10 @@ object QueriesApiSpec {
   trait QueriesApiConfigurationSpec extends BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
+    val queriesApplicationLayer: ULayer[QueriesApp] =
+      ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+        RelationalQueriesRepository.live >>>
+        QueriesService.live
 
   }
 }

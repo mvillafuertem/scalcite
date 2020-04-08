@@ -3,6 +3,7 @@ package io.github.mvillafuertem.scalcite.example.application
 import io.circe.Json
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
+import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformer.ScalciteApp
 import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformerSpec.ScalcitePerformerConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
@@ -63,10 +64,12 @@ object ScalcitePerformerSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    val env: ULayer[QueriesApp with CalciteRepo] = (
-      ZLayer.succeed(h2ConfigurationProperties.databaseName) >>> RelationalQueriesRepository.live >>> QueriesService.live
-      ) ++ (
-      ZLayer.succeed(calciteConfigurationProperties.databaseName) >>> RelationalCalciteRepository.live)
+    private val queriesApplicationLayer: ULayer[QueriesApp] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>> RelationalQueriesRepository.live >>> QueriesService.live
+    private val calciteRepositoryLayer: ULayer[CalciteRepo] = ZLayer.succeed(calciteConfigurationProperties.databaseName) >>> RelationalCalciteRepository.live
+    val env: ULayer[ScalciteApp with QueriesApp] =
+      queriesApplicationLayer ++
+        calciteRepositoryLayer >>>
+      ScalcitePerformer.live ++ queriesApplicationLayer
 
   }
 

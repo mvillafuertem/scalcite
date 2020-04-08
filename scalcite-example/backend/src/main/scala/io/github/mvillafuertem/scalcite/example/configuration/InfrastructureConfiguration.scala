@@ -1,8 +1,12 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
 import io.github.mvillafuertem.scalcite.example.configuration.properties.{CalciteConfigurationProperties, H2ConfigurationProperties, ScalciteConfigurationProperties}
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ErrorsRepo
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.QueriesRepo
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import scalikejdbc.{ConnectionPool, ConnectionPoolSettings}
+import zio.{ULayer, ZLayer}
 
 import scala.concurrent.ExecutionContext
 
@@ -40,5 +44,17 @@ trait InfrastructureConfiguration {
   lazy val calciteConfigurationProperties: CalciteConfigurationProperties = CalciteConfigurationProperties()
 
   lazy val scalciteConfigurationProperties: ScalciteConfigurationProperties = ScalciteConfigurationProperties()
+
+  val queriesRepositoryLayer: ULayer[QueriesRepo] =
+    ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+      RelationalQueriesRepository.live
+
+  val errorsRepositoryLayer: ULayer[ErrorsRepo] =
+    ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+      RelationalErrorsRepository.live
+
+  val calciteRepositoryLayer: ULayer[CalciteRepo] =
+    ZLayer.succeed(calciteConfigurationProperties.databaseName) >>>
+    RelationalCalciteRepository.live
 
 }

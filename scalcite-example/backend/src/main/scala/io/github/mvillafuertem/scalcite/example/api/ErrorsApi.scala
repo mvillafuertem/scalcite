@@ -10,20 +10,15 @@ import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMappi
 import io.github.mvillafuertem.scalcite.example.application.ErrorsService
 import io.github.mvillafuertem.scalcite.example.application.ErrorsService.ErrorsApp
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository
 import sttp.tapir.server.akkahttp._
 import zio.interop.reactivestreams._
-import zio.{BootstrapRuntime, ULayer, ZLayer, stream}
+import zio.{BootstrapRuntime, ULayer, stream}
 
 import scala.concurrent.Future
 
-trait ErrorsApi extends ApiJsonCodec
+final class ErrorsApi(env: ULayer[ErrorsApp]) extends ApiJsonCodec
   with ApiErrorMapping
   with BootstrapRuntime {
-
-  private val env: ULayer[ErrorsApp] = ZLayer.succeed("queriesdb") >>>
-    RelationalErrorsRepository.live >>>
-    ErrorsService.live
 
   val route: Route =
       errorsGetRoute ~
@@ -50,4 +45,6 @@ trait ErrorsApi extends ApiJsonCodec
   }
 }
 
-object ErrorsApi extends ErrorsApi
+object ErrorsApi {
+  def apply(env: ULayer[ErrorsApp]): ErrorsApi = new ErrorsApi(env)
+}
