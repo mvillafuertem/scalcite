@@ -62,7 +62,7 @@ object ScalcitePerformer {
   def performJson(json: Json, uuid: UUID*): stream.ZStream[ScalciteApp, Throwable, Json] =
     stream.ZStream.accessStream(_.get.performJson(json, uuid:_*))
 
-  val live: ZLayer[QueriesApp with CalciteRepo, Nothing, ScalciteApp] =
+  val live: URLayer[QueriesApp with CalciteRepo, ScalciteApp] =
     ZLayer.fromServices[QueriesApplication, CalciteRepository, ScalciteApplication](
       (app, repository) => new ScalcitePerformer(app, repository))
 

@@ -8,11 +8,7 @@ import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{Relat
 import scalikejdbc.{ConnectionPool, ConnectionPoolSettings}
 import zio.{ULayer, ZLayer}
 
-import scala.concurrent.ExecutionContext
-
 trait InfrastructureConfiguration {
-
-  implicit val executionContext: ExecutionContext
 
   ConnectionPool.add(Symbol(h2ConfigurationProperties.databaseName),
     h2ConfigurationProperties.url,

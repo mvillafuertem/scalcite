@@ -5,12 +5,8 @@ import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import io.github.mvillafuertem.scalcite.example.api._
 
-import scala.concurrent.ExecutionContext
-
 trait ApiConfiguration {
   self: ApplicationConfiguration =>
-
-  implicit val executionContext: ExecutionContext
 
   def route(implicit materializer: Materializer): Route =
     SwaggerApi.route ~

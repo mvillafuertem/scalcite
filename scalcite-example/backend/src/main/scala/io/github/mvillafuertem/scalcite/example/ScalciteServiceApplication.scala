@@ -1,8 +1,11 @@
 package io.github.mvillafuertem.scalcite.example
-import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
-import zio.logging.log
-import zio.logging.Logging
-import zio.{UIO, ZIO, ZManaged}
+import akka.actor.typed.ActorSystem
+import io.github.mvillafuertem.scalcite.example.configuration.{AkkaConfiguration, ScalciteServiceConfiguration}
+import zio._
+import zio.clock.Clock
+import zio.console.Console
+import zio.logging.Logging.Logging
+import zio.logging.{Logging, log}
 
 import scala.concurrent.ExecutionContext
 
@@ -11,19 +14,23 @@ import scala.concurrent.ExecutionContext
  */
 object ScalciteServiceApplication extends ScalciteServiceConfiguration with zio.App {
 
-  val env = Logging.console((_, logEntry) => logEntry)
+  private val loggingLayer: URLayer[Console with Clock, Logging] =
+    Logging.console((_, logEntry) => logEntry)
 
-  override implicit val executionContext: ExecutionContext = platform.executor.asEC
+  private val actorSystemLayer: RLayer[Has[ExecutionContext], Has[ActorSystem[_]]] =
+    ZLayer.fromAcquireRelease(actorSystem)(sys => UIO.succeed(sys.terminate()).ignore)
+
+  private val executionContextLayer: ULayer[Has[ExecutionContext]] =
+    ZLayer.succeed(platform.executor.asEC)
+
+  val program: ZIO[Has[ActorSystem[_]], Throwable, Int] =
+    (for {
+      _ <- httpServer
+    } yield 0)
 
   override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
-    ZManaged
-      .make(actorSystem)(sys => UIO.succeed(sys.terminate()).ignore)
-      .use(
-        actorSystem =>
-          for {
-            _ <- httpServer(actorSystem)
-          } yield 0
-      )
+    program
+      .provideLayer(executionContextLayer >>> actorSystemLayer)
       .foldM(e => log.throwable("", e).as(1), _ => UIO.effectTotal(0))
-      .provideLayer(env)
+      .provideLayer(loggingLayer)
 }

@@ -8,42 +8,46 @@ import akka.http.scaladsl.Http
 import akka.stream.Materializer
 import akka.{Done, actor}
 import io.github.mvillafuertem.scalcite.example.api.SwaggerApi
-import zio.{Task, UIO, ZIO}
+import zio._
 
 import scala.concurrent.ExecutionContext
+
 
 trait ScalciteServiceConfiguration extends ApiConfiguration
   with InfrastructureConfiguration
   with ApplicationConfiguration {
 
-  implicit val executionContext: ExecutionContext
-
-  val actorSystem: Task[ActorSystem[Done]] = Task(
-    ActorSystem[Done](
-      Behaviors.setup[Done] { context =>
-        context.setLoggerName(this.getClass)
-        context.log.info(s"Starting ${scalciteConfigurationProperties.name}... ${"BuildInfo.toJson"}")
-        Behaviors.receiveMessage {
-          case Done =>
-            context.log.error(s"Server could not start!")
-            Behaviors.stopped
-        }
-      },
-      scalciteConfigurationProperties.name.toLowerCase(),
-      BootstrapSetup().withDefaultExecutionContext(executionContext)
-    )
-  )
-
-
-  def httpServer(actorSystem: ActorSystem[_]): ZIO[Any, Throwable, Unit] = {
-
-    implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
-    implicit lazy val materializer: Materializer = Materializer(actorSystem)
-
+  val actorSystem: RIO[Has[ExecutionContext], ActorSystem[_]] =
     for {
-      eventualBinding <- Task(
-        Http().bindAndHandle(route, scalciteConfigurationProperties.interface, scalciteConfigurationProperties.port)
+      executionContext <- ZIO.access[Has[ExecutionContext]](_.get)
+      actorSystem <- Task(
+        ActorSystem[Done](
+          Behaviors.setup[Done] { context =>
+            context.setLoggerName(this.getClass)
+            context.log.info(s"Starting ${scalciteConfigurationProperties.name}... ${"BuildInfo.toJson"}")
+            Behaviors.receiveMessage {
+              case Done =>
+                context.log.error(s"Server could not start!")
+                Behaviors.stopped
+            }
+          },
+          scalciteConfigurationProperties.name.toLowerCase(),
+          BootstrapSetup().withDefaultExecutionContext(executionContext)
+        )
       )
+    } yield actorSystem
+
+
+
+
+  val httpServer: RIO[Has[ActorSystem[_]], Unit] =
+    for {
+      actorSystem <- ZIO.access[Has[ActorSystem[_]]](_.get)
+      eventualBinding <- Task {
+        implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
+        implicit lazy val materializer: Materializer = Materializer(actorSystem)
+        Http().bindAndHandle(route, scalciteConfigurationProperties.interface, scalciteConfigurationProperties.port)
+      }
       server <- Task
         .fromFuture(_ => eventualBinding)
         .tapError(
@@ -64,7 +68,5 @@ trait ScalciteServiceConfiguration extends ApiConfiguration
       )
       _ <- server.join
     } yield ()
-
-  }
 
 }

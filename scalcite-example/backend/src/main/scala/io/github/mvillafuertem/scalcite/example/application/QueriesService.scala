@@ -10,7 +10,7 @@ import io.github.mvillafuertem.scalcite.example.domain.model.Query
 import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.QueriesRepo
-import zio.{Has, ZLayer, stream}
+import zio.{Has, URLayer, ZLayer, stream}
 
 private final class QueriesService(repository: QueriesRepository[QueryDBO]) extends QueriesApplication {
   override def create(query: Query): stream.Stream[ScalciteError, Query] =
@@ -54,7 +54,7 @@ object QueriesService {
   def findByUUID(uuid: UUID): stream.ZStream[QueriesApp, Throwable, Query] =
     stream.ZStream.accessStream(_.get.findByUUID(uuid))
 
-  val live: ZLayer[QueriesRepo, Nothing, QueriesApp] =
+  val live: URLayer[QueriesRepo, QueriesApp] =
     ZLayer.fromService[QueriesRepository[QueryDBO], QueriesApplication](
       repository => new QueriesService(repository))
 
