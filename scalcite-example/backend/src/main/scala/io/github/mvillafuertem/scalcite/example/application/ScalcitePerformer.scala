@@ -11,38 +11,34 @@ import io.github.mvillafuertem.scalcite.example.api.documentation.ApiJsonCodec._
 import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
 import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
-import io.github.mvillafuertem.scalcite.example.domain.repository.CalciteRepository
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
 import io.github.mvillafuertem.scalcite.flattener.Flattener._
+import zio._
 import zio.stream.ZStream
-import zio.{IO, UIO, ULayer, ZLayer, stream}
 
+object ScalcitePerformer {
 
-final class ScalcitePerformer(calcite: CalciteRepository) extends ScalciteApplication {
+  type ScalciteApp = Has[ScalciteApplication]
 
-
-  private val env: ULayer[QueriesApp] = ZLayer.succeed("queriesdb") >>>
-    RelationalQueriesRepository.live >>>
-    QueriesService.live
-
-
-  override def performMap(map: collection.Map[String, Any], uuid: UUID*): stream.Stream[Throwable, collection.Map[String, Any]] =
+  def performMap(map: collection.Map[String, Any], uuid: UUID*): stream.ZStream[QueriesApp with CalciteRepo, Throwable, collection.Map[String, Any]] =
     ZStream.fromIterable(uuid)
-        .flatMapPar(10)(uuid => QueriesService.findByUUID(uuid).provideLayer(env))
-        .flatMapPar(10)(query => calcite.queryForMap(map, query.value))
+      .flatMapPar(10)(uuid => QueriesService.findByUUID(uuid))
+      .flatMapPar(10)(query => RelationalCalciteRepository.queryForMap(map, query.value)
+        .either
+        .map(_.fold(_ => Map.empty[String, Any], identity)))
 
-  override def performJson(json: Json, uuid: UUID*): stream.Stream[Throwable, Json] =
+  def performJson(json: Json, uuid: UUID*): stream.ZStream[QueriesApp with CalciteRepo, Throwable, Json] =
     for {
       flattened <- flattener(json)
       result <- ZStream.fromIterable(uuid)
-        .flatMapPar(1)(uuid => QueriesService.findByUUID(uuid).tap(_ => UIO(Thread.sleep(1000))).provideLayer(env))
+        .flatMapPar(1)(uuid => QueriesService.findByUUID(uuid).tap(_ => UIO(Thread.sleep(1000))))
         .flatMapPar(1)(query => performQuery(flattened, query.value))
       blowed <- blower(result)
     } yield blowed
 
-
-  private def performQuery(json: Json, query: String): stream.Stream[Nothing, Json] =
-    calcite
+  private def performQuery(json: Json, query: String): stream.ZStream[CalciteRepo, Nothing, Json] =
+    RelationalCalciteRepository
       .queryForJson(json, query)
       .either
       .map(_.fold(_.asJson, identity))
@@ -57,8 +53,12 @@ final class ScalcitePerformer(calcite: CalciteRepository) extends ScalciteApplic
       .either
       .map(_.fold(e => ScalciteError.Unknown(e.getMessage).asJson, identity))
 
-}
+  val live: ZLayer[QueriesApp, Nothing, ScalciteApp] = ZLayer.succeed{new ScalciteApplication {
 
-object ScalcitePerformer {
-  def apply(calcite: CalciteRepository): ScalcitePerformer = new ScalcitePerformer(calcite)
+    override def performMap(map: collection.Map[String, Any], uuid: UUID*): stream.Stream[Throwable, collection.Map[String, Any]] = ???
+
+    override def performJson(json: Json, uuid: UUID*): stream.Stream[Throwable, Json] = ???
+
+  }}
+
 }

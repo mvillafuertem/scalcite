@@ -2,27 +2,34 @@ package io.github.mvillafuertem.scalcite.example.api
 
 import akka.NotUsed
 import akka.http.scaladsl.server.Route
-import akka.stream.Materializer
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMapping, ApiJsonCodec, ScalciteEndpoint}
-import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
+import io.github.mvillafuertem.scalcite.example.application.{QueriesService, ScalcitePerformer}
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
 import sttp.tapir.server.akkahttp._
 import zio.interop.reactivestreams._
-import zio.{BootstrapRuntime, stream}
+import zio.{BootstrapRuntime, ULayer, ZLayer, stream}
 
 import scala.concurrent.Future
 
-final class ScalciteSimulateApi(scalciteApplication: ScalciteApplication)(implicit materializer: Materializer)
-  extends ApiJsonCodec
-    with ApiErrorMapping
-    with BootstrapRuntime {
+trait ScalciteSimulateApi extends ApiJsonCodec
+  with ApiErrorMapping
+  with BootstrapRuntime {
+
+  private val env: ULayer[QueriesApp with CalciteRepo] = (
+    ZLayer.succeed("queriesdb") >>> RelationalQueriesRepository.live >>> QueriesService.live
+    ) ++ (
+    ZLayer.succeed("calcitedb") >>> RelationalCalciteRepository.live)
+
 
   val route: Route = queriesSimulateRoute
 
   lazy val queriesSimulateRoute: Route = ScalciteEndpoint.simulateEndpoint.toRoute {
-    case (uuids, json) => buildResponse(scalciteApplication.performJson(json, uuids:_*).map(_.noSpaces))}
+    case (uuids, json) => buildResponse(ScalcitePerformer.performJson(json, uuids:_*).map(_.noSpaces).provideLayer(env))}
 
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
@@ -41,6 +48,4 @@ final class ScalciteSimulateApi(scalciteApplication: ScalciteApplication)(implic
 
 }
 
-object ScalciteSimulateApi {
-  def apply(scalciteApplication: ScalciteApplication)(implicit materializer: Materializer): ScalciteSimulateApi = new ScalciteSimulateApi(scalciteApplication)(materializer)
-}
+object ScalciteSimulateApi extends ScalciteSimulateApi

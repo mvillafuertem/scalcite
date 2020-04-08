@@ -17,10 +17,9 @@ import zio.{BootstrapRuntime, ULayer, ZLayer, stream}
 
 import scala.concurrent.Future
 
-final class ErrorsApi()
-  extends ApiJsonCodec
-    with ApiErrorMapping
-    with BootstrapRuntime {
+trait ErrorsApi extends ApiJsonCodec
+  with ApiErrorMapping
+  with BootstrapRuntime {
 
   private val env: ULayer[ErrorsApp] = ZLayer.succeed("queriesdb") >>>
     RelationalErrorsRepository.live >>>
@@ -51,6 +50,4 @@ final class ErrorsApi()
   }
 }
 
-object ErrorsApi {
-  def apply(): ErrorsApi = new ErrorsApi()
-}
+object ErrorsApi extends ErrorsApi

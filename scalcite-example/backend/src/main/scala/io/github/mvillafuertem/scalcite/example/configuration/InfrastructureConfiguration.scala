@@ -41,6 +41,4 @@ trait InfrastructureConfiguration {
 
   lazy val scalciteConfigurationProperties: ScalciteConfigurationProperties = ScalciteConfigurationProperties()
 
-  lazy val calciteRepository: RelationalCalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
-
 }

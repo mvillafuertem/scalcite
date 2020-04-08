@@ -12,10 +12,6 @@ import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.api.ScalciteSimulateApiSpec.ScalciteSimulateApiConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.api.behavior.{QueriesApiBehaviorSpec, ScalciteSimulateApiBehaviorSpec}
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
-import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformer
-import io.github.mvillafuertem.scalcite.example.domain.ScalciteApplication
-import io.github.mvillafuertem.scalcite.example.domain.repository.CalciteRepository
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository
 import org.scalatest.Succeeded
 
 import scala.concurrent.ExecutionContext
@@ -29,7 +25,6 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
   override implicit val timeout: RouteTestTimeout = RouteTestTimeout(10.seconds.dilated)
 
   val scalciteApi: QueriesApi = QueriesApi()(Materializer(system))
-  val scalciteSimulateApi: ScalciteSimulateApi = ScalciteSimulateApi(scalcitePerformer)(Materializer(system))
 
   behavior of "Scalcite Simulate Api"
 
@@ -49,7 +44,7 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
       "{}",
       StatusCodes.OK,
       "[]",
-      scalciteSimulateApi
+      ScalciteSimulateApi
     )
 
   }
@@ -82,7 +77,7 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
     // w h e n
     Post(s"/api/v1.0/queries/simulate?uuid=$uuid1&uuid=$uuid2&uuid=$uuid3")
       .withEntity(ScalciteEndpoint.simulateInExample.noSpaces) ~>
-      addHeader(`Content-Type`(`application/json`)) ~> scalciteSimulateApi.queriesSimulateRoute ~>
+      addHeader(`Content-Type`(`application/json`)) ~> ScalciteSimulateApi.queriesSimulateRoute ~>
       check {
 
         // t h e n
@@ -106,8 +101,6 @@ object ScalciteSimulateApiSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    private val calcite: CalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
-    val scalcitePerformer: ScalciteApplication = ScalcitePerformer(calcite)
   }
 
 }

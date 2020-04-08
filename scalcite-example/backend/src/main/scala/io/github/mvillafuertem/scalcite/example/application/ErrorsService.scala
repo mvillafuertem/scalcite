@@ -5,7 +5,6 @@ import java.util.UUID
 import io.github.mvillafuertem.scalcite.example.domain.ErrorsApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.Unknown
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.ErrorDBO
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ErrorsRepo
 import zio.{Has, ZLayer, stream}
 

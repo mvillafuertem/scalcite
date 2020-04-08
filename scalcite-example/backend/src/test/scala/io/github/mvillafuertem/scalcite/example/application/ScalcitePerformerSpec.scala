@@ -4,9 +4,7 @@ import io.circe.Json
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
 import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformerSpec.ScalcitePerformerConfigurationSpec
-import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
-import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
 import zio.{ULayer, ZLayer}
 
@@ -25,7 +23,7 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     val actual: Option[Json] = unsafeRun(
       (for {
         _ <- QueriesService.create(queryBoolean)
-        effect <- scalcitePerformer.performJson(json, uuid2)
+        effect <- ScalcitePerformer.performJson(json, uuid2)
       } yield effect)
         .runHead
         .provideLayer(env)
@@ -46,7 +44,7 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     val actual: Option[collection.Map[String, Any]] = unsafeRun(
       (for {
         _ <- QueriesService.create(queryBoolean)
-        effect <- scalcitePerformer.performMap(map, uuid2)
+        effect <- ScalcitePerformer.performMap(map, uuid2)
       } yield effect)
         .runHead
         .provideLayer(env)
@@ -65,13 +63,10 @@ object ScalcitePerformerSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    private val calcite: CalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
-
-    val scalcitePerformer: ScalciteApplication = ScalcitePerformer(calcite)
-
-    val env: ULayer[QueriesApp] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
-      RelationalQueriesRepository.live >>>
-      QueriesService.live
+    val env: ULayer[QueriesApp with CalciteRepo] = (
+      ZLayer.succeed(h2ConfigurationProperties.databaseName) >>> RelationalQueriesRepository.live >>> QueriesService.live
+      ) ++ (
+      ZLayer.succeed(calciteConfigurationProperties.databaseName) >>> RelationalCalciteRepository.live)
 
   }
 
