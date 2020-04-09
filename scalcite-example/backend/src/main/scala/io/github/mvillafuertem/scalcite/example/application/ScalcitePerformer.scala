@@ -1,5 +1,6 @@
 package io.github.mvillafuertem.scalcite.example.application
 
+import java.sql.SQLException
 import java.util.UUID
 
 import io.circe.Json
@@ -10,19 +11,25 @@ import io.github.mvillafuertem.scalcite.blower.Blower._
 import io.github.mvillafuertem.scalcite.example.api.documentation.ApiJsonCodec._
 import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
-import io.github.mvillafuertem.scalcite.example.domain.repository.CalciteRepository
+import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.Unknown
+import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, ErrorsRepository}
 import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.ErrorDBO
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.ZCalciteRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ZErrorsRepository
 import io.github.mvillafuertem.scalcite.flattener.Flattener._
 import zio._
 import zio.stream.ZStream
 
-private final class ScalcitePerformer(app: QueriesApplication, repository: CalciteRepository) extends ScalciteApplication {
+private final class ScalcitePerformer(app: QueriesApplication,
+                                      repository: CalciteRepository,
+                                      errorsRepository: ErrorsRepository[ErrorDBO]) extends ScalciteApplication {
 
   override def performMap(map: collection.Map[String, Any], uuid: UUID*): stream.Stream[Throwable, collection.Map[String, Any]] =
     ZStream.fromIterable(uuid)
       .flatMapPar(10)(uuid => app.findByUUID(uuid))
       .flatMapPar(10)(query => repository.queryForMap(map, query.value)
+        .catchAll(catchErrorsAndInsertInDB)
         .either
         .map(_.fold(_ => Map.empty[String, Any], identity)))
 
@@ -38,8 +45,16 @@ private final class ScalcitePerformer(app: QueriesApplication, repository: Calci
   private def performQuery(json: Json, query: String): stream.Stream[Nothing, Json] =
     repository
       .queryForJson(json, query)
+      .catchAll(catchErrorsAndInsertInDB)
       .either
       .map(_.fold(_.asJson, identity))
+
+  private def catchErrorsAndInsertInDB: ScalciteError => stream.Stream[ScalciteError, Nothing] = {
+    error =>
+      errorsRepository.insert(ErrorDBO(error.uuid, error.code))
+        .mapError { case e: SQLException => Unknown(e.getMessage) } *>
+        ZStream.fail(error)
+  }
 
   private def flattener(json: Json): stream.Stream[Nothing, Json] =
     ZStream.fromEffect(IO.fromEither(json.flatten))
@@ -54,8 +69,8 @@ private final class ScalcitePerformer(app: QueriesApplication, repository: Calci
 
 object ScalcitePerformer {
 
-  def apply(app: QueriesApplication, repository: CalciteRepository): ScalciteApplication =
-    new ScalcitePerformer(app, repository)
+  def apply(app: QueriesApplication, repository: CalciteRepository, errorsRepository: ErrorsRepository[ErrorDBO]): ScalciteApplication =
+    new ScalcitePerformer(app, repository, errorsRepository)
 
   type ZScalciteApplication = Has[ScalciteApplication]
 
@@ -65,8 +80,8 @@ object ScalcitePerformer {
   def performJson(json: Json, uuid: UUID*): stream.ZStream[ZScalciteApplication, Throwable, Json] =
     stream.ZStream.accessStream(_.get.performJson(json, uuid:_*))
 
-  val live: URLayer[ZQueriesApplication with CalciteRepo, ZScalciteApplication] =
-    ZLayer.fromServices[QueriesApplication, CalciteRepository, ScalciteApplication](
-      (app, repository) => ScalcitePerformer(app, repository))
+  val live: URLayer[ZQueriesApplication with ZCalciteRepository with ZErrorsRepository, ZScalciteApplication] =
+    ZLayer.fromServices[QueriesApplication, CalciteRepository, ErrorsRepository[ErrorDBO], ScalciteApplication](
+      (app, repository, errorsRepository) => ScalcitePerformer(app, repository, errorsRepository))
 
 }

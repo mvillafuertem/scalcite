@@ -15,7 +15,7 @@ import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoi
 import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
 import io.github.mvillafuertem.scalcite.example.application.{QueriesService, ScalcitePerformer}
 import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.ZCalciteRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import org.scalatest.Succeeded
 import zio.{ULayer, ZLayer}
@@ -116,7 +116,11 @@ object ScalciteSimulateApiSpec {
         RelationalErrorsRepository(h2ConfigurationProperties.databaseName))
 
 
-    val env: ScalciteApplication = ScalcitePerformer(queriesApplication, RelationalCalciteRepository(calciteConfigurationProperties.databaseName))
+    val env: ScalciteApplication = ScalcitePerformer(
+      queriesApplication,
+      RelationalCalciteRepository(calciteConfigurationProperties.databaseName),
+      RelationalErrorsRepository(calciteConfigurationProperties.databaseName)
+    )
 
 
   }

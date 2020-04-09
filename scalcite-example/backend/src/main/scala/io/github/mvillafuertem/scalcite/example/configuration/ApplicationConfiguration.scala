@@ -15,7 +15,10 @@ final class ApplicationConfiguration(infrastructureConfiguration: Infrastructure
     ErrorsService(infrastructureConfiguration.errorsRepository)
 
   val scalciteApplication: ScalciteApplication =
-    ScalcitePerformer(queriesApplication, infrastructureConfiguration.calciteRepository)
+    ScalcitePerformer(queriesApplication,
+      infrastructureConfiguration.calciteRepository,
+      infrastructureConfiguration.errorsRepository
+    )
 
 }
 

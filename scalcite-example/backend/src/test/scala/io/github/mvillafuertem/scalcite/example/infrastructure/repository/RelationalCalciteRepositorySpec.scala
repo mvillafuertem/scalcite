@@ -3,7 +3,7 @@ package io.github.mvillafuertem.scalcite.example.infrastructure.repository
 import io.circe.Json
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.Unknown
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.ZCalciteRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepositorySpec.RelationalCalciteRepositoryConfigurationSpec
 import zio.{FiberFailure, ULayer, ZLayer}
 
@@ -82,7 +82,7 @@ object RelationalCalciteRepositorySpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    val env: ULayer[CalciteRepo] = ZLayer.succeed(calciteConfigurationProperties.databaseName) >>> RelationalCalciteRepository.live
+    val env: ULayer[ZCalciteRepository] = ZLayer.succeed(calciteConfigurationProperties.databaseName) >>> RelationalCalciteRepository.live
 
   }
 }

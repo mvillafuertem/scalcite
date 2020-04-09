@@ -89,16 +89,16 @@ object RelationalCalciteRepository {
   def apply(databaseName: String): CalciteRepository =
     new RelationalCalciteRepository(databaseName)
 
-  type CalciteRepo = Has[CalciteRepository]
+  type ZCalciteRepository = Has[CalciteRepository]
 
   def queryForMap(map: collection.Map[String, Any],
-                  query: String): stream.ZStream[CalciteRepo, ScalciteError, collection.Map[String, Any]] =
+                  query: String): stream.ZStream[ZCalciteRepository, ScalciteError, collection.Map[String, Any]] =
     stream.ZStream.accessStream(_.get.queryForMap(map, query))
 
-  def queryForJson(json: Json, query: String): stream.ZStream[CalciteRepo, ScalciteError, Json] =
+  def queryForJson(json: Json, query: String): stream.ZStream[ZCalciteRepository, ScalciteError, Json] =
     stream.ZStream.accessStream(_.get.queryForJson(json, query))
 
-  val live: ZLayer[Has[String], Nothing, CalciteRepo] =
+  val live: ZLayer[Has[String], Nothing, ZCalciteRepository] =
     ZLayer.fromService[String, CalciteRepository](
       databaseName => RelationalCalciteRepository(databaseName))
 
