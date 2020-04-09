@@ -7,13 +7,11 @@ import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMapping, ApiJsonCodec, ErrorsEndpoint}
-import io.github.mvillafuertem.scalcite.example.application.ErrorsService
-import io.github.mvillafuertem.scalcite.example.application.ErrorsService.ZErrorsApplication
 import io.github.mvillafuertem.scalcite.example.domain.ErrorsApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import sttp.tapir.server.akkahttp._
 import zio.interop.reactivestreams._
-import zio.{BootstrapRuntime, ULayer, stream}
+import zio.{BootstrapRuntime, stream}
 
 import scala.concurrent.Future
 

@@ -34,7 +34,7 @@ esac
 # Build classpath on first call. (To force rebuild, remove .classpath.txt.)
 #cd $(dirname $0)
 
-CP="target/classes:target/test-classes:$(sbt -error ';project scalcite-example ;export test:fullClasspath')"
+CP="scalcite-example/console/target/scala-2.13/classes:scalcite-example/console/target/scala-2.13/test-classes:$(sbt -error ';project scalcite-example-console ;export fullClasspath')"
 VM_OPTS=
 if [ "$cygwin" ]; then
   CP=$(cygpath -wp "$CP")

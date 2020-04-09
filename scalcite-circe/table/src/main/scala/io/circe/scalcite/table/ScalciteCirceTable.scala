@@ -22,15 +22,15 @@ final class ScalciteCirceTable(json: Json) extends ScalciteTable {
       case Json.JNull => types.add(typeFactory.createJavaType(classOf[java.lang.String]))
       case Json.JBoolean(_) => types.add(typeFactory.createJavaType(classOf[java.lang.Boolean]))
       case Json.JNumber(value) => value match {
-        case _: BiggerDecimalJsonNumber => throw new RuntimeException("type not supported")
+        case _: BiggerDecimalJsonNumber => throw new RuntimeException(s"type not supported BiggerDecimalJsonNumber $value")
         case JsonBigDecimal(_) => types.add(typeFactory.createJavaType(classOf[java.math.BigDecimal]))
         case JsonLong(_) => types.add(typeFactory.createJavaType(classOf[java.lang.Long]))
         case JsonDouble(_) => types.add(typeFactory.createJavaType(classOf[java.lang.Double]))
         case JsonFloat(_) => types.add(typeFactory.createJavaType(classOf[java.lang.Float]))
       }
       case Json.JString(_) => types.add(typeFactory.createJavaType(classOf[java.lang.String]))
-      case Json.JArray(_) => throw new RuntimeException("type not supported")
-      case Json.JObject(_) => throw new RuntimeException("type not supported")
+      case Json.JArray(value) => throw new RuntimeException(s"type not supported JArray $value")
+      case Json.JObject(value) => throw new RuntimeException(s"type not supported JObject $value")
     }
 
     typeFactory.createStructType(Pair.zip(names, types))
@@ -44,15 +44,15 @@ final class ScalciteCirceTable(json: Json) extends ScalciteTable {
       case Json.JNull => "null"
       case Json.JBoolean(value) => value
       case Json.JNumber(value) => value match {
-        case _: BiggerDecimalJsonNumber => throw new RuntimeException("type not supported")
+        case _: BiggerDecimalJsonNumber => throw new RuntimeException(s"type not supported $value")
         case JsonBigDecimal(value) => value
         case JsonLong(value) => value
         case JsonDouble(value) => value
         case JsonFloat(value) => value
       }
       case Json.JString(value) => value
-      case Json.JArray(_) => throw new RuntimeException("type not supported")
-      case Json.JObject(_) => throw new RuntimeException("type not supported")
+      case Json.JArray(value) => throw new RuntimeException(s"type not supported JArray $value")
+      case Json.JObject(value) => throw new RuntimeException(s"type not supported JObject $value ")
     }
   }
 }

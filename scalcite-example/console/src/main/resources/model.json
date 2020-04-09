@@ -8,7 +8,7 @@
         {
           "name": "PERSON",
           "type": "custom",
-          "factory": "io.github.mvillafuertem.scalcite.JsonTableFactory",
+          "factory": "io.github.mvillafuertem.scalcite.example.JsonTableFactory",
           "operand": {
             "file": "person.json"
           }
