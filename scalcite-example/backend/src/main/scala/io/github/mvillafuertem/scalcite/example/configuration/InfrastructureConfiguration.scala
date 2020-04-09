@@ -6,7 +6,7 @@ import io.github.mvillafuertem.scalcite.example.infrastructure.repository.Relati
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.QueriesRepo
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import scalikejdbc.{ConnectionPool, ConnectionPoolSettings}
-import zio.{ULayer, ZLayer}
+import zio.{Has, ULayer, ZLayer}
 
 trait InfrastructureConfiguration {
 
@@ -40,6 +40,9 @@ trait InfrastructureConfiguration {
   lazy val calciteConfigurationProperties: CalciteConfigurationProperties = CalciteConfigurationProperties()
 
   lazy val scalciteConfigurationProperties: ScalciteConfigurationProperties = ScalciteConfigurationProperties()
+
+  val scalciteConfigurationPropertiesLayer: ULayer[Has[ScalciteConfigurationProperties]] =
+    ZLayer.succeed(scalciteConfigurationProperties)
 
   val queriesRepositoryLayer: ULayer[QueriesRepo] =
     ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>

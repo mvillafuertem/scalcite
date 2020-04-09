@@ -4,9 +4,13 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import io.github.mvillafuertem.scalcite.example.api._
+import zio.{Has, ZLayer}
 
 trait ApiConfiguration {
-  self: ApplicationConfiguration =>
+  self: ApplicationConfiguration with AkkaConfiguration =>
+
+  lazy val routeLayer: ZLayer[Any, Throwable, Has[Route]] =
+    materializerLayer >>> ZLayer.fromService[Materializer, Route] ( implicit materializer => route)
 
   def route(implicit materializer: Materializer): Route =
     SwaggerApi.route ~
