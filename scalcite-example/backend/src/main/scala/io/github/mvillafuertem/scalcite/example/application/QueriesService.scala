@@ -66,6 +66,6 @@ object QueriesService {
 
   val live: URLayer[ZQueriesRepository with ZErrorsRepository, ZQueriesApplication] =
     ZLayer.fromServices[QueriesRepository[QueryDBO], ErrorsRepository[ErrorDBO], QueriesApplication](
-      (repository, errorsRepository )=> QueriesService(repository, errorsRepository))
+      (repository, errorsRepository) => QueriesService(repository, errorsRepository))
 
 }

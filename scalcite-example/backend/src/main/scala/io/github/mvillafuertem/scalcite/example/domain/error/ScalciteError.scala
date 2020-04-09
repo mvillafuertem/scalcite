@@ -1,6 +1,6 @@
 package io.github.mvillafuertem.scalcite.example.domain.error
 
-import java.time.{Instant, OffsetDateTime, ZoneOffset, ZonedDateTime}
+import java.time.Instant
 import java.util.UUID
 
 sealed trait ScalciteError extends Product {

@@ -4,7 +4,9 @@ import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
 import io.github.mvillafuertem.scalcite.example.application.QueriesServiceSpec.QueriesServiceConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ZErrorsRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.ZQueriesRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalErrorsRepository, RelationalQueriesRepository}
 import zio.{ULayer, ZLayer}
 
 import scala.concurrent.ExecutionContext
@@ -77,8 +79,17 @@ object QueriesServiceSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    val env: ULayer[ZQueriesApplication] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
-      RelationalQueriesRepository.live >>>
+    private val queriesRepositoryLayer: ZLayer[Any, Nothing, ZQueriesRepository] =
+      ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+        RelationalQueriesRepository.live
+
+    private val errorsRepositoryLayer: ZLayer[Any, Nothing, ZErrorsRepository] =
+      ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+        RelationalErrorsRepository.live
+
+    val env: ULayer[ZQueriesApplication] =
+      (queriesRepositoryLayer ++
+        errorsRepositoryLayer) >>>
       QueriesService.live
   }
 

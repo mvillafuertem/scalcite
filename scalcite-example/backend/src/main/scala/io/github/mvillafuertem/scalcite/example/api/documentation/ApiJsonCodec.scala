@@ -1,7 +1,5 @@
 package io.github.mvillafuertem.scalcite.example.api.documentation
 
-import java.time.{Clock, ZoneId}
-
 import io.circe.generic.extras.Configuration
 import io.circe.parser.parse
 import io.circe.syntax._
