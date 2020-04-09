@@ -30,7 +30,7 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
 
   override implicit val timeout: RouteTestTimeout = RouteTestTimeout(10.seconds.dilated)
 
-  val scalciteApi: QueriesApi = QueriesApi(QueriesService(RelationalQueriesRepository("")))(Materializer(system))
+  val scalciteApi: QueriesApi = QueriesApi(QueriesService(RelationalQueriesRepository(h2ConfigurationProperties.databaseName)))(Materializer(system))
 
   behavior of "Scalcite Simulate Api"
 
@@ -107,10 +107,10 @@ object ScalciteSimulateApiSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    val queriesApplication: QueriesApplication = QueriesService(RelationalQueriesRepository(""))
+    val queriesApplication: QueriesApplication = QueriesService(RelationalQueriesRepository(h2ConfigurationProperties.databaseName))
 
 
-    val env: ScalciteApplication = ScalcitePerformer(queriesApplication, RelationalCalciteRepository(""))
+    val env: ScalciteApplication = ScalcitePerformer(queriesApplication, RelationalCalciteRepository(calciteConfigurationProperties.databaseName))
 
     val queriesApplicationLayer: ULayer[ZQueriesApplication] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>> RelationalQueriesRepository.live >>> QueriesService.live
     val calciteRepositoryLayer: ULayer[CalciteRepo] =
