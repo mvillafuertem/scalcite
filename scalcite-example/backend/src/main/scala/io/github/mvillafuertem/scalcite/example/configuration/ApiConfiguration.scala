@@ -3,7 +3,8 @@ package io.github.mvillafuertem.scalcite.example.configuration
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import io.github.mvillafuertem.scalcite.example.api._
-import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.{ZAkkaConfiguration, ZAkkaSystemConfiguration}
+import io.github.mvillafuertem.scalcite.example.configuration.ActorSystemConfiguration.ZAkkaSystemConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.ZAkkaConfiguration
 import io.github.mvillafuertem.scalcite.example.configuration.ApplicationConfiguration.ZApplicationConfiguration
 import zio._
 

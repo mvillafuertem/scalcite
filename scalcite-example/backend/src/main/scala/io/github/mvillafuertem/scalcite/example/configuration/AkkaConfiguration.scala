@@ -1,45 +1,18 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
-import akka.actor.BootstrapSetup
-import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.Behaviors
+import akka.actor
 import akka.actor.typed.scaladsl.adapter._
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
-import akka.{Done, actor}
-import io.github.mvillafuertem.scalcite.example.ScalciteServiceApplication.platform
 import io.github.mvillafuertem.scalcite.example.api.SwaggerApi
-import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.{ZAkkaConfiguration, ZAkkaSystemConfiguration, actorSystem}
+import io.github.mvillafuertem.scalcite.example.configuration.ActorSystemConfiguration.ZAkkaSystemConfiguration
 import io.github.mvillafuertem.scalcite.example.configuration.InfrastructureConfiguration.ZInfrastructureConfiguration
 import zio._
-
-import scala.concurrent.ExecutionContext
 
 
 final class AkkaConfiguration(infrastructureConfiguration: InfrastructureConfiguration) {
 
-  lazy val executionContext: Task[ExecutionContext] = Task(platform.executor.asEC)
-
-  lazy val actorSystem: ZIO[ZAkkaConfiguration, Throwable, ActorSystem[Done]] =
-    for {
-      executionContext <- AkkaConfiguration.executionContext
-      actorSystem <- Task(
-        ActorSystem[Done](
-          Behaviors.setup[Done] { context =>
-            context.setLoggerName(this.getClass)
-            context.log.info(s"Starting ${infrastructureConfiguration.scalciteConfigurationProperties.name}... ${"BuildInfo.toJson"}")
-            Behaviors.receiveMessage {
-              case Done =>
-                context.log.error(s"Server could not start!")
-                Behaviors.stopped
-            }
-          },
-          infrastructureConfiguration.scalciteConfigurationProperties.name.toLowerCase(),
-          BootstrapSetup().withDefaultExecutionContext(executionContext)
-        )
-      )
-    } yield actorSystem
 
   def httpServer(route: Route): ZIO[ZAkkaSystemConfiguration, Throwable, Unit] =
     for {
@@ -84,25 +57,18 @@ object AkkaConfiguration {
     new AkkaConfiguration(infrastructureConfiguration)
 
   type ZAkkaConfiguration = Has[AkkaConfiguration]
-  type ZAkkaSystemConfiguration = Has[ActorSystem[_]]
 
   def httpServer(route: Route): RIO[ZAkkaConfiguration with ZAkkaSystemConfiguration, Unit] =
     ZIO.accessM(_.get.httpServer(route))
 
-  val actorSystem: ZIO[ZAkkaConfiguration,Throwable, ActorSystem[_]] =
-    ZIO.accessM(_.get.actorSystem)
 
   val materializer: RIO[ZAkkaConfiguration with ZAkkaSystemConfiguration, Materializer] =
     ZIO.accessM(_.get.materializer)
 
-  val executionContext: RIO[ZAkkaConfiguration, ExecutionContext] =
-    ZIO.accessM(_.get.executionContext)
 
   val live: ZLayer[ZInfrastructureConfiguration, Throwable, ZAkkaConfiguration] =
     ZLayer.fromService[InfrastructureConfiguration, AkkaConfiguration](
       infrastructureConfiguration => AkkaConfiguration(infrastructureConfiguration))
 
-  val akkaSystemLayer: ZLayer[ZAkkaConfiguration, Throwable, ZAkkaSystemConfiguration] = ZLayer
-    .fromAcquireRelease(actorSystem)(
-      actorSystem => UIO.succeed(actorSystem.terminate()).ignore)
+
 }

@@ -1,6 +1,7 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
-import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.{ZAkkaConfiguration, ZAkkaSystemConfiguration}
+import io.github.mvillafuertem.scalcite.example.configuration.ActorSystemConfiguration.ZAkkaSystemConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.ZAkkaConfiguration
 import io.github.mvillafuertem.scalcite.example.configuration.ApiConfiguration.ZApiConfiguration
 import io.github.mvillafuertem.scalcite.example.configuration.ApplicationConfiguration.ZApplicationConfiguration
 import zio.{TaskLayer, ULayer}
@@ -22,8 +23,8 @@ trait ScalciteServiceConfiguration {
       ApiConfiguration.live
 
   private val akkaSystemLayer: TaskLayer[ZAkkaSystemConfiguration] =
-    akkaConfigurationLayer >>>
-      AkkaConfiguration.akkaSystemLayer
+    InfrastructureConfiguration.live >>>
+      ActorSystemConfiguration.live
 
   val ZScalciteEnv: TaskLayer[ZApiConfiguration with ZAkkaSystemConfiguration with ZAkkaConfiguration] =
     apiConfigurationLayer ++ akkaSystemLayer ++ akkaConfigurationLayer
