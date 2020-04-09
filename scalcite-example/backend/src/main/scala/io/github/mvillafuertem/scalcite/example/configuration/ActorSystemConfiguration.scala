@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 
 object ActorSystemConfiguration {
 
-  type ZAkkaSystemConfiguration = Has[ActorSystem[Done]]
+  type ZActorSystemConfiguration = Has[ActorSystem[Done]]
 
   lazy val executionContext: Task[ExecutionContext] = Task(platform.executor.asEC)
 
@@ -37,7 +37,7 @@ object ActorSystemConfiguration {
       )
     } yield actorSystem
 
-  val live: ZLayer[ZInfrastructureConfiguration, Throwable, ZAkkaSystemConfiguration] = ZLayer
+  val live: ZLayer[ZInfrastructureConfiguration, Throwable, ZActorSystemConfiguration] = ZLayer
     .fromAcquireRelease(actorSystem)(
       actorSystem => UIO.succeed(actorSystem.terminate()).ignore)
 }

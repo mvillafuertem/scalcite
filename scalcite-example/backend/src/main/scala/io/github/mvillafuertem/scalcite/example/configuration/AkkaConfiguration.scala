@@ -6,7 +6,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import io.github.mvillafuertem.scalcite.example.api.SwaggerApi
-import io.github.mvillafuertem.scalcite.example.configuration.ActorSystemConfiguration.ZAkkaSystemConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.ActorSystemConfiguration.ZActorSystemConfiguration
 import io.github.mvillafuertem.scalcite.example.configuration.InfrastructureConfiguration.ZInfrastructureConfiguration
 import zio._
 
@@ -14,9 +14,9 @@ import zio._
 final class AkkaConfiguration(infrastructureConfiguration: InfrastructureConfiguration) {
 
 
-  def httpServer(route: Route): ZIO[ZAkkaSystemConfiguration, Throwable, Unit] =
+  def httpServer(route: Route): ZIO[ZActorSystemConfiguration, Throwable, Unit] =
     for {
-      actorSystem <- ZIO.access[ZAkkaSystemConfiguration](_.get)
+      actorSystem <- ZIO.access[ZActorSystemConfiguration](_.get)
       eventualBinding <- Task {
         implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
         implicit lazy val materializer: Materializer = Materializer(actorSystem)
@@ -43,9 +43,9 @@ final class AkkaConfiguration(infrastructureConfiguration: InfrastructureConfigu
       _ <- server.join
     } yield ()
 
-  lazy val materializer: ZIO[ZAkkaSystemConfiguration, Throwable, Materializer] =
+  lazy val materializer: ZIO[ZActorSystemConfiguration, Throwable, Materializer] =
     for {
-      as <- ZIO.access[ZAkkaSystemConfiguration](_.get)
+      as <- ZIO.access[ZActorSystemConfiguration](_.get)
       m <- Task(Materializer(as))
     } yield m
 
@@ -58,11 +58,11 @@ object AkkaConfiguration {
 
   type ZAkkaConfiguration = Has[AkkaConfiguration]
 
-  def httpServer(route: Route): RIO[ZAkkaConfiguration with ZAkkaSystemConfiguration, Unit] =
+  def httpServer(route: Route): RIO[ZAkkaConfiguration with ZActorSystemConfiguration, Unit] =
     ZIO.accessM(_.get.httpServer(route))
 
 
-  val materializer: RIO[ZAkkaConfiguration with ZAkkaSystemConfiguration, Materializer] =
+  val materializer: RIO[ZAkkaConfiguration with ZActorSystemConfiguration, Materializer] =
     ZIO.accessM(_.get.materializer)
 
 

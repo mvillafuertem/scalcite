@@ -3,7 +3,7 @@ package io.github.mvillafuertem.scalcite.example.configuration
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import io.github.mvillafuertem.scalcite.example.api._
-import io.github.mvillafuertem.scalcite.example.configuration.ActorSystemConfiguration.ZAkkaSystemConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.ActorSystemConfiguration.ZActorSystemConfiguration
 import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.ZAkkaConfiguration
 import io.github.mvillafuertem.scalcite.example.configuration.ApplicationConfiguration.ZApplicationConfiguration
 import zio._
@@ -16,7 +16,7 @@ object ApiConfiguration {
 
   type ZApiConfiguration = Has[ApiConfiguration]
 
-  val route: RIO[ZApiConfiguration with ZAkkaConfiguration with ZAkkaSystemConfiguration, Route] =
+  val route: RIO[ZApiConfiguration with ZAkkaConfiguration with ZActorSystemConfiguration, Route] =
     ZIO.accessM(_.get.route)
 
   val live: ZLayer[ZApplicationConfiguration with ZAkkaConfiguration, Throwable, ZApiConfiguration] =
@@ -28,7 +28,7 @@ object ApiConfiguration {
 
 final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration, akkaConfiguration: AkkaConfiguration) {
 
-  val route: ZIO[ZAkkaConfiguration with ZAkkaSystemConfiguration, Throwable, Route] =
+  val route: ZIO[ZAkkaConfiguration with ZActorSystemConfiguration, Throwable, Route] =
     for {
       materializer <- AkkaConfiguration.materializer
       routes <- Task {
