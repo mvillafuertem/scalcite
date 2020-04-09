@@ -8,25 +8,7 @@ import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.
 import io.github.mvillafuertem.scalcite.example.configuration.ApplicationConfiguration.ZApplicationConfiguration
 import zio._
 
-object ApiConfiguration {
-
-  def apply(applicationConfiguration: ApplicationConfiguration,
-            akkaConfiguration: AkkaConfiguration): ApiConfiguration =
-    new ApiConfiguration(applicationConfiguration, akkaConfiguration)
-
-  type ZApiConfiguration = Has[ApiConfiguration]
-
-  val route: RIO[ZApiConfiguration with ZAkkaConfiguration with ZActorSystemConfiguration, Route] =
-    ZIO.accessM(_.get.route)
-
-  val live: ZLayer[ZApplicationConfiguration with ZAkkaConfiguration, Throwable, ZApiConfiguration] =
-    ZLayer.fromServices[ApplicationConfiguration, AkkaConfiguration, ApiConfiguration](
-      (applicationConfiguration, akkaConfiguration) => ApiConfiguration(applicationConfiguration, akkaConfiguration)
-    )
-
-}
-
-final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration, akkaConfiguration: AkkaConfiguration) {
+final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration) {
 
   val route: ZIO[ZAkkaConfiguration with ZActorSystemConfiguration, Throwable, Route] =
     for {
@@ -41,3 +23,22 @@ final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration,
     } yield routes
 
 }
+
+
+object ApiConfiguration {
+
+  def apply(applicationConfiguration: ApplicationConfiguration): ApiConfiguration =
+    new ApiConfiguration(applicationConfiguration)
+
+  type ZApiConfiguration = Has[ApiConfiguration]
+
+  val route: RIO[ZApiConfiguration with ZAkkaConfiguration with ZActorSystemConfiguration, Route] =
+    ZIO.accessM(_.get.route)
+
+  val live: ZLayer[ZApplicationConfiguration, Throwable, ZApiConfiguration] =
+    ZLayer.fromService[ApplicationConfiguration, ApiConfiguration](
+      (applicationConfiguration) => ApiConfiguration(applicationConfiguration)
+    )
+
+}
+
