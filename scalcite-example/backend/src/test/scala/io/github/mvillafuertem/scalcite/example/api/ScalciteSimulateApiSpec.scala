@@ -12,9 +12,9 @@ import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.api.ScalciteSimulateApiSpec.ScalciteSimulateApiConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.api.behavior.{QueriesApiBehaviorSpec, ScalciteSimulateApiBehaviorSpec}
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
 import io.github.mvillafuertem.scalcite.example.application.{QueriesService, ScalcitePerformer}
-import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
-import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformer.ScalciteApp
+import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
 import org.scalatest.Succeeded
@@ -30,7 +30,7 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
 
   override implicit val timeout: RouteTestTimeout = RouteTestTimeout(10.seconds.dilated)
 
-  val scalciteApi: QueriesApi = QueriesApi(queriesApplicationLayer)(Materializer(system))
+  val scalciteApi: QueriesApi = QueriesApi(QueriesService(RelationalQueriesRepository("")))(Materializer(system))
 
   behavior of "Scalcite Simulate Api"
 
@@ -107,13 +107,16 @@ object ScalciteSimulateApiSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    val queriesApplicationLayer: ULayer[QueriesApp] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>> RelationalQueriesRepository.live >>> QueriesService.live
+    val queriesApplication: QueriesApplication = QueriesService(RelationalQueriesRepository(""))
+
+
+    val env: ScalciteApplication = ScalcitePerformer(queriesApplication, RelationalCalciteRepository(""))
+
+    val queriesApplicationLayer: ULayer[ZQueriesApplication] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>> RelationalQueriesRepository.live >>> QueriesService.live
     val calciteRepositoryLayer: ULayer[CalciteRepo] =
       ZLayer.succeed(calciteConfigurationProperties.databaseName) >>>
         RelationalCalciteRepository.live
-    val env: ULayer[ScalciteApp] =
-      (queriesApplicationLayer ++ calciteRepositoryLayer) >>>
-        ScalcitePerformer.live
+
   }
 
 }

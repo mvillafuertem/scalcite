@@ -86,6 +86,9 @@ private final class RelationalCalciteRepository(databaseName: String) extends Ca
 }
 object RelationalCalciteRepository {
 
+  def apply(databaseName: String): CalciteRepository =
+    new RelationalCalciteRepository(databaseName)
+
   type CalciteRepo = Has[CalciteRepository]
 
   def queryForMap(map: collection.Map[String, Any],
@@ -97,6 +100,6 @@ object RelationalCalciteRepository {
 
   val live: ZLayer[Has[String], Nothing, CalciteRepo] =
     ZLayer.fromService[String, CalciteRepository](
-      databaseName => new RelationalCalciteRepository(databaseName))
+      databaseName => RelationalCalciteRepository(databaseName))
 
 }

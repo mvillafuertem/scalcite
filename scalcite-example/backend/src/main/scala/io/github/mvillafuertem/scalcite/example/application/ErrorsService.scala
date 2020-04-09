@@ -28,16 +28,19 @@ private final class ErrorsService(repository: ErrorsRepository[ErrorDBO]) extend
 
 object ErrorsService {
 
-  type ErrorsApp = Has[ErrorsApplication]
+  def apply(repository: ErrorsRepository[ErrorDBO]): ErrorsApplication =
+    new ErrorsService(repository)
 
-  def findAll(): stream.ZStream[ErrorsApp, Throwable, ScalciteError] =
+  type ZErrorsApplication = Has[ErrorsApplication]
+
+  def findAll(): stream.ZStream[ZErrorsApplication, Throwable, ScalciteError] =
     stream.ZStream.accessStream(_.get.findAll())
 
-  def findByUUID(uuid: UUID): stream.ZStream[ErrorsApp, Throwable, ScalciteError] =
+  def findByUUID(uuid: UUID): stream.ZStream[ZErrorsApplication, Throwable, ScalciteError] =
     stream.ZStream.accessStream(_.get.findByUUID(uuid))
 
-  val live: URLayer[ErrorsRepo, ErrorsApp] =
+  val live: URLayer[ErrorsRepo, ZErrorsApplication] =
     ZLayer.fromService[ErrorsRepository[ErrorDBO], ErrorsApplication](
-      repository => new ErrorsService(repository))
+      repository => ErrorsService(repository))
 
 }

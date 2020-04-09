@@ -10,81 +10,94 @@ import akka.stream.Materializer
 import akka.{Done, actor}
 import io.github.mvillafuertem.scalcite.example.ScalciteServiceApplication.platform
 import io.github.mvillafuertem.scalcite.example.api.SwaggerApi
-import io.github.mvillafuertem.scalcite.example.configuration.properties.ScalciteConfigurationProperties
+import io.github.mvillafuertem.scalcite.example.configuration.InfrastructureConfiguration.ZInfrastructureConfiguration
 import zio._
 
 import scala.concurrent.ExecutionContext
 
 
-trait AkkaConfiguration {
-  self: InfrastructureConfiguration =>
+final class AkkaConfiguration(infrastructureConfiguration: InfrastructureConfiguration) {
 
-  lazy val executionContextLayer: ULayer[Has[ExecutionContext]] =
-    ZLayer.succeed(platform.executor.asEC)
+  lazy val executionContext: Task[ExecutionContext] = Task(platform.executor.asEC)
 
-  lazy val actorSystemLayer: TaskLayer[Has[ActorSystem[_]]] =
-    (executionContextLayer ++ scalciteConfigurationPropertiesLayer) >>>
-      ZLayer.fromAcquireRelease(actorSystem)(sys => UIO.succeed(sys.terminate()).ignore)
-
-  lazy val materializerLayer: TaskLayer[Has[Materializer]] =
-    actorSystemLayer >>>
-      ZLayer.fromService[ActorSystem[_], Materializer](actorSystem => Materializer(actorSystem))
-
-  private lazy val actorSystem: RIO[Has[ExecutionContext] with Has[ScalciteConfigurationProperties], ActorSystem[_]] =
+  def httpServer(route: Route): Task[Unit] =
     for {
-      executionContext <- ZIO.access[Has[ExecutionContext]](_.get)
-      scalciteConfigurationProperties <- ZIO.access[Has[ScalciteConfigurationProperties]](_.get)
+    actorSystem <- actorSystem
+    materializer <- materializer
+    eventualBinding <- Task {
+      implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
+      implicit lazy val mat: Materializer = materializer
+      Http().bindAndHandle(route, infrastructureConfiguration.scalciteConfigurationProperties.interface, infrastructureConfiguration.scalciteConfigurationProperties.port)
+    }
+    server <- Task
+      .fromFuture(_ => eventualBinding)
+      .tapError(
+        exception =>
+          UIO(
+            actorSystem.log.error(
+              s"Server could not start with parameters [host:port]=[${infrastructureConfiguration.scalciteConfigurationProperties.interface},${infrastructureConfiguration.scalciteConfigurationProperties.port}]",
+              exception
+            )
+          )
+      )
+      .forever
+      .fork
+    _ <- UIO(
+      actorSystem.log.info(
+        s"Server online at http://${infrastructureConfiguration.scalciteConfigurationProperties.interface}:${infrastructureConfiguration.scalciteConfigurationProperties.port}/${SwaggerApi.swagger}"
+      )
+    )
+    _ <- server.join
+  } yield ()
+
+  lazy val actorSystem: Task[ActorSystem[Done]] =
+    for {
+      executionContext <- executionContext
       actorSystem <- Task(
         ActorSystem[Done](
           Behaviors.setup[Done] { context =>
             context.setLoggerName(this.getClass)
-            context.log.info(s"Starting ${scalciteConfigurationProperties.name}... ${"BuildInfo.toJson"}")
+            context.log.info(s"Starting ${infrastructureConfiguration.scalciteConfigurationProperties.name}... ${"BuildInfo.toJson"}")
             Behaviors.receiveMessage {
               case Done =>
                 context.log.error(s"Server could not start!")
                 Behaviors.stopped
             }
           },
-          scalciteConfigurationProperties.name.toLowerCase(),
+          infrastructureConfiguration.scalciteConfigurationProperties.name.toLowerCase(),
           BootstrapSetup().withDefaultExecutionContext(executionContext)
         )
       )
     } yield actorSystem
 
-
-  val httpServer: RIO[Has[ActorSystem[_]]
-    with Has[Materializer]
-    with Has[ScalciteConfigurationProperties]
-    with Has[Route], Unit] =
+  lazy val materializer: Task[Materializer] =
     for {
-      actorSystem <- ZIO.access[Has[ActorSystem[_]]](_.get)
-      materializer <- ZIO.access[Has[Materializer]](_.get)
-      scalciteConfigurationProperties <- ZIO.access[Has[ScalciteConfigurationProperties]](_.get)
-      route <- ZIO.access[Has[Route]](_.get)
-      eventualBinding <- Task {
-        implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
-        implicit lazy val mat: Materializer = materializer
-        Http().bindAndHandle(route, scalciteConfigurationProperties.interface, scalciteConfigurationProperties.port)
-      }
-      server <- Task
-        .fromFuture(_ => eventualBinding)
-        .tapError(
-          exception =>
-            UIO(
-              actorSystem.log.error(
-                s"Server could not start with parameters [host:port]=[${scalciteConfigurationProperties.interface},${scalciteConfigurationProperties.port}]",
-                exception
-              )
-            )
-        )
-        .forever
-        .fork
-      _ <- UIO(
-        actorSystem.log.info(
-          s"Server online at http://${scalciteConfigurationProperties.interface}:${scalciteConfigurationProperties.port}/${SwaggerApi.swagger}"
-        )
-      )
-      _ <- server.join
-    } yield ()
+      as <- actorSystem
+      m <- Task(Materializer(as))
+    } yield m
 
+}
+
+object AkkaConfiguration {
+
+  def apply(infrastructureConfiguration: InfrastructureConfiguration): AkkaConfiguration =
+    new AkkaConfiguration(infrastructureConfiguration)
+
+  type ZAkkaConfiguration = Has[AkkaConfiguration]
+
+  def httpServer(route: Route): RIO[ZAkkaConfiguration, Unit] =
+    ZIO.accessM(_.get.httpServer(route))
+
+  val actorSystem: ZIO[ZAkkaConfiguration,Throwable, ActorSystem[_]] =
+    ZIO.accessM(_.get.actorSystem)
+
+  val materializer: RIO[ZAkkaConfiguration, Materializer] =
+    ZIO.accessM(_.get.materializer)
+
+  val executionContext: RIO[ZAkkaConfiguration, ExecutionContext] =
+    ZIO.accessM(_.get.executionContext)
+
+  val live: ZLayer[ZInfrastructureConfiguration, Throwable, ZAkkaConfiguration] =
+    ZLayer.fromService[InfrastructureConfiguration, AkkaConfiguration](
+      infrastructureConfiguration => AkkaConfiguration(infrastructureConfiguration))
 }

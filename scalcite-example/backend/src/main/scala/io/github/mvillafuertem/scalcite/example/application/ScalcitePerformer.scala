@@ -8,7 +8,7 @@ import io.circe.scalcite.flattener.ScalciteFlattener._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.blower.Blower._
 import io.github.mvillafuertem.scalcite.example.api.documentation.ApiJsonCodec._
-import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.repository.CalciteRepository
 import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
@@ -54,16 +54,19 @@ private final class ScalcitePerformer(app: QueriesApplication, repository: Calci
 
 object ScalcitePerformer {
 
-  type ScalciteApp = Has[ScalciteApplication]
+  def apply(app: QueriesApplication, repository: CalciteRepository): ScalciteApplication =
+    new ScalcitePerformer(app, repository)
 
-  def performMap(map: collection.Map[String, Any], uuid: UUID*): stream.ZStream[ScalciteApp, Throwable, collection.Map[String, Any]] =
+  type ZScalciteApplication = Has[ScalciteApplication]
+
+  def performMap(map: collection.Map[String, Any], uuid: UUID*): stream.ZStream[ZScalciteApplication, Throwable, collection.Map[String, Any]] =
     stream.ZStream.accessStream(_.get.performMap(map, uuid:_*))
 
-  def performJson(json: Json, uuid: UUID*): stream.ZStream[ScalciteApp, Throwable, Json] =
+  def performJson(json: Json, uuid: UUID*): stream.ZStream[ZScalciteApplication, Throwable, Json] =
     stream.ZStream.accessStream(_.get.performJson(json, uuid:_*))
 
-  val live: URLayer[QueriesApp with CalciteRepo, ScalciteApp] =
+  val live: URLayer[ZQueriesApplication with CalciteRepo, ZScalciteApplication] =
     ZLayer.fromServices[QueriesApplication, CalciteRepository, ScalciteApplication](
-      (app, repository) => new ScalcitePerformer(app, repository))
+      (app, repository) => ScalcitePerformer(app, repository))
 
 }

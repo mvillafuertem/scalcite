@@ -76,6 +76,9 @@ private final class RelationalQueriesRepository(databaseName: String) extends Qu
 }
 object RelationalQueriesRepository {
 
+  def apply(databaseName: String): QueriesRepository[QueryDBO] =
+    new RelationalQueriesRepository(databaseName)
+
   type QueriesRepo = Has[QueriesRepository[QueryDBO]]
 
   def findByUUID(uuid: UUID): stream.ZStream[QueriesRepo, Throwable, QueryDBO] =
@@ -95,6 +98,6 @@ object RelationalQueriesRepository {
 
   val live: ZLayer[Has[String], Nothing, QueriesRepo] =
     ZLayer.fromService[String, QueriesRepository[QueryDBO]](
-      databaseName => new RelationalQueriesRepository(databaseName))
+      databaseName => RelationalQueriesRepository(databaseName))
 
 }

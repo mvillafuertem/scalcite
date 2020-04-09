@@ -9,17 +9,16 @@ import akka.util.ByteString
 import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMapping, ApiJsonCodec, ScalciteEndpoint}
-import io.github.mvillafuertem.scalcite.example.application.QueriesService
-import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
+import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import org.reactivestreams.Publisher
 import sttp.tapir.server.akkahttp._
 import zio.interop.reactivestreams._
-import zio.{BootstrapRuntime, ULayer, stream}
+import zio.{BootstrapRuntime, stream}
 
 import scala.concurrent.Future
 
-final class QueriesApi(env: ULayer[QueriesApp])(implicit materializer: Materializer)
+final class QueriesApi(app: QueriesApplication)(implicit materializer: Materializer)
   extends ApiJsonCodec
     with ApiErrorMapping
     with BootstrapRuntime {
@@ -35,13 +34,13 @@ final class QueriesApi(env: ULayer[QueriesApp])(implicit materializer: Materiali
     queriesGetAllRoute
 
   lazy val queriesPostRoute: Route = ScalciteEndpoint.queriesPostEndpoint.toRoute {
-    query => buildScalciteResponse(QueriesService.create(query).map(_.asJson.noSpaces).provideLayer(env))}
+    query => buildScalciteResponse(app.create(query).map(_.asJson.noSpaces))}
 
   lazy val queriesGetRoute: Route = ScalciteEndpoint.queriesGetEndpoint.toRoute {
-    uuid => buildResponse(QueriesService.findByUUID(uuid).map(_.asJson.noSpaces).provideLayer(env))}
+    uuid => buildResponse(app.findByUUID(uuid).map(_.asJson.noSpaces))}
 
   lazy val queriesGetAllRoute: Route = ScalciteEndpoint.queriesGetAllEndpoint.toRoute {
-    _ => buildResponse(QueriesService.findAll().map(_.asJson.noSpaces).provideLayer(env))}
+    _ => buildResponse(app.findAll().map(_.asJson.noSpaces))}
 
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
@@ -86,5 +85,7 @@ final class QueriesApi(env: ULayer[QueriesApp])(implicit materializer: Materiali
 }
 
 object QueriesApi {
-  def apply(env: ULayer[QueriesApp])(implicit materializer: Materializer): QueriesApi = new QueriesApi(env)(materializer)
+
+  def apply(app: QueriesApplication)(implicit materializer: Materializer): QueriesApi = new QueriesApi(app)(materializer)
+
 }

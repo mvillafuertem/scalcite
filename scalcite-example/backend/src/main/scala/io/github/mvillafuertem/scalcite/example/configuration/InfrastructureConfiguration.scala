@@ -1,14 +1,10 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
 import io.github.mvillafuertem.scalcite.example.configuration.properties.{CalciteConfigurationProperties, H2ConfigurationProperties, ScalciteConfigurationProperties}
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.CalciteRepo
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ErrorsRepo
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.QueriesRepo
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import scalikejdbc.{ConnectionPool, ConnectionPoolSettings}
-import zio.{Has, ULayer, ZLayer}
+import zio._
 
-trait InfrastructureConfiguration {
+final class InfrastructureConfiguration() {
 
   ConnectionPool.add(Symbol(h2ConfigurationProperties.databaseName),
     h2ConfigurationProperties.url,
@@ -41,19 +37,25 @@ trait InfrastructureConfiguration {
 
   lazy val scalciteConfigurationProperties: ScalciteConfigurationProperties = ScalciteConfigurationProperties()
 
-  val scalciteConfigurationPropertiesLayer: ULayer[Has[ScalciteConfigurationProperties]] =
-    ZLayer.succeed(scalciteConfigurationProperties)
+}
 
-  val queriesRepositoryLayer: ULayer[QueriesRepo] =
-    ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
-      RelationalQueriesRepository.live
+object InfrastructureConfiguration {
 
-  val errorsRepositoryLayer: ULayer[ErrorsRepo] =
-    ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
-      RelationalErrorsRepository.live
+  def apply(): InfrastructureConfiguration =
+    new InfrastructureConfiguration()
 
-  val calciteRepositoryLayer: ULayer[CalciteRepo] =
-    ZLayer.succeed(calciteConfigurationProperties.databaseName) >>>
-    RelationalCalciteRepository.live
+  type ZInfrastructureConfiguration = Has[InfrastructureConfiguration]
+
+  val h2ConfigurationProperties: URIO[ZInfrastructureConfiguration, H2ConfigurationProperties] =
+    ZIO.access(_.get.h2ConfigurationProperties)
+
+  val calciteConfigurationProperties: URIO[ZInfrastructureConfiguration, CalciteConfigurationProperties] =
+    ZIO.access(_.get.calciteConfigurationProperties)
+
+  val scalciteConfigurationProperties: URIO[ZInfrastructureConfiguration, ScalciteConfigurationProperties] =
+    ZIO.access(_.get.scalciteConfigurationProperties)
+
+  val live: ULayer[ZInfrastructureConfiguration] =
+    ZLayer.succeed[InfrastructureConfiguration](InfrastructureConfiguration())
 
 }

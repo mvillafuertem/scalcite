@@ -2,7 +2,9 @@ package io.github.mvillafuertem.scalcite.example
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
-import io.github.mvillafuertem.scalcite.example.configuration.ScalciteServiceConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.ZAkkaConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.ApiConfiguration.ZApiConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.{AkkaConfiguration, ApiConfiguration, ApplicationConfiguration, InfrastructureConfiguration, ScalciteServiceConfiguration}
 import io.github.mvillafuertem.scalcite.example.configuration.properties.ScalciteConfigurationProperties
 import zio._
 import zio.clock.Clock
@@ -18,17 +20,12 @@ object ScalciteServiceApplication extends ScalciteServiceConfiguration with zio.
   private val loggingLayer: URLayer[Console with Clock, Logging] =
     Logging.console((_, logEntry) => logEntry)
 
-  val ScalciteEnv: ZLayer[Any, Throwable, Has[Materializer] with Has[Route] with Has[ActorSystem[_]] with Has[ScalciteConfigurationProperties]] =
-    materializerLayer ++
-      routeLayer ++
-      actorSystemLayer ++
-      scalciteConfigurationPropertiesLayer
-
-  val program: ZIO[Logging, Nothing, Int] =
+  private val program: ZIO[Logging, Nothing, Int] =
     (for {
-      _ <- httpServer
-    } yield 0)
-      .provideLayer(ScalciteEnv)
+      routes <- ApiConfiguration.route
+      _ <- AkkaConfiguration.httpServer(routes)
+    } yield ())
+      .provideLayer(ZScalciteEnv)
       .foldM(e => log.throwable("", e).as(1), _ => UIO.effectTotal(0))
 
   override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =

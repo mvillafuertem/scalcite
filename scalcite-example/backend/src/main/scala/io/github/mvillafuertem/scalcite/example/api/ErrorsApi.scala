@@ -8,7 +8,8 @@ import akka.util.ByteString
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMapping, ApiJsonCodec, ErrorsEndpoint}
 import io.github.mvillafuertem.scalcite.example.application.ErrorsService
-import io.github.mvillafuertem.scalcite.example.application.ErrorsService.ErrorsApp
+import io.github.mvillafuertem.scalcite.example.application.ErrorsService.ZErrorsApplication
+import io.github.mvillafuertem.scalcite.example.domain.ErrorsApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import sttp.tapir.server.akkahttp._
 import zio.interop.reactivestreams._
@@ -16,7 +17,7 @@ import zio.{BootstrapRuntime, ULayer, stream}
 
 import scala.concurrent.Future
 
-final class ErrorsApi(env: ULayer[ErrorsApp]) extends ApiJsonCodec
+final class ErrorsApi(app: ErrorsApplication) extends ApiJsonCodec
   with ApiErrorMapping
   with BootstrapRuntime {
 
@@ -25,10 +26,10 @@ final class ErrorsApi(env: ULayer[ErrorsApp]) extends ApiJsonCodec
       errorsGetAllRoute
 
   lazy val errorsGetRoute: Route = ErrorsEndpoint.errorsGetEndpoint.toRoute {
-    uuid => buildResponse(ErrorsService.findByUUID(uuid).map(_.asJson.noSpaces).provideLayer(env))}
+    uuid => buildResponse(app.findByUUID(uuid).map(_.asJson.noSpaces))}
 
   lazy val errorsGetAllRoute: Route = ErrorsEndpoint.errorsGetAllEndpoint.toRoute {
-    _ => buildResponse(ErrorsService.findAll().map(_.asJson.noSpaces).provideLayer(env))}
+    _ => buildResponse(app.findAll().map(_.asJson.noSpaces))}
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
     val value = unsafeRun(
@@ -46,5 +47,7 @@ final class ErrorsApi(env: ULayer[ErrorsApp]) extends ApiJsonCodec
 }
 
 object ErrorsApi {
-  def apply(env: ULayer[ErrorsApp]): ErrorsApi = new ErrorsApi(env)
+
+  def apply(app: ErrorsApplication): ErrorsApi = new ErrorsApi(app)
+
 }

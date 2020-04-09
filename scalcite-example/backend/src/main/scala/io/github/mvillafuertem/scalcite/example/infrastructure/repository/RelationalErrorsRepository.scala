@@ -74,6 +74,9 @@ private final class RelationalErrorsRepository(databaseName: String) extends Err
 
 object RelationalErrorsRepository {
 
+  def apply(databaseName: String): ErrorsRepository[ErrorDBO] =
+    new RelationalErrorsRepository(databaseName)
+
   type ErrorsRepo = Has[ErrorsRepository[ErrorDBO]]
 
   def findByUUID(uuid: UUID): stream.ZStream[ErrorsRepo, Throwable, ErrorDBO] =
@@ -93,5 +96,5 @@ object RelationalErrorsRepository {
 
   val live: ZLayer[Has[String], Nothing, ErrorsRepo] =
     ZLayer.fromService[String, ErrorsRepository[ErrorDBO]](
-      databaseName => new RelationalErrorsRepository(databaseName))
+      databaseName => RelationalErrorsRepository(databaseName))
 }

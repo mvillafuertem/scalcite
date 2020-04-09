@@ -1,7 +1,7 @@
 package io.github.mvillafuertem.scalcite.example.application
 
 import io.github.mvillafuertem.scalcite.example.BaseData
-import io.github.mvillafuertem.scalcite.example.application.QueriesService.QueriesApp
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
 import io.github.mvillafuertem.scalcite.example.application.QueriesServiceSpec.QueriesServiceConfigurationSpec
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
@@ -77,7 +77,7 @@ object QueriesServiceSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    val env: ULayer[QueriesApp] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+    val env: ULayer[ZQueriesApplication] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
       RelationalQueriesRepository.live >>>
       QueriesService.live
   }

@@ -12,7 +12,7 @@ import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.QueriesRepo
 import zio.{Has, URLayer, ZLayer, stream}
 
-private final class QueriesService(repository: QueriesRepository[QueryDBO]) extends QueriesApplication {
+final class QueriesService(repository: QueriesRepository[QueryDBO]) extends QueriesApplication {
   override def create(query: Query): stream.Stream[ScalciteError, Query] =
     (for {
       input <- stream.Stream(QueryDBO(query.uuid, query.value))
@@ -40,22 +40,24 @@ private final class QueriesService(repository: QueriesRepository[QueryDBO]) exte
 
 object QueriesService {
 
-  type QueriesApp = Has[QueriesApplication]
+  def apply(repository: QueriesRepository[QueryDBO]): QueriesService = new QueriesService(repository)
 
-  def create(query: Query): stream.ZStream[QueriesApp, ScalciteError, Query] =
+  type ZQueriesApplication = Has[QueriesApplication]
+
+  def create(query: Query): stream.ZStream[ZQueriesApplication, ScalciteError, Query] =
     stream.ZStream.accessStream(_.get.create(query))
 
-  def deleteByUUID(uuid: UUID): stream.ZStream[QueriesApp, Throwable, Int] =
+  def deleteByUUID(uuid: UUID): stream.ZStream[ZQueriesApplication, Throwable, Int] =
     stream.ZStream.accessStream(_.get.deleteByUUID(uuid))
 
-  def findAll(): stream.ZStream[QueriesApp, Throwable, Query] =
+  def findAll(): stream.ZStream[ZQueriesApplication, Throwable, Query] =
     stream.ZStream.accessStream(_.get.findAll())
 
-  def findByUUID(uuid: UUID): stream.ZStream[QueriesApp, Throwable, Query] =
+  def findByUUID(uuid: UUID): stream.ZStream[ZQueriesApplication, Throwable, Query] =
     stream.ZStream.accessStream(_.get.findByUUID(uuid))
 
-  val live: URLayer[QueriesRepo, QueriesApp] =
+  val live: URLayer[QueriesRepo, ZQueriesApplication] =
     ZLayer.fromService[QueriesRepository[QueryDBO], QueriesApplication](
-      repository => new QueriesService(repository))
+      repository => QueriesService(repository))
 
 }

@@ -2,21 +2,41 @@ package io.github.mvillafuertem.scalcite.example.configuration
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.stream.Materializer
 import io.github.mvillafuertem.scalcite.example.api._
-import zio.{Has, ZLayer}
+import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.ZAkkaConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.ApplicationConfiguration.ZApplicationConfiguration
+import zio._
 
-trait ApiConfiguration {
-  self: ApplicationConfiguration with AkkaConfiguration =>
+object ApiConfiguration {
 
-  lazy val routeLayer: ZLayer[Any, Throwable, Has[Route]] =
-    materializerLayer >>> ZLayer.fromService[Materializer, Route] ( implicit materializer => route)
+  def apply(applicationConfiguration: ApplicationConfiguration,
+            akkaConfiguration: AkkaConfiguration): ApiConfiguration =
+    new ApiConfiguration(applicationConfiguration, akkaConfiguration)
 
-  def route(implicit materializer: Materializer): Route =
-    SwaggerApi.route ~
-    ActuatorApi.route ~
-    ErrorsApi(errorsApplicationLayer).route ~
-    QueriesApi(queriesApplicationLayer).route ~
-    ScalciteSimulateApi(scalciteApplicationLayer).route
+  type ZApiConfiguration = Has[ApiConfiguration]
+
+  val route: RIO[ZApiConfiguration, Route] =
+    ZIO.accessM(_.get.route)
+
+  val live: ZLayer[ZApplicationConfiguration with ZAkkaConfiguration, Throwable, ZApiConfiguration] =
+    ZLayer.fromServices[ApplicationConfiguration, AkkaConfiguration, ApiConfiguration](
+      (applicationConfiguration, akkaConfiguration) => ApiConfiguration(applicationConfiguration, akkaConfiguration)
+    )
+
+}
+
+final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration, akkaConfiguration: AkkaConfiguration) {
+
+  val route: Task[Route] =
+    for {
+      materializer <- akkaConfiguration.materializer
+      routes <- Task {
+        SwaggerApi.route ~
+        ActuatorApi.route ~
+        ErrorsApi(applicationConfiguration.errorsApplication).route ~
+        QueriesApi(applicationConfiguration.queriesApplication)(materializer).route ~
+        ScalciteSimulateApi(applicationConfiguration.scalciteApplication).route
+      }
+    } yield routes
 
 }
