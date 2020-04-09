@@ -42,7 +42,7 @@ private final class RelationalErrorsRepository(databaseName: String) extends Err
     sql"SELECT * FROM ERRORS"
 
   private def queryCreate(queryDBO: ErrorDBO): SQL[Nothing, NoExtractor] =
-    sql"INSERT INTO ERRORS(UUID, VALUE) VALUES (${queryDBO.uuid}, ${queryDBO.code})"
+    sql"INSERT INTO ERRORS(UUID, VALUE, DATE) VALUES (${queryDBO.uuid}, ${queryDBO.code}, ${queryDBO.timestamp})"
 
   private def queryDeleteByUUID(uuid: UUID): SQL[Nothing, NoExtractor] =
     sql"DELETE FROM ERRORS WHERE UUID = $uuid"

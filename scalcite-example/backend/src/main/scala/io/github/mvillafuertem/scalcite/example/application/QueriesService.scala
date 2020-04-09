@@ -29,7 +29,7 @@ final class QueriesService(repository: QueriesRepository[QueryDBO],
         case _ => Unknown()
       }
     }.catchAll(error =>
-      errorsRepository.insert(ErrorDBO(error.uuid, error.code))
+      errorsRepository.insert(ErrorDBO(error.uuid, error.code, error.timestamp))
         .mapError{case e: SQLException => Unknown(e.getMessage)} *>
         ZStream.fail(error)
     )
