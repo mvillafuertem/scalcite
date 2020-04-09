@@ -14,9 +14,7 @@ import io.github.mvillafuertem.scalcite.example.api.behavior.{QueriesApiBehavior
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
 import io.github.mvillafuertem.scalcite.example.application.{QueriesService, ScalcitePerformer}
 import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
-import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import org.scalatest.Succeeded
 
 import scala.concurrent.ExecutionContext
@@ -27,10 +25,12 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
   with ScalciteSimulateApiBehaviorSpec
   with QueriesApiBehaviorSpec {
 
-  override implicit val timeout = RouteTestTimeout(10.seconds.dilated)
+  override implicit val timeout: RouteTestTimeout = RouteTestTimeout(10.seconds.dilated)
 
-  val scalciteApi: QueriesApi = QueriesApi(service)(Materializer(system))
-  val scalciteSimulateApi: ScalciteSimulateApi = ScalciteSimulateApi(scalcitePerformer)(Materializer(system))
+  val scalciteApi: QueriesApi =
+    QueriesApi(QueriesService(
+      RelationalQueriesRepository(h2ConfigurationProperties.databaseName),
+      RelationalErrorsRepository(h2ConfigurationProperties.databaseName)))(Materializer(system))
 
   behavior of "Scalcite Simulate Api"
 
@@ -50,7 +50,7 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
       "{}",
       StatusCodes.OK,
       "[]",
-      scalciteSimulateApi
+      ScalciteSimulateApi(env)
     )
 
   }
@@ -83,7 +83,7 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
     // w h e n
     Post(s"/api/v1.0/queries/simulate?uuid=$uuid1&uuid=$uuid2&uuid=$uuid3")
       .withEntity(ScalciteEndpoint.simulateInExample.noSpaces) ~>
-      addHeader(`Content-Type`(`application/json`)) ~> scalciteSimulateApi.queriesSimulateRoute ~>
+      addHeader(`Content-Type`(`application/json`)) ~> ScalciteSimulateApi(env).route ~>
       check {
 
         // t h e n
@@ -107,10 +107,19 @@ object ScalciteSimulateApiSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    private val repository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
-    private val calcite: CalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
-    val service: QueriesApplication = QueriesService(repository)
-    val scalcitePerformer: ScalciteApplication = ScalcitePerformer(calcite, service)
+    val queriesApplication: QueriesApplication =
+      QueriesService(
+        RelationalQueriesRepository(h2ConfigurationProperties.databaseName),
+        RelationalErrorsRepository(h2ConfigurationProperties.databaseName))
+
+
+    val env: ScalciteApplication = ScalcitePerformer(
+      queriesApplication,
+      RelationalCalciteRepository(calciteConfigurationProperties.databaseName),
+      RelationalErrorsRepository(calciteConfigurationProperties.databaseName)
+    )
+
+
   }
 
 }

@@ -9,17 +9,17 @@ import io.github.mvillafuertem.scalcite.example.api.QueriesApiSpec.QueriesApiCon
 import io.github.mvillafuertem.scalcite.example.api.behavior.QueriesApiBehaviorSpec
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
 import io.github.mvillafuertem.scalcite.example.application.QueriesService
-import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication
-import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalErrorsRepository, RelationalQueriesRepository}
 import org.scalatest.Succeeded
 
 import scala.concurrent.ExecutionContext
 
 final class QueriesApiSpec extends QueriesApiConfigurationSpec with QueriesApiBehaviorSpec {
 
-  val scalciteApi: QueriesApi = QueriesApi(service)(Materializer(system))
+  val scalciteApi: QueriesApi =
+    QueriesApi(QueriesService(
+      RelationalQueriesRepository(h2ConfigurationProperties.databaseName),
+      RelationalErrorsRepository(h2ConfigurationProperties.databaseName)))(Materializer(system))
 
   behavior of "Scalcite Api"
 
@@ -57,9 +57,6 @@ object QueriesApiSpec {
   trait QueriesApiConfigurationSpec extends BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
-
-    private val repository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
-    val service: QueriesApplication = QueriesService(repository)
 
   }
 }

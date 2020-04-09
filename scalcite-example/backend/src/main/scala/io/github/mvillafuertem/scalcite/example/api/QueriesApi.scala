@@ -18,7 +18,7 @@ import zio.{BootstrapRuntime, stream}
 
 import scala.concurrent.Future
 
-final class QueriesApi(queriesApplication: QueriesApplication)(implicit materializer: Materializer)
+final class QueriesApi(app: QueriesApplication)(implicit materializer: Materializer)
   extends ApiJsonCodec
     with ApiErrorMapping
     with BootstrapRuntime {
@@ -34,13 +34,13 @@ final class QueriesApi(queriesApplication: QueriesApplication)(implicit material
     queriesGetAllRoute
 
   lazy val queriesPostRoute: Route = ScalciteEndpoint.queriesPostEndpoint.toRoute {
-    query => buildScalciteResponse(queriesApplication.create(query).map(_.asJson.noSpaces))}
+    query => buildScalciteResponse(app.create(query).map(_.asJson.noSpaces))}
 
   lazy val queriesGetRoute: Route = ScalciteEndpoint.queriesGetEndpoint.toRoute {
-    uuid => buildResponse(queriesApplication.findByUUID(uuid).map(_.asJson.noSpaces))}
+    uuid => buildResponse(app.findByUUID(uuid).map(_.asJson.noSpaces))}
 
   lazy val queriesGetAllRoute: Route = ScalciteEndpoint.queriesGetAllEndpoint.toRoute {
-    _ => buildResponse(queriesApplication.findAll().map(_.asJson.noSpaces))}
+    _ => buildResponse(app.findAll().map(_.asJson.noSpaces))}
 
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
@@ -85,5 +85,7 @@ final class QueriesApi(queriesApplication: QueriesApplication)(implicit material
 }
 
 object QueriesApi {
-  def apply(queriesApplication: QueriesApplication)(implicit materializer: Materializer): QueriesApi = new QueriesApi(queriesApplication)(materializer)
+
+  def apply(app: QueriesApplication)(implicit materializer: Materializer): QueriesApi = new QueriesApi(app)(materializer)
+
 }

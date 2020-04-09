@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 trait ScalciteSimulateApiBehaviorSpec extends ScalatestRouteTest with Matchers {
   this: Suite =>
 
-  implicit val timeout = RouteTestTimeout(5.seconds.dilated)
+  implicit val timeout: RouteTestTimeout = RouteTestTimeout(5.seconds.dilated)
 
   def postQueriesSimulate(entity: String, expectedStatus: StatusCode, expectedEntity: String, api: => ScalciteSimulateApi): Assertion =
     Post(s"/api/v1.0/queries/simulate")

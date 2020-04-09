@@ -29,7 +29,8 @@ trait ApiJsonCodec {
   implicit def encodeScalciteError[A <: ScalciteError]: Encoder[A] =
     (e: A) => Json.obj( ("error", Json.obj(
       ("uuid", Json.fromString(e.uuid.toString)),
-      ("code", Json.fromString(e.code))
+      ("code", Json.fromString(e.code)),
+      ("timestamp", Json.fromString(e.timestamp.toString))
     )))
 
   implicit def decodeScalciteError[A <: ScalciteError]: Decoder[A] = (c: HCursor) => for {

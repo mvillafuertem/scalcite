@@ -2,7 +2,9 @@ package io.github.mvillafuertem.scalcite.example.infrastructure.repository
 
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.ZQueriesRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepositorySpec.RelationalQueriesRepositoryConfigurationSpec
+import zio.{ULayer, ZLayer}
 
 import scala.concurrent.ExecutionContext
 
@@ -18,10 +20,12 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
     // w h e n
     val actual: Option[QueryDBO] = unsafeRun(
       (for {
-        id <- repository.insert(queryDBO1)
-        dbo <- repository.findById(id)
-      } yield dbo).runHead
-    )
+        id <- RelationalQueriesRepository.insert(queryDBO1)
+        dbo <- RelationalQueriesRepository.findById(id)
+      } yield dbo)
+        .runHead
+        .provideLayer(env))
+
     // t h e n
     actual shouldBe Some(queryDBO1Expected)
 
@@ -35,9 +39,11 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
     // w h e n
     val actual: Option[QueryDBO] = unsafeRun(
       (for {
-        _ <- repository.insert(queryDBO1)
-        dbo <- repository.findByUUID(uuid1)
-      } yield dbo).runHead)
+        _ <- RelationalQueriesRepository.insert(queryDBO1)
+        dbo <- RelationalQueriesRepository.findByUUID(uuid1)
+      } yield dbo)
+        .runHead
+        .provideLayer(env))
 
     // t h e n
     actual shouldBe Some(queryDBO1Expected)
@@ -50,7 +56,9 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
     // see trait
 
     // w h e n
-    val actual: Option[Long] = unsafeRun(repository.insert(queryDBO1).runHead)
+    val actual: Option[Long] = unsafeRun(RelationalQueriesRepository.insert(queryDBO1)
+      .runHead
+      .provideLayer(env))
 
     // t h e n
     actual shouldBe Some(1)
@@ -63,7 +71,9 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
     // see trait
 
     // w h e n
-    val actual: Seq[Long] = unsafeRun((repository.insert(queryDBO1) ++ repository.insert(queryDBO2)).runCollect)
+    val actual: Seq[Long] = unsafeRun((RelationalQueriesRepository.insert(queryDBO1) ++ RelationalQueriesRepository.insert(queryDBO2))
+      .runCollect
+      .provideLayer(env))
 
     // t h e n
     actual should have size 2
@@ -77,9 +87,11 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
 
     // w h e n
     val actual: Seq[Int] = unsafeRun(
-      (repository.insert(queryDBO1) *>
-        repository.insert(queryDBO2) *>
-        repository.deleteByUUID(uuid1)).runCollect)
+      (RelationalQueriesRepository.insert(queryDBO1) *>
+        RelationalQueriesRepository.insert(queryDBO2) *>
+        RelationalQueriesRepository.deleteByUUID(uuid1))
+        .runCollect
+        .provideLayer(env))
 
     // t h e n
     actual should have size 1
@@ -94,10 +106,12 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
     // w h e n
     val actual: Seq[QueryDBO] = unsafeRun(
       (for {
-        _ <- repository.insert(queryDBO1)
-        _ <- repository.insert(queryDBO2)
-        dbos <- repository.findAll()
-      } yield dbos).runCollect)
+        _ <- RelationalQueriesRepository.insert(queryDBO1)
+        _ <- RelationalQueriesRepository.insert(queryDBO2)
+        dbos <- RelationalQueriesRepository.findAll()
+      } yield dbos)
+        .runCollect
+        .provideLayer(env))
 
     // t h e n
     actual should have size 2
@@ -111,7 +125,9 @@ object RelationalQueriesRepositorySpec {
   trait RelationalQueriesRepositoryConfigurationSpec extends BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
-    val repository = new RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
+
+    val env: ULayer[ZQueriesRepository] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+      RelationalQueriesRepository.live
 
   }
 

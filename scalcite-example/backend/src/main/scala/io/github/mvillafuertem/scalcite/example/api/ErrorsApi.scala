@@ -3,7 +3,6 @@ package io.github.mvillafuertem.scalcite.example.api
 import akka.NotUsed
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.stream.Materializer
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import io.circe.syntax._
@@ -16,20 +15,19 @@ import zio.{BootstrapRuntime, stream}
 
 import scala.concurrent.Future
 
-final class ErrorsApi(errorsApplication: ErrorsApplication)(implicit materializer: Materializer)
-  extends ApiJsonCodec
-    with ApiErrorMapping
-    with BootstrapRuntime {
+final class ErrorsApi(app: ErrorsApplication) extends ApiJsonCodec
+  with ApiErrorMapping
+  with BootstrapRuntime {
 
   val route: Route =
       errorsGetRoute ~
       errorsGetAllRoute
 
   lazy val errorsGetRoute: Route = ErrorsEndpoint.errorsGetEndpoint.toRoute {
-    uuid => buildResponse(errorsApplication.findByUUID(uuid).map(_.asJson.noSpaces))}
+    uuid => buildResponse(app.findByUUID(uuid).map(_.asJson.noSpaces))}
 
   lazy val errorsGetAllRoute: Route = ErrorsEndpoint.errorsGetAllEndpoint.toRoute {
-    _ => buildResponse(errorsApplication.findAll().map(_.asJson.noSpaces))}
+    _ => buildResponse(app.findAll().map(_.asJson.noSpaces))}
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
     val value = unsafeRun(
@@ -47,5 +45,7 @@ final class ErrorsApi(errorsApplication: ErrorsApplication)(implicit materialize
 }
 
 object ErrorsApi {
-  def apply(errorsApplication: ErrorsApplication)(implicit materializer: Materializer): ErrorsApi = new ErrorsApi(errorsApplication)(materializer)
+
+  def apply(app: ErrorsApplication): ErrorsApi = new ErrorsApi(app)
+
 }

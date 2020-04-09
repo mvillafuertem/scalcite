@@ -6,7 +6,6 @@ import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.DuplicatedEntity
 import sttp.model.StatusCode
 import sttp.tapir.{EndpointOutput, _}
-import sttp.tapir.json.circe._
 
 trait ApiErrorMapping extends ApiJsonCodec {
 
@@ -18,17 +17,17 @@ trait ApiErrorMapping extends ApiJsonCodec {
   // C O N F L I C T
   private lazy val conflictDescription = model.StatusCodes.Conflict.defaultMessage
   private[api] lazy val statusConflict: EndpointOutput.StatusMapping[error.ScalciteError.DuplicatedEntity] =
-    statusMapping(StatusCode.Conflict, jsonBody[error.ScalciteError.DuplicatedEntity].example(DuplicatedEntity()).description(conflictDescription))
+    statusMapping(StatusCode.Conflict, anyJsonBody[error.ScalciteError.DuplicatedEntity].example(DuplicatedEntity()).description(conflictDescription))
 
   // D E F A U L T
   private lazy val defaultDescription = "Unknown Error"
   private[api] lazy val statusDefault: EndpointOutput.StatusMapping[ScalciteError] =
-    statusDefaultMapping(jsonBody[ScalciteError].example(error.ScalciteError.Unknown()).description(defaultDescription))
+    statusDefaultMapping(anyJsonBody[ScalciteError].example(error.ScalciteError.Unknown()).description(defaultDescription))
 
   // I N T E R N A L  S E R V E R  E R R O R
   private lazy val internalServerErrorDescription = model.StatusCodes.InternalServerError.defaultMessage
   private[api] lazy val statusInternalServerError: EndpointOutput.StatusMapping[error.ScalciteError.Unknown] =
-    statusMapping(StatusCode.InternalServerError, jsonBody[error.ScalciteError.Unknown].example(error.ScalciteError.Unknown()).description(internalServerErrorDescription))
+    statusMapping(StatusCode.InternalServerError, anyJsonBody[error.ScalciteError.Unknown].example(error.ScalciteError.Unknown()).description(internalServerErrorDescription))
 
   // N O T  F O U N D
 //  private lazy val notFoundDescription = model.StatusCodes.NotFound.defaultMessage

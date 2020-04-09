@@ -8,16 +8,14 @@ import scalikejdbc._
 import scalikejdbc.streams._
 import zio.interop.reactivestreams._
 import zio.stream.ZStream
-import zio.{Task, stream}
+import zio.{Has, Task, ZLayer, stream}
 
 import scala.concurrent.ExecutionContext
 
 /**
  * @author Miguel Villafuerte
  */
-final class RelationalQueriesRepository(databaseName: String)(
-    implicit executionContext: ExecutionContext
-) extends QueriesRepository[QueryDBO] {
+private final class RelationalQueriesRepository(databaseName: String) extends QueriesRepository[QueryDBO] {
 
   implicit def executeOperation(sqlUpdateWithGeneratedKey: SQLUpdateWithGeneratedKey): stream.Stream[Throwable, Long] =
     ZStream.fromEffect(
@@ -31,7 +29,7 @@ final class RelationalQueriesRepository(databaseName: String)(
         NamedDB(Symbol(databaseName)).autoCommit{implicit session => sqlUpdate.apply()})
     )
 
-  implicit def executeStreamOperation[T](streamReadySQL: StreamReadySQL[T]): stream.Stream[Throwable, T] =
+  implicit def executeStreamOperation[T](streamReadySQL: StreamReadySQL[T])(implicit executionContext: ExecutionContext): stream.Stream[Throwable, T] =
     (NamedDB(Symbol(databaseName)) readOnlyStream streamReadySQL).toStream()
 
   implicit def executeSQLOperation[T](sql: SQL[T, HasExtractor]): stream.Stream[Throwable, T] =
@@ -52,29 +50,54 @@ final class RelationalQueriesRepository(databaseName: String)(
   private def queryDeleteByUUID(uuid: UUID): SQL[Nothing, NoExtractor] =
     sql"DELETE FROM QUERIES WHERE UUID = $uuid"
 
+  override def insert(dbo: QueryDBO): stream.Stream[Throwable, Long] =
+    queryCreate(dbo).updateAndReturnGeneratedKey()
 
-  override def findByUUID(uuid: UUID): stream.Stream[Throwable, QueryDBO] =
-    queryFindByUUID(uuid)
-      .map(rs => QueryDBO(rs))
-      //.iterator()
-
-  override def findAll(): stream.Stream[Throwable, QueryDBO] =
-    queryFindAll
-      .map(rs => QueryDBO(rs))
-      //.iterator()
+  override def deleteByUUID(uuid: UUID): stream.Stream[Throwable, Int] =
+    queryDeleteByUUID(uuid).update()
 
   override def findById(id: Long): stream.Stream[Throwable, QueryDBO] =
     queryFindById(id)
       .map(rs => QueryDBO(rs))
-      //.iterator()
+  // https://github.com/scalikejdbc/scalikejdbc/issues/1050
+  //.iterator()
+  override def findByUUID(uuid: UUID): stream.Stream[Throwable, QueryDBO] =
+    queryFindByUUID(uuid)
+      .map(rs => QueryDBO(rs))
+  // https://github.com/scalikejdbc/scalikejdbc/issues/1050
+  //.iterator()
 
-  override def insert(query: QueryDBO): stream.Stream[Throwable, Long] =
-    queryCreate(query).updateAndReturnGeneratedKey()
+  override def findAll(): stream.Stream[Throwable, QueryDBO] =
+    queryFindAll
+      .map(rs => QueryDBO(rs))
+  // https://github.com/scalikejdbc/scalikejdbc/issues/1050
+  //.iterator()
 
-  override def deleteByUUID(uuid: UUID): stream.Stream[Throwable, Int] =
-    queryDeleteByUUID(uuid).update()
 }
-
 object RelationalQueriesRepository {
-  def apply(databaseName: String)(implicit executionContext: ExecutionContext): RelationalQueriesRepository = new RelationalQueriesRepository(databaseName)(executionContext)
+
+  def apply(databaseName: String): QueriesRepository[QueryDBO] =
+    new RelationalQueriesRepository(databaseName)
+
+  type ZQueriesRepository = Has[QueriesRepository[QueryDBO]]
+
+  def findByUUID(uuid: UUID): stream.ZStream[ZQueriesRepository, Throwable, QueryDBO] =
+    stream.ZStream.accessStream(_.get.findByUUID(uuid))
+
+  def findAll(): stream.ZStream[ZQueriesRepository, Throwable, QueryDBO] =
+    stream.ZStream.accessStream(_.get.findAll())
+
+  def findById(id: Long): stream.ZStream[ZQueriesRepository, Throwable, QueryDBO] =
+    stream.ZStream.accessStream(_.get.findById(id))
+
+  def insert(query: QueryDBO): stream.ZStream[ZQueriesRepository, Throwable, Long] =
+    stream.ZStream.accessStream(_.get.insert(query))
+
+  def deleteByUUID(uuid: UUID): stream.ZStream[ZQueriesRepository,Throwable, Int] =
+    stream.ZStream.accessStream(_.get.deleteByUUID(uuid))
+
+  val live: ZLayer[Has[String], Nothing, ZQueriesRepository] =
+    ZLayer.fromService[String, QueriesRepository[QueryDBO]](
+      databaseName => RelationalQueriesRepository(databaseName))
+
 }

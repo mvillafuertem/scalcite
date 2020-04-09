@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 trait QueriesApiBehaviorSpec extends ScalatestRouteTest with Matchers {
   this: Suite =>
 
-  implicit val timeout = RouteTestTimeout(5.seconds.dilated)
+  implicit val timeout: RouteTestTimeout = RouteTestTimeout(5.seconds.dilated)
 
   def postQueries(entity: String, expectedStatus: StatusCode, expectedEntity: String, api: => QueriesApi): Assertion =
     Post(s"/api/v1.0/queries")

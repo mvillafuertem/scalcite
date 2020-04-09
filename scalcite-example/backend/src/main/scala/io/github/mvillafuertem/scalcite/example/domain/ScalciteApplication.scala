@@ -3,8 +3,6 @@ package io.github.mvillafuertem.scalcite.example.domain
 import java.util.UUID
 
 import io.circe.Json
-import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
-import io.github.mvillafuertem.scalcite.example.domain.model.Query
 import zio.stream
 
 /**

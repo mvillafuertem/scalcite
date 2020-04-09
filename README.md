@@ -13,11 +13,32 @@ See ScalciteApplication.scala
 ****
 
 
+
+## Scalcite Example
+
+
+### Backend
+
 ```bash
 
-./scalcite-example/backend/sqlline
 
-!connect jdbc:calcite:model=scalcite-example-backend/target/scala-2.13/test-classes/model.json admin admin
+sbt scalcite-example-backend/run
+
+http://0.0.0.0:8080/api/v1.0/docs
+
+
+```
+
+
+### Console
+
+```bash
+
+sbt clean compile
+
+./scalcite-example/console/sqlline
+
+!connect jdbc:calcite:model=scalcite-example/console/target/scala-2.13/classes/model.json admin admin
 
 !tables
 

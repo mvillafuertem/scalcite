@@ -2,11 +2,14 @@ package io.github.mvillafuertem.scalcite.example.application
 
 import io.circe.Json
 import io.github.mvillafuertem.scalcite.example.BaseData
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
+import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformer.ZScalciteApplication
 import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformerSpec.ScalcitePerformerConfigurationSpec
-import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, QueriesRepository}
-import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalQueriesRepository}
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.ZCalciteRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ZErrorsRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.ZQueriesRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
+import zio.{ULayer, ZLayer}
 
 import scala.concurrent.ExecutionContext
 
@@ -22,9 +25,12 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     // w h e n
     val actual: Option[Json] = unsafeRun(
       (for {
-        _ <- service.create(queryBoolean)
-        effect <- scalcitePerformer.performJson(json, uuid2)
-      } yield effect).runHead
+        _ <- QueriesService.create(queryBoolean)
+        effect <- ScalcitePerformer.performJson(json, uuid2)
+      } yield effect)
+        .runHead
+        .provideLayer(env)
+
     )
 
     // t h e n
@@ -40,9 +46,11 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     // w h e n
     val actual: Option[collection.Map[String, Any]] = unsafeRun(
       (for {
-        _ <- service.create(queryBoolean)
-        effect <- scalcitePerformer.performMap(map, uuid2)
-      } yield effect).runHead
+        _ <- QueriesService.create(queryBoolean)
+        effect <- ScalcitePerformer.performMap(map, uuid2)
+      } yield effect)
+        .runHead
+        .provideLayer(env)
     )
 
     // t h e n
@@ -58,11 +66,28 @@ object ScalcitePerformerSpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    private val repository: QueriesRepository[QueryDBO] = RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
-    private val calcite: CalciteRepository = RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
+    private val queriesRepositoryLayer: ZLayer[Any, Nothing, ZQueriesRepository] =
+      ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+        RelationalQueriesRepository.live
 
-    val service: QueriesApplication = QueriesService(repository)
-    val scalcitePerformer: ScalciteApplication = ScalcitePerformer(calcite, service)
+    private val errorsRepositoryLayer: ZLayer[Any, Nothing, ZErrorsRepository] =
+      ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+        RelationalErrorsRepository.live
+
+    private val queriesApplicationLayer: ULayer[ZQueriesApplication] =
+      (queriesRepositoryLayer ++ errorsRepositoryLayer) >>>
+        QueriesService.live
+
+    private val calciteRepositoryLayer: ULayer[ZCalciteRepository] =
+      ZLayer.succeed(calciteConfigurationProperties.databaseName) >>>
+        RelationalCalciteRepository.live
+
+    val env: ULayer[ZScalciteApplication with ZQueriesApplication] =
+      queriesApplicationLayer ++
+        errorsRepositoryLayer ++
+        calciteRepositoryLayer >>>
+      ScalcitePerformer.live ++ queriesApplicationLayer
+
   }
 
 }
