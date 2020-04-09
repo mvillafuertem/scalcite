@@ -2,7 +2,7 @@ package io.github.mvillafuertem.scalcite.example.infrastructure.repository
 
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.QueriesRepo
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.ZQueriesRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepositorySpec.RelationalQueriesRepositoryConfigurationSpec
 import zio.{ULayer, ZLayer}
 
@@ -126,7 +126,7 @@ object RelationalQueriesRepositorySpec {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
-    val env: ULayer[QueriesRepo] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
+    val env: ULayer[ZQueriesRepository] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
       RelationalQueriesRepository.live
 
   }

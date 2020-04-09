@@ -4,7 +4,7 @@ import java.util.UUID
 
 import scalikejdbc._
 
-case class ErrorDBO(uuid: UUID, value: String, id: Option[Long] = None)
+case class ErrorDBO(uuid: UUID, code: String, id: Option[Long] = None)
 
 object ErrorDBO extends SQLSyntaxSupport[ErrorDBO] {
 

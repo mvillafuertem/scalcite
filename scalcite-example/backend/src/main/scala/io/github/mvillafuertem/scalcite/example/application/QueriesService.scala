@@ -7,12 +7,15 @@ import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.{DuplicatedEntity, Unknown}
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
-import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.QueriesRepo
+import io.github.mvillafuertem.scalcite.example.domain.repository.{ErrorsRepository, QueriesRepository}
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.{ErrorDBO, QueryDBO}
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ZErrorsRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.ZQueriesRepository
+import zio.stream.ZStream
 import zio.{Has, URLayer, ZLayer, stream}
 
-final class QueriesService(repository: QueriesRepository[QueryDBO]) extends QueriesApplication {
+final class QueriesService(repository: QueriesRepository[QueryDBO],
+                           errorsRepository: ErrorsRepository[ErrorDBO]) extends QueriesApplication {
   override def create(query: Query): stream.Stream[ScalciteError, Query] =
     (for {
       input <- stream.Stream(QueryDBO(query.uuid, query.value))
@@ -25,7 +28,11 @@ final class QueriesService(repository: QueriesRepository[QueryDBO]) extends Quer
         case "23505" => DuplicatedEntity()
         case _ => Unknown()
       }
-    }
+    }.catchAll(error =>
+      errorsRepository.insert(ErrorDBO(error.uuid, error.code))
+        .mapError{case e: SQLException => Unknown(e.getMessage)} *>
+        ZStream.fail(error)
+    )
 
   override def deleteByUUID(uuid: UUID): stream.Stream[Throwable, Int] =
     repository.deleteByUUID(uuid)
@@ -40,7 +47,8 @@ final class QueriesService(repository: QueriesRepository[QueryDBO]) extends Quer
 
 object QueriesService {
 
-  def apply(repository: QueriesRepository[QueryDBO]): QueriesService = new QueriesService(repository)
+  def apply(repository: QueriesRepository[QueryDBO], errorsRepository: ErrorsRepository[ErrorDBO]): QueriesService =
+    new QueriesService(repository, errorsRepository)
 
   type ZQueriesApplication = Has[QueriesApplication]
 
@@ -56,8 +64,8 @@ object QueriesService {
   def findByUUID(uuid: UUID): stream.ZStream[ZQueriesApplication, Throwable, Query] =
     stream.ZStream.accessStream(_.get.findByUUID(uuid))
 
-  val live: URLayer[QueriesRepo, ZQueriesApplication] =
-    ZLayer.fromService[QueriesRepository[QueryDBO], QueriesApplication](
-      repository => QueriesService(repository))
+  val live: URLayer[ZQueriesRepository with ZErrorsRepository, ZQueriesApplication] =
+    ZLayer.fromServices[QueriesRepository[QueryDBO], ErrorsRepository[ErrorDBO], QueriesApplication](
+      (repository, errorsRepository )=> QueriesService(repository, errorsRepository))
 
 }

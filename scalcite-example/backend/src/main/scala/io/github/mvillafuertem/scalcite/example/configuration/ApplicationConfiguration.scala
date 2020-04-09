@@ -9,7 +9,7 @@ import zio.{Has, URIO, ZIO, ZLayer}
 final class ApplicationConfiguration(infrastructureConfiguration: InfrastructureConfiguration) {
 
   val queriesApplication: QueriesApplication =
-    QueriesService(infrastructureConfiguration.queriesRepository)
+    QueriesService(infrastructureConfiguration.queriesRepository, infrastructureConfiguration.errorsRepository)
 
   val errorsApplication: ErrorsApplication =
     ErrorsService(infrastructureConfiguration.errorsRepository)

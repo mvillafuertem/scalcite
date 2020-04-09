@@ -10,7 +10,7 @@ import io.github.mvillafuertem.scalcite.example.api.behavior.QueriesApiBehaviorS
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
 import io.github.mvillafuertem.scalcite.example.application.QueriesService
 import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalErrorsRepository, RelationalQueriesRepository}
 import org.scalatest.Succeeded
 import zio.{ULayer, ZLayer}
 
@@ -18,7 +18,10 @@ import scala.concurrent.ExecutionContext
 
 final class QueriesApiSpec extends QueriesApiConfigurationSpec with QueriesApiBehaviorSpec {
 
-  val scalciteApi: QueriesApi = QueriesApi(QueriesService(RelationalQueriesRepository(h2ConfigurationProperties.databaseName)))(Materializer(system))
+  val scalciteApi: QueriesApi =
+    QueriesApi(QueriesService(
+      RelationalQueriesRepository(h2ConfigurationProperties.databaseName),
+      RelationalErrorsRepository(h2ConfigurationProperties.databaseName)))(Materializer(system))
 
   behavior of "Scalcite Api"
 
@@ -56,10 +59,6 @@ object QueriesApiSpec {
   trait QueriesApiConfigurationSpec extends BaseData {
 
     private implicit val executionContext: ExecutionContext = platform.executor.asEC
-    val queriesApplicationLayer: ULayer[ZQueriesApplication] =
-      ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
-        RelationalQueriesRepository.live >>>
-        QueriesService.live
 
   }
 }

@@ -42,7 +42,7 @@ private final class RelationalErrorsRepository(databaseName: String) extends Err
     sql"SELECT * FROM ERRORS"
 
   private def queryCreate(queryDBO: ErrorDBO): SQL[Nothing, NoExtractor] =
-    sql"INSERT INTO ERRORS(UUID, VALUE) VALUES (${queryDBO.uuid}, ${queryDBO.value})"
+    sql"INSERT INTO ERRORS(UUID, VALUE) VALUES (${queryDBO.uuid}, ${queryDBO.code})"
 
   private def queryDeleteByUUID(uuid: UUID): SQL[Nothing, NoExtractor] =
     sql"DELETE FROM ERRORS WHERE UUID = $uuid"
@@ -77,24 +77,24 @@ object RelationalErrorsRepository {
   def apply(databaseName: String): ErrorsRepository[ErrorDBO] =
     new RelationalErrorsRepository(databaseName)
 
-  type ErrorsRepo = Has[ErrorsRepository[ErrorDBO]]
+  type ZErrorsRepository = Has[ErrorsRepository[ErrorDBO]]
 
-  def findByUUID(uuid: UUID): stream.ZStream[ErrorsRepo, Throwable, ErrorDBO] =
+  def findByUUID(uuid: UUID): stream.ZStream[ZErrorsRepository, Throwable, ErrorDBO] =
     stream.ZStream.accessStream(_.get.findByUUID(uuid))
 
-  def findAll(): stream.ZStream[ErrorsRepo, Throwable, ErrorDBO] =
+  def findAll(): stream.ZStream[ZErrorsRepository, Throwable, ErrorDBO] =
     stream.ZStream.accessStream(_.get.findAll())
 
-  def findById(id: Long): stream.ZStream[ErrorsRepo, Throwable, ErrorDBO] =
+  def findById(id: Long): stream.ZStream[ZErrorsRepository, Throwable, ErrorDBO] =
     stream.ZStream.accessStream(_.get.findById(id))
 
-  def insert(query: ErrorDBO): stream.ZStream[ErrorsRepo, Throwable, Long] =
+  def insert(query: ErrorDBO): stream.ZStream[ZErrorsRepository, Throwable, Long] =
     stream.ZStream.accessStream(_.get.insert(query))
 
-  def deleteByUUID(uuid: UUID): stream.ZStream[ErrorsRepo,Throwable, Int] =
+  def deleteByUUID(uuid: UUID): stream.ZStream[ZErrorsRepository,Throwable, Int] =
     stream.ZStream.accessStream(_.get.deleteByUUID(uuid))
 
-  val live: ZLayer[Has[String], Nothing, ErrorsRepo] =
+  val live: ZLayer[Has[String], Nothing, ZErrorsRepository] =
     ZLayer.fromService[String, ErrorsRepository[ErrorDBO]](
       databaseName => RelationalErrorsRepository(databaseName))
 }

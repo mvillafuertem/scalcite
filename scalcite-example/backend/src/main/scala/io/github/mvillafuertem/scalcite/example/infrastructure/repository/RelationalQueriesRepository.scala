@@ -79,24 +79,24 @@ object RelationalQueriesRepository {
   def apply(databaseName: String): QueriesRepository[QueryDBO] =
     new RelationalQueriesRepository(databaseName)
 
-  type QueriesRepo = Has[QueriesRepository[QueryDBO]]
+  type ZQueriesRepository = Has[QueriesRepository[QueryDBO]]
 
-  def findByUUID(uuid: UUID): stream.ZStream[QueriesRepo, Throwable, QueryDBO] =
+  def findByUUID(uuid: UUID): stream.ZStream[ZQueriesRepository, Throwable, QueryDBO] =
     stream.ZStream.accessStream(_.get.findByUUID(uuid))
 
-  def findAll(): stream.ZStream[QueriesRepo, Throwable, QueryDBO] =
+  def findAll(): stream.ZStream[ZQueriesRepository, Throwable, QueryDBO] =
     stream.ZStream.accessStream(_.get.findAll())
 
-  def findById(id: Long): stream.ZStream[QueriesRepo, Throwable, QueryDBO] =
+  def findById(id: Long): stream.ZStream[ZQueriesRepository, Throwable, QueryDBO] =
     stream.ZStream.accessStream(_.get.findById(id))
 
-  def insert(query: QueryDBO): stream.ZStream[QueriesRepo, Throwable, Long] =
+  def insert(query: QueryDBO): stream.ZStream[ZQueriesRepository, Throwable, Long] =
     stream.ZStream.accessStream(_.get.insert(query))
 
-  def deleteByUUID(uuid: UUID): stream.ZStream[QueriesRepo,Throwable, Int] =
+  def deleteByUUID(uuid: UUID): stream.ZStream[ZQueriesRepository,Throwable, Int] =
     stream.ZStream.accessStream(_.get.deleteByUUID(uuid))
 
-  val live: ZLayer[Has[String], Nothing, QueriesRepo] =
+  val live: ZLayer[Has[String], Nothing, ZQueriesRepository] =
     ZLayer.fromService[String, QueriesRepository[QueryDBO]](
       databaseName => RelationalQueriesRepository(databaseName))
 
