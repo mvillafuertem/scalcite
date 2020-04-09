@@ -3,7 +3,7 @@ package io.github.mvillafuertem.scalcite.example.configuration
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import io.github.mvillafuertem.scalcite.example.api._
-import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.ZAkkaConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.{ZAkkaConfiguration, ZAkkaSystemConfiguration}
 import io.github.mvillafuertem.scalcite.example.configuration.ApplicationConfiguration.ZApplicationConfiguration
 import zio._
 
@@ -15,7 +15,7 @@ object ApiConfiguration {
 
   type ZApiConfiguration = Has[ApiConfiguration]
 
-  val route: RIO[ZApiConfiguration, Route] =
+  val route: RIO[ZApiConfiguration with ZAkkaConfiguration with ZAkkaSystemConfiguration, Route] =
     ZIO.accessM(_.get.route)
 
   val live: ZLayer[ZApplicationConfiguration with ZAkkaConfiguration, Throwable, ZApiConfiguration] =
@@ -27,9 +27,9 @@ object ApiConfiguration {
 
 final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration, akkaConfiguration: AkkaConfiguration) {
 
-  val route: Task[Route] =
+  val route: ZIO[ZAkkaConfiguration with ZAkkaSystemConfiguration, Throwable, Route] =
     for {
-      materializer <- akkaConfiguration.materializer
+      materializer <- AkkaConfiguration.materializer
       routes <- Task {
         SwaggerApi.route ~
         ActuatorApi.route ~

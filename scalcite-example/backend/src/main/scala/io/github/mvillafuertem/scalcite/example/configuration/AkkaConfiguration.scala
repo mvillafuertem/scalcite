@@ -10,6 +10,7 @@ import akka.stream.Materializer
 import akka.{Done, actor}
 import io.github.mvillafuertem.scalcite.example.ScalciteServiceApplication.platform
 import io.github.mvillafuertem.scalcite.example.api.SwaggerApi
+import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.{ZAkkaConfiguration, ZAkkaSystemConfiguration, actorSystem}
 import io.github.mvillafuertem.scalcite.example.configuration.InfrastructureConfiguration.ZInfrastructureConfiguration
 import zio._
 
@@ -20,39 +21,9 @@ final class AkkaConfiguration(infrastructureConfiguration: InfrastructureConfigu
 
   lazy val executionContext: Task[ExecutionContext] = Task(platform.executor.asEC)
 
-  def httpServer(route: Route): Task[Unit] =
+  lazy val actorSystem: ZIO[ZAkkaConfiguration, Throwable, ActorSystem[Done]] =
     for {
-    actorSystem <- actorSystem
-    materializer <- materializer
-    eventualBinding <- Task {
-      implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
-      implicit lazy val mat: Materializer = materializer
-      Http().bindAndHandle(route, infrastructureConfiguration.scalciteConfigurationProperties.interface, infrastructureConfiguration.scalciteConfigurationProperties.port)
-    }
-    server <- Task
-      .fromFuture(_ => eventualBinding)
-      .tapError(
-        exception =>
-          UIO(
-            actorSystem.log.error(
-              s"Server could not start with parameters [host:port]=[${infrastructureConfiguration.scalciteConfigurationProperties.interface},${infrastructureConfiguration.scalciteConfigurationProperties.port}]",
-              exception
-            )
-          )
-      )
-      .forever
-      .fork
-    _ <- UIO(
-      actorSystem.log.info(
-        s"Server online at http://${infrastructureConfiguration.scalciteConfigurationProperties.interface}:${infrastructureConfiguration.scalciteConfigurationProperties.port}/${SwaggerApi.swagger}"
-      )
-    )
-    _ <- server.join
-  } yield ()
-
-  lazy val actorSystem: Task[ActorSystem[Done]] =
-    for {
-      executionContext <- executionContext
+      executionContext <- AkkaConfiguration.executionContext
       actorSystem <- Task(
         ActorSystem[Done](
           Behaviors.setup[Done] { context =>
@@ -70,9 +41,38 @@ final class AkkaConfiguration(infrastructureConfiguration: InfrastructureConfigu
       )
     } yield actorSystem
 
-  lazy val materializer: Task[Materializer] =
+  def httpServer(route: Route): ZIO[ZAkkaSystemConfiguration, Throwable, Unit] =
     for {
-      as <- actorSystem
+      actorSystem <- ZIO.access[ZAkkaSystemConfiguration](_.get)
+      eventualBinding <- Task {
+        implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
+        implicit lazy val materializer: Materializer = Materializer(actorSystem)
+        Http().bindAndHandle(route, infrastructureConfiguration.scalciteConfigurationProperties.interface, infrastructureConfiguration.scalciteConfigurationProperties.port)
+      }
+      server <- Task
+        .fromFuture(_ => eventualBinding)
+        .tapError(
+          exception =>
+            UIO(
+              actorSystem.log.error(
+                s"Server could not start with parameters [host:port]=[${infrastructureConfiguration.scalciteConfigurationProperties.interface},${infrastructureConfiguration.scalciteConfigurationProperties.port}]",
+                exception
+              )
+            )
+        )
+        .forever
+        .fork
+      _ <- UIO(
+        actorSystem.log.info(
+          s"Server online at http://${infrastructureConfiguration.scalciteConfigurationProperties.interface}:${infrastructureConfiguration.scalciteConfigurationProperties.port}/${SwaggerApi.swagger}"
+        )
+      )
+      _ <- server.join
+    } yield ()
+
+  lazy val materializer: ZIO[ZAkkaSystemConfiguration, Throwable, Materializer] =
+    for {
+      as <- ZIO.access[ZAkkaSystemConfiguration](_.get)
       m <- Task(Materializer(as))
     } yield m
 
@@ -84,14 +84,15 @@ object AkkaConfiguration {
     new AkkaConfiguration(infrastructureConfiguration)
 
   type ZAkkaConfiguration = Has[AkkaConfiguration]
+  type ZAkkaSystemConfiguration = Has[ActorSystem[_]]
 
-  def httpServer(route: Route): RIO[ZAkkaConfiguration, Unit] =
+  def httpServer(route: Route): RIO[ZAkkaConfiguration with ZAkkaSystemConfiguration, Unit] =
     ZIO.accessM(_.get.httpServer(route))
 
   val actorSystem: ZIO[ZAkkaConfiguration,Throwable, ActorSystem[_]] =
     ZIO.accessM(_.get.actorSystem)
 
-  val materializer: RIO[ZAkkaConfiguration, Materializer] =
+  val materializer: RIO[ZAkkaConfiguration with ZAkkaSystemConfiguration, Materializer] =
     ZIO.accessM(_.get.materializer)
 
   val executionContext: RIO[ZAkkaConfiguration, ExecutionContext] =
@@ -100,4 +101,8 @@ object AkkaConfiguration {
   val live: ZLayer[ZInfrastructureConfiguration, Throwable, ZAkkaConfiguration] =
     ZLayer.fromService[InfrastructureConfiguration, AkkaConfiguration](
       infrastructureConfiguration => AkkaConfiguration(infrastructureConfiguration))
+
+  val akkaSystemLayer: ZLayer[ZAkkaConfiguration, Throwable, ZAkkaSystemConfiguration] = ZLayer
+    .fromAcquireRelease(actorSystem)(
+      actorSystem => UIO.succeed(actorSystem.terminate()).ignore)
 }

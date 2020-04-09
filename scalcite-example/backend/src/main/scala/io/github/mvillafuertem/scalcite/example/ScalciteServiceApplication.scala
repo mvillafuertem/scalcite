@@ -1,11 +1,5 @@
 package io.github.mvillafuertem.scalcite.example
-import akka.actor.typed.ActorSystem
-import akka.http.scaladsl.server.Route
-import akka.stream.Materializer
-import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.ZAkkaConfiguration
-import io.github.mvillafuertem.scalcite.example.configuration.ApiConfiguration.ZApiConfiguration
-import io.github.mvillafuertem.scalcite.example.configuration.{AkkaConfiguration, ApiConfiguration, ApplicationConfiguration, InfrastructureConfiguration, ScalciteServiceConfiguration}
-import io.github.mvillafuertem.scalcite.example.configuration.properties.ScalciteConfigurationProperties
+import io.github.mvillafuertem.scalcite.example.configuration.{AkkaConfiguration, ApiConfiguration, ScalciteServiceConfiguration}
 import zio._
 import zio.clock.Clock
 import zio.console.Console

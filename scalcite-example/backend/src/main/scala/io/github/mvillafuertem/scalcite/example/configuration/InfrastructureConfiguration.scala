@@ -1,6 +1,9 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
 import io.github.mvillafuertem.scalcite.example.configuration.properties.{CalciteConfigurationProperties, H2ConfigurationProperties, ScalciteConfigurationProperties}
+import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, ErrorsRepository, QueriesRepository}
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.{ErrorDBO, QueryDBO}
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import scalikejdbc.{ConnectionPool, ConnectionPoolSettings}
 import zio._
 
@@ -37,6 +40,16 @@ final class InfrastructureConfiguration() {
 
   lazy val scalciteConfigurationProperties: ScalciteConfigurationProperties = ScalciteConfigurationProperties()
 
+  lazy val queriesRepository: QueriesRepository[QueryDBO] =
+    RelationalQueriesRepository(h2ConfigurationProperties.databaseName)
+
+  lazy val errorsRepository: ErrorsRepository[ErrorDBO] =
+    RelationalErrorsRepository(h2ConfigurationProperties.databaseName)
+
+  lazy val calciteRepository: CalciteRepository =
+    RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
+
+
 }
 
 object InfrastructureConfiguration {
@@ -54,6 +67,15 @@ object InfrastructureConfiguration {
 
   val scalciteConfigurationProperties: URIO[ZInfrastructureConfiguration, ScalciteConfigurationProperties] =
     ZIO.access(_.get.scalciteConfigurationProperties)
+
+  val queriesRepository: URIO[ZInfrastructureConfiguration, QueriesRepository[QueryDBO]] =
+    ZIO.access(_.get.queriesRepository)
+
+  val errorsRepository: URIO[ZInfrastructureConfiguration, ErrorsRepository[ErrorDBO]] =
+    ZIO.access(_.get.errorsRepository)
+
+  val calciteRepository: URIO[ZInfrastructureConfiguration, CalciteRepository] =
+    ZIO.access(_.get.calciteRepository)
 
   val live: ULayer[ZInfrastructureConfiguration] =
     ZLayer.succeed[InfrastructureConfiguration](InfrastructureConfiguration())

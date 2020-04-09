@@ -3,21 +3,19 @@ package io.github.mvillafuertem.scalcite.example.configuration
 import io.github.mvillafuertem.scalcite.example.application.{ErrorsService, QueriesService, ScalcitePerformer}
 import io.github.mvillafuertem.scalcite.example.configuration.InfrastructureConfiguration.ZInfrastructureConfiguration
 import io.github.mvillafuertem.scalcite.example.domain.{ErrorsApplication, QueriesApplication, ScalciteApplication}
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import zio.{Has, URIO, ZIO, ZLayer}
 
 
 final class ApplicationConfiguration(infrastructureConfiguration: InfrastructureConfiguration) {
 
   val queriesApplication: QueriesApplication =
-    QueriesService(RelationalQueriesRepository(""))
+    QueriesService(infrastructureConfiguration.queriesRepository)
 
   val errorsApplication: ErrorsApplication =
-    ErrorsService(RelationalErrorsRepository(""))
-
+    ErrorsService(infrastructureConfiguration.errorsRepository)
 
   val scalciteApplication: ScalciteApplication =
-    ScalcitePerformer(queriesApplication, RelationalCalciteRepository(""))
+    ScalcitePerformer(queriesApplication, infrastructureConfiguration.calciteRepository)
 
 }
 
