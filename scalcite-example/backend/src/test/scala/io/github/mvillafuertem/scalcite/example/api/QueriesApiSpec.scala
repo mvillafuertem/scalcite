@@ -9,10 +9,8 @@ import io.github.mvillafuertem.scalcite.example.api.QueriesApiSpec.QueriesApiCon
 import io.github.mvillafuertem.scalcite.example.api.behavior.QueriesApiBehaviorSpec
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
 import io.github.mvillafuertem.scalcite.example.application.QueriesService
-import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalErrorsRepository, RelationalQueriesRepository}
 import org.scalatest.Succeeded
-import zio.{ULayer, ZLayer}
 
 import scala.concurrent.ExecutionContext
 

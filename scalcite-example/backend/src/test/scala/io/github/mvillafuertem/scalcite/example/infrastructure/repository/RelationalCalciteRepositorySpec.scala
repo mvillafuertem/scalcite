@@ -1,6 +1,5 @@
 package io.github.mvillafuertem.scalcite.example.infrastructure.repository
 
-import io.circe.Json
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.Unknown
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.ZCalciteRepository
