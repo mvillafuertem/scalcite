@@ -7,11 +7,12 @@ import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMapping, ApiJsonCodec, ErrorsEndpoint}
+import io.github.mvillafuertem.scalcite.example.application.ErrorsService.ZErrorsApplication
 import io.github.mvillafuertem.scalcite.example.domain.ErrorsApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import sttp.tapir.server.akkahttp._
 import zio.interop.reactivestreams._
-import zio.{BootstrapRuntime, stream}
+import zio._
 
 import scala.concurrent.Future
 
@@ -47,5 +48,13 @@ final class ErrorsApi(app: ErrorsApplication) extends ApiJsonCodec
 object ErrorsApi {
 
   def apply(app: ErrorsApplication): ErrorsApi = new ErrorsApi(app)
+
+  type ZErrorsApi = Has[ErrorsApi]
+
+  val route: ZIO[ZErrorsApi, Nothing, Route] =
+    ZIO.access[ZErrorsApi](_.get.route)
+
+  val live: ZLayer[ZErrorsApplication, Nothing, ZErrorsApi] =
+    ZLayer.fromService[ErrorsApplication, ErrorsApi](app => ErrorsApi(app))
 
 }

@@ -1,5 +1,6 @@
 package io.github.mvillafuertem.scalcite.example
-import io.github.mvillafuertem.scalcite.example.configuration.{AkkaConfiguration, ApiConfiguration, ScalciteServiceConfiguration}
+import akka.http.scaladsl.server.Directives._
+import io.github.mvillafuertem.scalcite.example.configuration.{AkkaHttpConfiguration, ApiConfiguration, ScalciteServiceConfiguration}
 import zio._
 import zio.clock.Clock
 import zio.console.Console
@@ -16,14 +17,13 @@ object ScalciteServiceApplication extends ScalciteServiceConfiguration with zio.
 
   private val program: ZIO[Logging, Nothing, Int] =
     (for {
-      routes <- ApiConfiguration.route
-      _ <- AkkaConfiguration.httpServer(routes)
+      routes <- ApiConfiguration.routes
+      _ <- AkkaHttpConfiguration.httpServer(routes)
     } yield ())
       .provideLayer(ZScalciteEnv)
       .foldM(e => log.throwable("", e).as(1), _ => UIO.effectTotal(0))
 
   override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
     program.provideLayer(loggingLayer)
-
 
 }

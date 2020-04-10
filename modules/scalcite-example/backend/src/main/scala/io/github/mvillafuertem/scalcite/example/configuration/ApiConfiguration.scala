@@ -2,42 +2,49 @@ package io.github.mvillafuertem.scalcite.example.configuration
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.stream.Materializer
 import io.github.mvillafuertem.scalcite.example.api._
-import io.github.mvillafuertem.scalcite.example.configuration.ActorSystemConfiguration.ZActorSystemConfiguration
-import io.github.mvillafuertem.scalcite.example.configuration.AkkaConfiguration.ZAkkaConfiguration
+import io.github.mvillafuertem.scalcite.example.configuration.AkkaHttpConfiguration.ZMaterializer
 import io.github.mvillafuertem.scalcite.example.configuration.ApplicationConfiguration.ZApplicationConfiguration
 import zio._
 
-final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration) {
+final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration,
+                             materializer: Materializer) {
 
-  val route: ZIO[ZAkkaConfiguration with ZActorSystemConfiguration, Throwable, Route] =
-    for {
-      materializer <- AkkaConfiguration.materializer
-      routes <- Task {
-        SwaggerApi.route ~
-        ActuatorApi.route ~
-        ErrorsApi(applicationConfiguration.errorsApplication).route ~
-        QueriesApi(applicationConfiguration.queriesApplication)(materializer).route ~
-        ScalciteSimulateApi(applicationConfiguration.scalciteApplication).route
-      }
-    } yield routes
+  val errorsApi: ErrorsApi =
+    ErrorsApi(applicationConfiguration.errorsApplication)
+
+  val queriesApi: QueriesApi =
+    QueriesApi(applicationConfiguration.queriesApplication)(materializer)
+
+  val scalciteSimulateApi: ScalciteSimulateApi =
+    ScalciteSimulateApi(applicationConfiguration.scalciteApplication)
 
 }
 
 
 object ApiConfiguration {
 
-  def apply(applicationConfiguration: ApplicationConfiguration): ApiConfiguration =
-    new ApiConfiguration(applicationConfiguration)
+  def apply(applicationConfiguration: ApplicationConfiguration, materializer: Materializer): ApiConfiguration =
+    new ApiConfiguration(applicationConfiguration, materializer)
 
   type ZApiConfiguration = Has[ApiConfiguration]
 
-  val route: RIO[ZApiConfiguration with ZAkkaConfiguration with ZActorSystemConfiguration, Route] =
-    ZIO.accessM(_.get.route)
+  val routes: ZIO[ZApiConfiguration, Nothing, Route] =
+    for {
+      errorsRoute <- ZIO.access[ZApiConfiguration](_.get.errorsApi.route)
+      queriesRoute <- ZIO.access[ZApiConfiguration](_.get.queriesApi.route)
+      scalciteSimulateRoute <- ZIO.access[ZApiConfiguration](_.get.scalciteSimulateApi.route)
 
-  val live: ZLayer[ZApplicationConfiguration, Throwable, ZApiConfiguration] =
-    ZLayer.fromService[ApplicationConfiguration, ApiConfiguration](
-      (applicationConfiguration) => ApiConfiguration(applicationConfiguration)
+    } yield errorsRoute ~
+      queriesRoute ~
+      scalciteSimulateRoute ~
+      SwaggerApi.route ~
+      ActuatorApi.route
+
+  val live: ZLayer[ZApplicationConfiguration with ZMaterializer, Throwable, ZApiConfiguration] =
+    ZLayer.fromServices[ApplicationConfiguration, Materializer, ApiConfiguration](
+      (applicationConfiguration, materializer) => ApiConfiguration(applicationConfiguration, materializer)
     )
 
 }

@@ -28,11 +28,13 @@ final class QueriesService(repository: QueriesRepository[QueryDBO],
         case "23505" => DuplicatedEntity()
         case _ => Unknown()
       }
-    }.catchAll(error =>
+    }.catchAll(catchErrorAndSaveInDB)
+
+  private def catchErrorAndSaveInDB: ScalciteError => stream.Stream[ScalciteError, Query] =
+    error =>
       errorsRepository.insert(ErrorDBO(error.uuid, error.code, error.timestamp))
-        .mapError{case e: SQLException => Unknown(e.getMessage)} *>
+        .mapError { case e: SQLException => Unknown(e.getMessage) } *>
         ZStream.fail(error)
-    )
 
   override def deleteByUUID(uuid: UUID): stream.Stream[Throwable, Int] =
     repository.deleteByUUID(uuid)

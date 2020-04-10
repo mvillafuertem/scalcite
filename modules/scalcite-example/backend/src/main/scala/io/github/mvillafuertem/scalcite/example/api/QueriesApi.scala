@@ -9,12 +9,13 @@ import akka.util.ByteString
 import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.api.documentation.{ApiErrorMapping, ApiJsonCodec, ScalciteEndpoint}
+import io.github.mvillafuertem.scalcite.example.application.QueriesService.ZQueriesApplication
 import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import org.reactivestreams.Publisher
 import sttp.tapir.server.akkahttp._
+import zio._
 import zio.interop.reactivestreams._
-import zio.{BootstrapRuntime, stream}
 
 import scala.concurrent.Future
 
@@ -87,5 +88,13 @@ final class QueriesApi(app: QueriesApplication)(implicit materializer: Materiali
 object QueriesApi {
 
   def apply(app: QueriesApplication)(implicit materializer: Materializer): QueriesApi = new QueriesApi(app)(materializer)
+
+  type ZQueriesApi = Has[QueriesApi]
+
+  val route: ZIO[ZQueriesApi, Nothing, Route] =
+    ZIO.access[ZQueriesApi](_.get.route)
+
+  val live: ZLayer[ZQueriesApplication with Has[Materializer], Nothing, ZQueriesApi] =
+    ZLayer.fromServices[QueriesApplication, Materializer, QueriesApi]((app, mat) => QueriesApi(app)(mat))
 
 }

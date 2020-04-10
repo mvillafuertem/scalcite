@@ -1,6 +1,7 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
-import akka.actor
+import akka.{Done, actor}
+import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.adapter._
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
@@ -11,12 +12,11 @@ import io.github.mvillafuertem.scalcite.example.configuration.InfrastructureConf
 import zio._
 
 
-final class AkkaConfiguration(infrastructureConfiguration: InfrastructureConfiguration) {
+final class AkkaHttpConfiguration(infrastructureConfiguration: InfrastructureConfiguration,
+                                 actorSystem: ActorSystem[_]) {
 
-
-  def httpServer(route: Route): ZIO[ZActorSystemConfiguration, Throwable, Unit] =
+  def httpServer(route: Route): Task[Unit] =
     for {
-      actorSystem <- ZIO.access[ZActorSystemConfiguration](_.get)
       eventualBinding <- Task {
         implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
         implicit lazy val materializer: Materializer = Materializer(actorSystem)
@@ -43,32 +43,26 @@ final class AkkaConfiguration(infrastructureConfiguration: InfrastructureConfigu
       _ <- server.join
     } yield ()
 
-  lazy val materializer: ZIO[ZActorSystemConfiguration, Throwable, Materializer] =
-    for {
-      as <- ZIO.access[ZActorSystemConfiguration](_.get)
-      m <- Task(Materializer(as))
-    } yield m
-
 }
 
-object AkkaConfiguration {
+object AkkaHttpConfiguration {
 
-  def apply(infrastructureConfiguration: InfrastructureConfiguration): AkkaConfiguration =
-    new AkkaConfiguration(infrastructureConfiguration)
+  def apply(infrastructureConfiguration: InfrastructureConfiguration, actorSystem: ActorSystem[_]): AkkaHttpConfiguration =
+    new AkkaHttpConfiguration(infrastructureConfiguration, actorSystem)
 
-  type ZAkkaConfiguration = Has[AkkaConfiguration]
+  type ZAkkaHttpConfiguration = Has[AkkaHttpConfiguration]
+  type ZMaterializer = Has[Materializer]
 
-  def httpServer(route: Route): RIO[ZAkkaConfiguration with ZActorSystemConfiguration, Unit] =
+  def httpServer(route: Route): RIO[ZAkkaHttpConfiguration with ZActorSystemConfiguration, Unit] =
     ZIO.accessM(_.get.httpServer(route))
 
+  val materializerLive: ZLayer[ZActorSystemConfiguration, Nothing, ZMaterializer] =
+    ZLayer.fromService[ActorSystem[_], Materializer](actorSystem => Materializer(actorSystem))
 
-  val materializer: RIO[ZAkkaConfiguration with ZActorSystemConfiguration, Materializer] =
-    ZIO.accessM(_.get.materializer)
-
-
-  val live: ZLayer[ZInfrastructureConfiguration, Throwable, ZAkkaConfiguration] =
-    ZLayer.fromService[InfrastructureConfiguration, AkkaConfiguration](
-      infrastructureConfiguration => AkkaConfiguration(infrastructureConfiguration))
+  val live: ZLayer[ZInfrastructureConfiguration with ZActorSystemConfiguration, Nothing, ZAkkaHttpConfiguration] =
+    ZLayer.fromServices[InfrastructureConfiguration, ActorSystem[_], AkkaHttpConfiguration](
+      (infrastructureConfiguration, actorSystem) =>
+        AkkaHttpConfiguration(infrastructureConfiguration, actorSystem))
 
 
 }

@@ -12,11 +12,11 @@ import scala.concurrent.ExecutionContext
 
 object ActorSystemConfiguration {
 
-  type ZActorSystemConfiguration = Has[ActorSystem[Done]]
+  type ZActorSystemConfiguration = Has[ActorSystem[_]]
 
   lazy val executionContext: Task[ExecutionContext] = Task(platform.executor.asEC)
 
-  private lazy val actorSystem: ZIO[ZInfrastructureConfiguration, Throwable, ActorSystem[Done]] =
+  private lazy val actorSystem: ZIO[ZInfrastructureConfiguration, Throwable, ActorSystem[_]] =
     for {
       scalciteConfigurationProperties <- InfrastructureConfiguration.scalciteConfigurationProperties
       executionContext <- executionContext
