@@ -24,9 +24,11 @@ final class QueriesService(repository: QueriesRepository[QueryDBO],
         case _  => query.copy(value = ScalciteError.Unknown.toString)
       }
     } yield stream).mapError {
-      case e: SQLException => e.getSQLState match {
+      case e: SQLException =>
+        print(s"PEPEPEPE $e")
+        e.getSQLState match {
         case "23505" => DuplicatedEntity()
-        case _ => Unknown()
+        case _ => Unknown(s"$e ~ ${e.getCause}")
       }
     }.catchAll(catchErrorAndSaveInDB)
 

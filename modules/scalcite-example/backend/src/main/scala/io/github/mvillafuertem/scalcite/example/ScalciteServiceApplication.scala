@@ -1,6 +1,6 @@
 package io.github.mvillafuertem.scalcite.example
 import akka.http.scaladsl.server.Directives._
-import io.github.mvillafuertem.scalcite.example.configuration.{AkkaHttpConfiguration, ApiConfiguration, ScalciteServiceConfiguration}
+import io.github.mvillafuertem.scalcite.example.configuration.{AkkaHttpConfiguration, ApiConfiguration, InfrastructureConfiguration, ScalciteServiceConfiguration}
 import zio._
 import zio.clock.Clock
 import zio.console.Console
@@ -17,6 +17,8 @@ object ScalciteServiceApplication extends ScalciteServiceConfiguration with zio.
 
   private val program: ZIO[Logging, Nothing, Int] =
     (for {
+      _ <- InfrastructureConfiguration.connectionPoolH2
+      _ <- InfrastructureConfiguration.connectionPoolCalcite
       routes <- ApiConfiguration.routes
       _ <- AkkaHttpConfiguration.httpServer(routes)
     } yield ())

@@ -10,15 +10,15 @@ import zio._
 
 import scala.concurrent.ExecutionContext
 
-object ActorSystemConfiguration {
+trait ActorSystemConfiguration {
 
   type ZActorSystemConfiguration = Has[ActorSystem[_]]
 
   lazy val executionContext: Task[ExecutionContext] = Task(platform.executor.asEC)
 
-  private lazy val actorSystem: ZIO[ZInfrastructureConfiguration, Throwable, ActorSystem[_]] =
+  private lazy val actorSystem: ZIO[Any, Throwable, ActorSystem[_]] =
     for {
-      scalciteConfigurationProperties <- InfrastructureConfiguration.scalciteConfigurationProperties
+      scalciteConfigurationProperties <- Task(InfrastructureConfiguration.scalciteConfigurationProperties)
       executionContext <- executionContext
       actorSystem <- Task(
         ActorSystem[Done](
@@ -37,7 +37,10 @@ object ActorSystemConfiguration {
       )
     } yield actorSystem
 
-  val live: ZLayer[ZInfrastructureConfiguration, Throwable, ZActorSystemConfiguration] = ZLayer
+  val live: TaskLayer[ZActorSystemConfiguration] = ZLayer
     .fromAcquireRelease(actorSystem)(
       actorSystem => UIO.succeed(actorSystem.terminate()).ignore)
+
 }
+
+object ActorSystemConfiguration extends ActorSystemConfiguration
