@@ -46,7 +46,7 @@ object Dependencies {
   val `scalcite-example-console`: Seq[ModuleID] = Seq(
 
     // P R O D U C T I O N
-    sqlline,
+    sqlline
   )
 
   val `scalcite-example-frontend`: Project => Project =
@@ -141,11 +141,9 @@ object Dependencies {
   lazy val h2 = "com.h2database" % "h2" % Version.h2
   lazy val json4s = "org.json4s" %% "json4s-jackson" % Version.json4s
   lazy val jsoniterCore = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core" % Version.jsoniter
-  lazy val jsoniterMacros = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % Version.jsoniter % "compile-internal"
+  lazy val jsoniterMacros = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % Version.jsoniter % Provided
   lazy val logback = "ch.qos.logback" % "logback-classic" % Version.logback
   lazy val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % Version.scalaLogging
-  // TODO sustituir por mockito
-  lazy val scalaMock = "org.scalamock" %% "scalamock" % Version.scalaMock
   lazy val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest
   lazy val scalcite = "io.github.mvillafuertem" %% "scalcite" % Version.scalcite
   lazy val scalikejdbc = "org.scalikejdbc" %% "scalikejdbc-streams" % Version.scalikejdbc
@@ -171,12 +169,10 @@ object Dependencies {
     val circe = "0.13.0"
     val h2 = "1.4.200"
     val json4s = "3.6.7"
-    val jsoniter = "2.1.12"
+    val jsoniter = "2.1.13"
     val logback = "1.2.3"
     val mapflablup = "0.1.1"
     val scalaLogging = "3.9.2"
-    // TODO sustituir por mockito
-    val scalaMock = "4.4.0"
     val scalaTest = "3.1.1"
     val scalcite = "0.1.1"
     val scalikejdbc = "3.4.1"

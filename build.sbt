@@ -38,7 +38,7 @@ lazy val `scalcite` = (project in file("."))
   )
   .settings(commands ++= Commands.value)
 
-lazy val `scalcite-core` = (project in file("scalcite-core"))
+lazy val `scalcite-core` = (project in file("modules/scalcite-core"))
   .configure(configurationPublish)
   // S E T T I N G S
   .settings(crossScalaVersions := Settings.supportedScalaVersions)
@@ -47,7 +47,7 @@ lazy val `scalcite-core` = (project in file("scalcite-core"))
   .dependsOn(`scalcite-blower`)
   .dependsOn(`scalcite-flattener`)
 
-lazy val `scalcite-example-backend` = (project in file("scalcite-example/backend"))
+lazy val `scalcite-example-backend` = (project in file("modules/scalcite-example/backend"))
   .configure(configurationNoPublish)
   // S E T T I N G S
   .settings(AssemblySettings.value)
@@ -67,7 +67,7 @@ lazy val `scalcite-example-backend` = (project in file("scalcite-example/backend
   .enablePlugins(DockerPlugin)
   .enablePlugins(GitVersioning)
 
-lazy val `scalcite-example-console` = (project in file("scalcite-example/console"))
+lazy val `scalcite-example-console` = (project in file("modules/scalcite-example/console"))
   .configure(configurationNoPublish)
   // S E T T I N G S
   .settings(BuildInfoSettings.value)
@@ -83,7 +83,7 @@ lazy val `scalcite-example-console` = (project in file("scalcite-example/console
   .enablePlugins(DockerPlugin)
   .enablePlugins(GitVersioning)
 
-lazy val `scalcite-example-frontend` = (project in file("scalcite-example/frontend"))
+lazy val `scalcite-example-frontend` = (project in file("modules/scalcite-example/frontend"))
   .configure(configurationNoPublish)
   .configure(Dependencies.`scalcite-example-frontend`)
   // S E T T I N G S
@@ -100,7 +100,7 @@ lazy val `scalcite-example-frontend` = (project in file("scalcite-example/fronte
   // P L U G I N S
   .enablePlugins(ScalaJSBundlerPlugin)
 
-lazy val `scalcite-docs` = (project in file("scalcite-docs"))
+lazy val `scalcite-docs` = (project in file("modules/scalcite-docs"))
   .configure(configurationNoPublish)
   // S E T T I N G S
   .settings(scalaSource in Compile := baseDirectory.value / "src/main/mdoc")
@@ -111,31 +111,31 @@ lazy val `scalcite-docs` = (project in file("scalcite-docs"))
   // P L U G I N S
   .enablePlugins(MdocPlugin)
 
-lazy val `scalcite-blower` = (project in file("scalcite-blower"))
+lazy val `scalcite-blower` = (project in file("modules/scalcite-blower"))
   .configure(configurationPublish)
   // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-blower`)
 
-lazy val `scalcite-circe-blower` = (project in file("scalcite-circe/blower"))
+lazy val `scalcite-circe-blower` = (project in file("modules/scalcite-circe/blower"))
   .configure(configurationPublish)
   // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-circe-blower`)
   // D E P E N D S  O N
   .dependsOn(`scalcite-blower`)
 
-lazy val `scalcite-flattener` = (project in file("scalcite-flattener"))
+lazy val `scalcite-flattener` = (project in file("modules/scalcite-flattener"))
   .configure(configurationPublish)
   // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-flattener`)
 
-lazy val `scalcite-circe-flattener` = (project in file("scalcite-circe/flattener"))
+lazy val `scalcite-circe-flattener` = (project in file("modules/scalcite-circe/flattener"))
   .configure(configurationPublish)
   // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-circe-flattener`)
   // D E P E N D S  O N
   .dependsOn(`scalcite-flattener`)
 
-lazy val `scalcite-circe-table` = (project in file("scalcite-circe/table"))
+lazy val `scalcite-circe-table` = (project in file("modules/scalcite-circe/table"))
   .configure(configurationPublish)
   // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-circe-table`)
