@@ -59,8 +59,8 @@ object Dependencies {
     .settings(Compile / npmDevDependencies += "html-webpack-plugin" -> "3.2.0")
     .settings(Compile / npmDevDependencies += "style-loader" -> "1.1.3")
     .settings(Compile / npmDevDependencies += "webpack-merge" -> "4.2.2")
-    .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.6.4+2-3c8aef65")
-    .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.6.4+2-3c8aef65")
+    .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.6.5")
+    .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.6.5")
 
   val `scalcite-docs`: Seq[ModuleID] = Seq(
 
