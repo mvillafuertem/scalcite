@@ -9,8 +9,6 @@ import io.github.mvillafuertem.scalcite.example.infrastructure.repository.Relati
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalErrorsRepository, RelationalQueriesRepository}
 import zio.{ULayer, ZLayer}
 
-import scala.concurrent.ExecutionContext
-
 class QueriesServiceSpec extends QueriesServiceConfigurationSpec {
 
   behavior of "Queries Service"
@@ -76,8 +74,6 @@ class QueriesServiceSpec extends QueriesServiceConfigurationSpec {
 object QueriesServiceSpec {
 
   trait QueriesServiceConfigurationSpec extends BaseData {
-
-    private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
     private val queriesRepositoryLayer: ZLayer[Any, Nothing, ZQueriesRepository] =
       ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>

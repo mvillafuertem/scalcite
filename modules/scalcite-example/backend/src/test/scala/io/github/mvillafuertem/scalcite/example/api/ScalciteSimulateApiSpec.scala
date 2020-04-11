@@ -17,7 +17,6 @@ import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, Scal
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import org.scalatest.Succeeded
 
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 
@@ -104,8 +103,6 @@ final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
 object ScalciteSimulateApiSpec {
 
   trait ScalciteSimulateApiConfigurationSpec extends BaseData {
-
-    private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
     val queriesApplication: QueriesApplication =
       QueriesService(

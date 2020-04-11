@@ -6,8 +6,6 @@ import io.github.mvillafuertem.scalcite.example.infrastructure.repository.Relati
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepositorySpec.RelationalCalciteRepositoryConfigurationSpec
 import zio.{FiberFailure, ULayer, ZLayer}
 
-import scala.concurrent.ExecutionContext
-
 final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryConfigurationSpec {
 
   behavior of "Relational Calcite Repository"
@@ -78,8 +76,6 @@ final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryC
 object RelationalCalciteRepositorySpec {
 
   trait RelationalCalciteRepositoryConfigurationSpec extends BaseData {
-
-    private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
     val env: ULayer[ZCalciteRepository] = ZLayer.succeed(calciteConfigurationProperties.databaseName) >>> RelationalCalciteRepository.live
 

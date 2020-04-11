@@ -11,8 +11,6 @@ import io.github.mvillafuertem.scalcite.example.infrastructure.repository.Relati
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
 import zio.{ULayer, ZLayer}
 
-import scala.concurrent.ExecutionContext
-
 final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
 
   behavior of "Scalcite Performer"
@@ -63,8 +61,6 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
 object ScalcitePerformerSpec {
 
   trait ScalcitePerformerConfigurationSpec extends BaseData {
-
-    private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
     private val queriesRepositoryLayer: ZLayer[Any, Nothing, ZQueriesRepository] =
       ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>

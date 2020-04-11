@@ -1,6 +1,6 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
-import akka.{Done, actor}
+import akka.actor
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.adapter._
 import akka.http.scaladsl.Http

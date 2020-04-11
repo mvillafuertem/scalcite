@@ -6,8 +6,6 @@ import io.github.mvillafuertem.scalcite.example.infrastructure.repository.Relati
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepositorySpec.RelationalQueriesRepositoryConfigurationSpec
 import zio.{ULayer, ZLayer}
 
-import scala.concurrent.ExecutionContext
-
 final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryConfigurationSpec {
 
   behavior of "Relational Queries Repository"
@@ -123,8 +121,6 @@ final class RelationalQueriesRepositorySpec extends RelationalQueriesRepositoryC
 object RelationalQueriesRepositorySpec {
 
   trait RelationalQueriesRepositoryConfigurationSpec extends BaseData {
-
-    private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
     val env: ULayer[ZQueriesRepository] = ZLayer.succeed(h2ConfigurationProperties.databaseName) >>>
       RelationalQueriesRepository.live

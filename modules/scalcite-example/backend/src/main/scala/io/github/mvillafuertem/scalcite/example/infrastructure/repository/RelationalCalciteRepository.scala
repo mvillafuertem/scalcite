@@ -61,9 +61,9 @@ private final class RelationalCalciteRepository(databaseName: String) extends Ca
         }
     }
 
-  private def toMap: WrappedResultSet => collection.Map[String, Json] =
+  private def toMap: WrappedResultSet => Map[String, Json] =
     rs => {
-      (1 to rs.metaData.getColumnCount).foldLeft(collection.Map[String, Json]()) { (result, i) =>
+      (1 to rs.metaData.getColumnCount).foldLeft(Map[String, Json]()) { (result, i) =>
         val label = rs.metaData.getColumnLabel(i)
         Option(rs.any(label))
           .map { value =>

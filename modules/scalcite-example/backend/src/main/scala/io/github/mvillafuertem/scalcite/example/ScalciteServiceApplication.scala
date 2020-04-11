@@ -1,5 +1,4 @@
 package io.github.mvillafuertem.scalcite.example
-import akka.http.scaladsl.server.Directives._
 import io.github.mvillafuertem.scalcite.example.configuration.{AkkaHttpConfiguration, ApiConfiguration, ScalciteServiceConfiguration}
 import zio._
 import zio.clock.Clock

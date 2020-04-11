@@ -12,8 +12,6 @@ import io.github.mvillafuertem.scalcite.example.application.QueriesService
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalErrorsRepository, RelationalQueriesRepository}
 import org.scalatest.Succeeded
 
-import scala.concurrent.ExecutionContext
-
 final class QueriesApiSpec extends QueriesApiConfigurationSpec with QueriesApiBehaviorSpec {
 
   val scalciteApi: QueriesApi =
@@ -55,8 +53,6 @@ final class QueriesApiSpec extends QueriesApiConfigurationSpec with QueriesApiBe
 object QueriesApiSpec {
 
   trait QueriesApiConfigurationSpec extends BaseData {
-
-    private implicit val executionContext: ExecutionContext = platform.executor.asEC
 
   }
 }

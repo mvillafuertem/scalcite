@@ -19,7 +19,7 @@ object ReactLogo extends js.Object
 @react class App extends StatelessComponent {
   type Props = Unit
 
-  private val css = AppCSS
+  //private val css = AppCSS
 
   def render() = {
     div(className := "App")(
