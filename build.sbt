@@ -58,6 +58,7 @@ lazy val `scalcite-example-backend` = (project in file("modules/scalcite-example
   .settings(NexusSettings.value)
   .settings(crossScalaVersions := Nil)
   .settings(libraryDependencies ++= Dependencies.`scalcite-example-backend`)
+  .settings(javaAgents += JavaAgent(Dependencies.elasticApm))
   // D E P E N D S  O N
   .dependsOn(`scalcite-core`)
   .dependsOn(`scalcite-circe-blower`)
@@ -66,6 +67,8 @@ lazy val `scalcite-example-backend` = (project in file("modules/scalcite-example
   // P L U G I N S
   .enablePlugins(BuildInfoPlugin)
   .enablePlugins(DockerPlugin)
+  .enablePlugins(JavaAgent)
+  .enablePlugins(JavaAppPackaging)
   .enablePlugins(GitVersioning)
 
 lazy val `scalcite-example-console` = (project in file("modules/scalcite-example/console"))

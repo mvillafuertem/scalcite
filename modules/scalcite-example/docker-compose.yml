@@ -16,6 +16,7 @@ services:
       - postgres
     external_links:
       - "postgres:postgres.local"
+      - "apm:apm.local"
 
   # I N F R A S T R U C T U R E
   postgres:
@@ -30,6 +31,46 @@ services:
       POSTGRES_PASSWORD: rootpassword
     volumes:
       - ./backend/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/init.sql
+
+  apm:
+    container_name: apm
+    hostname: "apm.local"
+    image: docker.elastic.co/apm/apm-server:7.6.2
+    volumes:
+      - ./apm-server.yml:/etc/apm-server.yml
+    ports:
+      - 8200:8200
+    restart: always
+    depends_on:
+      - kibana
+      - elasticsearch
+    external_links:
+      - "kibana:kibana.local"
+      - "elasticsearch:elasticsearch.local"
+
+  kibana:
+    container_name: kibana
+    hostname: "kibana.local"
+    image: docker.elastic.co/kibana/kibana:7.6.2
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    restart: always
+    depends_on:
+      - elasticsearch
+    external_links:
+      - "elasticsearch:elasticsearch.local"
+
+  elasticsearch:
+    container_name: elasticsearch
+    hostname: "elasticsearch.local"
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    environment:
+      discovery.type: single-node
+    ports:
+      - 9200:9200
+    restart: always
 
   adminer:
     container_name: adminer

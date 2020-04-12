@@ -36,7 +36,6 @@ object Dependencies {
     zioStreams,
     circeGenericExtras,
 
-
     // T E S T
     akkaHttpTestkit % Test,
     akkaActorTestkitTyped % Test,
@@ -138,6 +137,7 @@ object Dependencies {
   lazy val circeGeneric = "io.circe" %% "circe-generic" % Version.circe
   lazy val circeGenericExtras = "io.circe" %% "circe-generic-extras" % Version.circe
   lazy val circeParser = "io.circe" %% "circe-parser" % Version.circe
+  lazy val elasticApm = "co.elastic.apm" % "elastic-apm-agent" % Version.elasticApm
   lazy val h2 = "com.h2database" % "h2" % Version.h2
   lazy val json4s = "org.json4s" %% "json4s-jackson" % Version.json4s
   lazy val jsoniterCore = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core" % Version.jsoniter
@@ -160,13 +160,12 @@ object Dependencies {
   lazy val zioInteropReactiveStreams = "dev.zio" %% "zio-interop-reactivestreams" % Version.zioInteropReactiveStreams
   lazy val zioStreams = "dev.zio" %% "zio-streams" % Version.zio
 
-
-
   object Version {
     val akka = "2.6.4"
     val akkaHttp = "10.1.11"
     val calcite = "1.22.0"
     val circe = "0.13.0"
+    val elasticApm = "1.15.0"
     val h2 = "1.4.200"
     val json4s = "3.6.7"
     val jsoniter = "2.1.13"

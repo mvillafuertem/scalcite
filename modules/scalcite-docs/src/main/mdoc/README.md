@@ -57,3 +57,8 @@ SELECT "personalinfo.address" FROM scalcite;
 ### Frontend
 
 Is a UI project created with React using Slinky 
+
+
+## Monitoring
+
+![APM](modules/scalcite-docs/src/main/resources/kibana.png)

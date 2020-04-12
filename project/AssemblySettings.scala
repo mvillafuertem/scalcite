@@ -11,7 +11,7 @@ object AssemblySettings {
     assembly / assemblyJarName := s"${name.value}-${version.value}.jar",
 
     assembly / assemblyMergeStrategy := {
-      case "module-info.class" => MergeStrategy.discard
+      case "module-info.class" => MergeStrategy.last
       case x =>
         val oldStrategy = (assembly / assemblyMergeStrategy).value
         oldStrategy(x)
