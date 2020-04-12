@@ -16,11 +16,12 @@ object DockerSettings {
     Docker / mappings ++= Seq(
       (Compile / resourceDirectory).value / "application.conf" -> "/opt/docker/configuration/application.conf",
       (Compile / resourceDirectory).value / "logback.xml" -> "/opt/docker/configuration/logback.xml",
+      (Compile / resourceDirectory).value / "elasticapm.properties" -> "/opt/docker/elastic-apm-agent/elasticapm.properties"
     ),
 
-    dockerExposedPorts ++= Seq(8080),
+    Docker / dockerExposedPorts ++= Seq(8080),
 
-    dockerCommands := {
+    Docker / dockerCommands := {
 
       val jarName = (Compile / assembly).value.getName
 
@@ -34,11 +35,13 @@ object DockerSettings {
         Cmd("RUN", "chown", "-R", "scalcite:scalcite", "/opt/scalcite/configuration"),
         Cmd("EXPOSE", "8080"),
         Cmd("COPY", "/opt/docker/configuration/", "/opt/scalcite/configuration/"),
+        Cmd("COPY", "/opt/docker/elastic-apm-agent/", "/opt/scalcite/elastic-apm-agent/"),
         Cmd("COPY", "/opt/docker/lib/", "/opt/scalcite/"),
         Cmd("CMD",
           s"""
              |[
              |"java",
+             |"-javaagent:/opt/scalcite/elastic-apm-agent/elastic-apm-agent-${Dependencies.Version.elasticApm}.jar",
              |"-Dconfig.file=/opt/scalcite/configuration/application.conf",
              |"-Dlogback.configurationFile=/opt/scalcite/configuration/logback.xml",
              |"-Dcom.sun.management.jmxremote",

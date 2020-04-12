@@ -1,4 +1,7 @@
+import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
+import sbt.Keys.libraryDependencies
 import sbt._
+import scalajsbundler.sbtplugin.ScalaJSBundlerPlugin.autoImport.{npmDependencies, npmDevDependencies}
 
 object Dependencies {
 
@@ -33,22 +36,30 @@ object Dependencies {
     zioStreams,
     circeGenericExtras,
 
-
     // T E S T
     akkaHttpTestkit % Test,
     akkaActorTestkitTyped % Test,
-    scalaTest % Test,
-    sqlline % Test,
-
+    scalaTest % Test
   )
 
-  val `scalcite-example-frontend`: Seq[ModuleID] = Seq(
+  val `scalcite-example-console`: Seq[ModuleID] = Seq(
 
     // P R O D U C T I O N
-
-    // T E S T
-
+    sqlline
   )
+
+  val `scalcite-example-frontend`: Project => Project =
+    _.settings(Compile / npmDependencies += "react" -> "16.13.0")
+    .settings(Compile / npmDependencies += "react-dom" -> "16.13.0")
+    .settings(Compile / npmDependencies += "react-proxy" -> "1.1.8")
+    .settings(Compile / npmDevDependencies += "copy-webpack-plugin" -> "5.1.1")
+    .settings(Compile / npmDevDependencies += "css-loader" -> "3.4.2")
+    .settings(Compile / npmDevDependencies += "file-loader" -> "5.1.0")
+    .settings(Compile / npmDevDependencies += "html-webpack-plugin" -> "3.2.0")
+    .settings(Compile / npmDevDependencies += "style-loader" -> "1.1.3")
+    .settings(Compile / npmDevDependencies += "webpack-merge" -> "4.2.2")
+    .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.6.5")
+    .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.6.5")
 
   val `scalcite-docs`: Seq[ModuleID] = Seq(
 
@@ -126,14 +137,13 @@ object Dependencies {
   lazy val circeGeneric = "io.circe" %% "circe-generic" % Version.circe
   lazy val circeGenericExtras = "io.circe" %% "circe-generic-extras" % Version.circe
   lazy val circeParser = "io.circe" %% "circe-parser" % Version.circe
+  lazy val elasticApm = "co.elastic.apm" % "elastic-apm-agent" % Version.elasticApm
   lazy val h2 = "com.h2database" % "h2" % Version.h2
   lazy val json4s = "org.json4s" %% "json4s-jackson" % Version.json4s
   lazy val jsoniterCore = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core" % Version.jsoniter
-  lazy val jsoniterMacros = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % Version.jsoniter % "compile-internal"
+  lazy val jsoniterMacros = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % Version.jsoniter % Provided
   lazy val logback = "ch.qos.logback" % "logback-classic" % Version.logback
   lazy val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % Version.scalaLogging
-  // TODO sustituir por mockito
-  lazy val scalaMock = "org.scalamock" %% "scalamock" % Version.scalaMock
   lazy val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest
   lazy val scalcite = "io.github.mvillafuertem" %% "scalcite" % Version.scalcite
   lazy val scalikejdbc = "org.scalikejdbc" %% "scalikejdbc-streams" % Version.scalikejdbc
@@ -150,28 +160,25 @@ object Dependencies {
   lazy val zioInteropReactiveStreams = "dev.zio" %% "zio-interop-reactivestreams" % Version.zioInteropReactiveStreams
   lazy val zioStreams = "dev.zio" %% "zio-streams" % Version.zio
 
-
-
   object Version {
-    val akka = "2.6.3"
+    val akka = "2.6.4"
     val akkaHttp = "10.1.11"
     val calcite = "1.22.0"
     val circe = "0.13.0"
+    val elasticApm = "1.15.0"
     val h2 = "1.4.200"
     val json4s = "3.6.7"
-    val jsoniter = "2.1.7"
+    val jsoniter = "2.1.13"
     val logback = "1.2.3"
     val mapflablup = "0.1.1"
     val scalaLogging = "3.9.2"
-    // TODO sustituir por mockito
-    val scalaMock = "4.4.0"
     val scalaTest = "3.1.1"
     val scalcite = "0.1.1"
-    val scalikejdbc = "3.4.0"
+    val scalikejdbc = "3.4.1"
     val sqlline = "1.9.0"
-    val tapir = "0.12.23"
-    val zio = "1.0.0-RC18"
-    val zioLogging = "0.2.3"
-    val zioInteropReactiveStreams = "1.0.3.5-RC5"
+    val tapir = "0.13.2"
+    val zio = "1.0.0-RC18-2"
+    val zioLogging = "0.2.6"
+    val zioInteropReactiveStreams = "1.0.3.5-RC6+4-e21787d4-SNAPSHOT"
   }
 }

@@ -1,25 +1,31 @@
-lazy val infoSettings = Seq(
-  organization := "io.github.mvillafuertem",
-  description := "Scalcite is a library",
-  homepage := Some(url(s"https://github.com/mvillafuertem/scalcite")),
-  licenses := List("MIT" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-  developers := List(
-    Developer(
-      "mvillafuertem",
-      "Miguel Villafuerte",
-      "mvillafuertem@email.com",
-      url("https://github.com/mvillafuertem")
-    )
-  ),
-  scmInfo := Some(
-    ScmInfo(
-      url("https://github.com/mvillafuertem/scalcite"),
-      "scm:git@github.com:mvillafuertem/scalcite.git"
-    )
-  )
-)
+Global / onLoad := {
+  sLog.value.info(
+    s"""*
+       |*    ███████╗  ██████╗  █████╗  ██╗       ██████╗ ██╗ ████████╗ ███████╗
+       |*    ██╔════╝ ██╔════╝ ██╔══██╗ ██║      ██╔════╝ ██║ ╚══██╔══╝ ██╔════╝
+       |*    ███████╗ ██║      ███████║ ██║      ██║      ██║    ██║    █████╗
+       |*    ╚════██║ ██║      ██╔══██║ ██║      ██║      ██║    ██║    ██╔══╝
+       |*    ███████║ ╚██████╗ ██║  ██║ ███████╗ ╚██████╗ ██║    ██║    ███████╗
+       |*    ╚══════╝  ╚═════╝ ╚═╝  ╚═╝ ╚══════╝  ╚═════╝ ╚═╝    ╚═╝    ╚══════╝
+       |*    v.${version.value}
+       |*""".stripMargin)
+  (Global / onLoad).value
+}
+
+lazy val configurationPublish: Project => Project =
+  _.settings(Information.value)
+    .settings(Settings.value)
+    .settings(Settings.noAssemblyTest)
+    .settings(crossScalaVersions := Settings.supportedScalaVersions)
+
+lazy val configurationNoPublish: Project => Project =
+  _.settings(Information.value)
+    .settings(Settings.value)
+    .settings(Settings.noPublish)
+    .settings(Settings.noAssemblyTest)
 
 lazy val `scalcite` = (project in file("."))
+  .configure(configurationNoPublish)
   .aggregate(
     `scalcite-blower`,
     `scalcite-circe-blower`,
@@ -27,33 +33,24 @@ lazy val `scalcite` = (project in file("."))
     `scalcite-core`,
     `scalcite-docs`,
     `scalcite-example-backend`,
+    `scalcite-example-console`,
     `scalcite-example-frontend`,
     `scalcite-flattener`,
   )
-  .settings(infoSettings)
-  .settings(Settings.value)
-  .settings(Settings.noPublish)
-  .settings(Settings.noAssemblyTest)
-  .settings(crossScalaVersions := Nil)
   .settings(commands ++= Commands.value)
 
-lazy val `scalcite-core` = (project in file("scalcite-core"))
-// S E T T I N G S
-  .settings(infoSettings)
-  .settings(Settings.value)
-  .settings(Settings.noAssemblyTest)
+lazy val `scalcite-core` = (project in file("modules/scalcite-core"))
+  .configure(configurationPublish)
+  // S E T T I N G S
   .settings(crossScalaVersions := Settings.supportedScalaVersions)
   .settings(libraryDependencies ++= Dependencies.`scalcite-core`)
   // D E P E N D S  O N
   .dependsOn(`scalcite-blower`)
   .dependsOn(`scalcite-flattener`)
 
-lazy val `scalcite-example-backend` = (project in file("scalcite-example/backend"))
+lazy val `scalcite-example-backend` = (project in file("modules/scalcite-example/backend"))
+  .configure(configurationNoPublish)
   // S E T T I N G S
-  .settings(infoSettings)
-  .settings(Settings.value)
-  .settings(Settings.noPublish)
-  .settings(Settings.noAssemblyTest)
   .settings(AssemblySettings.value)
   .settings(BuildInfoSettings.value)
   .settings(DockerSettings.value)
@@ -61,6 +58,25 @@ lazy val `scalcite-example-backend` = (project in file("scalcite-example/backend
   .settings(NexusSettings.value)
   .settings(crossScalaVersions := Nil)
   .settings(libraryDependencies ++= Dependencies.`scalcite-example-backend`)
+  .settings(javaAgents += JavaAgent(Dependencies.elasticApm))
+  // D E P E N D S  O N
+  .dependsOn(`scalcite-core`)
+  .dependsOn(`scalcite-circe-blower`)
+  .dependsOn(`scalcite-circe-flattener`)
+  .dependsOn(`scalcite-circe-table`)
+  // P L U G I N S
+  .enablePlugins(BuildInfoPlugin)
+  .enablePlugins(DockerPlugin)
+  .enablePlugins(JavaAgent)
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(GitVersioning)
+
+lazy val `scalcite-example-console` = (project in file("modules/scalcite-example/console"))
+  .configure(configurationNoPublish)
+  // S E T T I N G S
+  .settings(BuildInfoSettings.value)
+  .settings(crossScalaVersions := Nil)
+  .settings(libraryDependencies ++= Dependencies.`scalcite-example-console`)
   // D E P E N D S  O N
   .dependsOn(`scalcite-core`)
   .dependsOn(`scalcite-circe-blower`)
@@ -71,27 +87,15 @@ lazy val `scalcite-example-backend` = (project in file("scalcite-example/backend
   .enablePlugins(DockerPlugin)
   .enablePlugins(GitVersioning)
 
-lazy val `scalcite-example-frontend` = (project in file("scalcite-example/frontend"))
+lazy val `scalcite-example-frontend` = (project in file("modules/scalcite-example/frontend"))
+  .configure(configurationNoPublish)
+  .configure(Dependencies.`scalcite-example-frontend`)
   // S E T T I N G S
-  .settings(infoSettings)
-  .settings(scalaVersion := Settings.scala212)
-  .settings(scalacOptions += "-P:scalajs:sjsDefinedByDefault")
-  .settings(addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
-  .settings(Compile / npmDependencies += "react" -> "16.13.0")
-  .settings(Compile / npmDependencies += "react-dom" -> "16.13.0")
-  .settings(Compile / npmDependencies += "react-proxy" -> "1.1.8")
-  .settings(Compile / npmDevDependencies += "copy-webpack-plugin" -> "5.1.1")
-  .settings(Compile / npmDevDependencies += "css-loader" -> "3.4.2")
-  .settings(Compile / npmDevDependencies += "file-loader" -> "5.1.0")
-  .settings(Compile / npmDevDependencies += "html-webpack-plugin" -> "3.2.0")
-  .settings(Compile / npmDevDependencies += "style-loader" -> "1.1.3")
-  .settings(Compile / npmDevDependencies += "webpack-merge" -> "4.2.2")
+  .settings(scalacOptions += "-Ymacro-annotations")
   .settings(fastOptJS / webpackBundlingMode := BundlingMode.LibraryOnly())
   .settings(fastOptJS / webpackConfigFile := Some(baseDirectory.value / "webpack" / "webpack-fastopt.config.js"))
   .settings(fastOptJS / webpackDevServerExtraArgs := Seq("--inline", "--hot"))
   .settings(fullOptJS / webpackConfigFile := Some(baseDirectory.value / "webpack" / "webpack-opt.config.js"))
-  .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.6.4")
-  .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.6.4")
   .settings(startWebpackDevServer / version  := "3.10.3")
   .settings(Test / requireJsDomEnv := true)
   .settings(Test / webpackConfigFile := Some(baseDirectory.value / "webpack" / "webpack-core.config.js"))
@@ -100,61 +104,44 @@ lazy val `scalcite-example-frontend` = (project in file("scalcite-example/fronte
   // P L U G I N S
   .enablePlugins(ScalaJSBundlerPlugin)
 
-lazy val `scalcite-docs` = (project in file("scalcite-docs"))
-  .dependsOn(`scalcite-example-backend` % "compile->test")
+lazy val `scalcite-docs` = (project in file("modules/scalcite-docs"))
+  .configure(configurationNoPublish)
   // S E T T I N G S
   .settings(scalaSource in Compile := baseDirectory.value / "src/main/mdoc")
-  .settings(infoSettings)
-  .settings(Settings.value)
-  .settings(Settings.noPublish)
   .settings(MdocSettings.value)
-  .settings(crossScalaVersions := Nil)
   .settings(libraryDependencies ++= Dependencies.`scalcite-docs`)
+  // D E P E N D S  O N
+  .dependsOn(`scalcite-example-backend` % "compile->test")
   // P L U G I N S
   .enablePlugins(MdocPlugin)
 
-lazy val `scalcite-blower` = (project in file("scalcite-blower"))
-// S E T T I N G S
-  .settings(infoSettings)
-  .settings(Settings.value)
-  .settings(Settings.noPublish)
-  .settings(crossScalaVersions := Settings.supportedScalaVersions)
+lazy val `scalcite-blower` = (project in file("modules/scalcite-blower"))
+  .configure(configurationPublish)
+  // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-blower`)
 
-lazy val `scalcite-circe-blower` = (project in file("scalcite-circe/blower"))
-// S E T T I N G S
-  .settings(infoSettings)
-  .settings(Settings.value)
-  .settings(Settings.noPublish)
-  .settings(crossScalaVersions := Settings.supportedScalaVersions)
+lazy val `scalcite-circe-blower` = (project in file("modules/scalcite-circe/blower"))
+  .configure(configurationPublish)
+  // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-circe-blower`)
   // D E P E N D S  O N
   .dependsOn(`scalcite-blower`)
 
-lazy val `scalcite-flattener` = (project in file("scalcite-flattener"))
-// S E T T I N G S
-  .settings(infoSettings)
-  .settings(Settings.value)
-  .settings(Settings.noPublish)
-  .settings(crossScalaVersions := Settings.supportedScalaVersions)
+lazy val `scalcite-flattener` = (project in file("modules/scalcite-flattener"))
+  .configure(configurationPublish)
+  // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-flattener`)
 
-lazy val `scalcite-circe-flattener` = (project in file("scalcite-circe/flattener"))
-// S E T T I N G S
-  .settings(infoSettings)
-  .settings(Settings.value)
-  .settings(Settings.noPublish)
-  .settings(crossScalaVersions := Settings.supportedScalaVersions)
+lazy val `scalcite-circe-flattener` = (project in file("modules/scalcite-circe/flattener"))
+  .configure(configurationPublish)
+  // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-circe-flattener`)
   // D E P E N D S  O N
   .dependsOn(`scalcite-flattener`)
 
-lazy val `scalcite-circe-table` = (project in file("scalcite-circe/table"))
-// S E T T I N G S
-  .settings(infoSettings)
-  .settings(Settings.value)
-  .settings(Settings.noPublish)
-  .settings(crossScalaVersions := Settings.supportedScalaVersions)
+lazy val `scalcite-circe-table` = (project in file("modules/scalcite-circe/table"))
+  .configure(configurationPublish)
+  // S E T T I N G S
   .settings(libraryDependencies ++= Dependencies.`scalcite-circe-table`)
   // D E P E N D S  O N
   .dependsOn(`scalcite-core`)

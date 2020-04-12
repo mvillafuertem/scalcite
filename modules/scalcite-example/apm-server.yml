@@ -1,0 +1,28 @@
+apm-server:
+  host: "0.0.0.0:8200"
+  frontend:
+    enabled: false
+setup.template.settings:
+  index:
+    number_of_shards: 1
+    codec: best_compression
+setup.dashboards.enabled: true
+setup.kibana:
+  host: "kibana:5601"
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  indices:
+    - index: "apm-%{[beat.version]}-sourcemap"
+      when.contains:
+        processor.event: "sourcemap"
+    - index: "apm-%{[beat.version]}-error-%{+yyyy.MM.dd}"
+      when.contains:
+        processor.event: "error"
+    - index: "apm-%{[beat.version]}-transaction-%{+yyyy.MM.dd}"
+      when.contains:
+        processor.event: "transaction"
+    - index: "apm-%{[beat.version]}-span-%{+yyyy.MM.dd}"
+      when.contains:
+        processor.event: "span"
+queue.mem.events: 8192
+flush.min_events: 5
