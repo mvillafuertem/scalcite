@@ -6,7 +6,7 @@ set -o nounset
 set -o xtrace
 
 BASE="$(cd "$(dirname "${0}")" && pwd)"
-source ${BASE}/../.env
+source "${BASE}"/../.env
 
 echo Running publish.sh
 
