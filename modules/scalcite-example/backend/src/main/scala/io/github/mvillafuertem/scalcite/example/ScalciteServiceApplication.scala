@@ -3,7 +3,6 @@ import io.github.mvillafuertem.scalcite.example.configuration.{AkkaHttpConfigura
 import zio._
 import zio.clock.Clock
 import zio.console.Console
-import zio.logging.Logging.Logging
 import zio.logging.{Logging, log}
 
 /**
