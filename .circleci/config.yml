@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:11-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      JVM_OPTS: -Xmx2048m
+      TERM: dumb
+
+    steps:
+      - checkout
+      - run:
+          name: Test
+          command: |
+            sudo ls -la
+            ./.cicd/test.sh
+#      - setup_remote_docker:
+#          docker_layer_caching: true
+#      - run:
+#          name: Integration Test
+#          command: |
+#            curl -L https://github.com/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+#            chmod +x ~/docker-compose
+#            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+#            sudo ls -la
+#            docker create --network env_default --name tests
+#            ./.cicd/integration-test.sh

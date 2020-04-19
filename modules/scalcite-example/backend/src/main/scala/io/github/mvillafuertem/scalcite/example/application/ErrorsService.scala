@@ -41,6 +41,6 @@ object ErrorsService {
 
   val live: URLayer[ZErrorsRepository, ZErrorsApplication] =
     ZLayer.fromService[ErrorsRepository[ErrorDBO], ErrorsApplication](
-      repository => ErrorsService(repository))
+      ErrorsService.apply)
 
 }

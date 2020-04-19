@@ -50,6 +50,6 @@ object ScalciteSimulateApi {
     ZIO.access[ZScalciteSimulateApi](_.get.route)
 
   val live: ZLayer[ZScalciteApplication, Nothing, ZScalciteSimulateApi] =
-    ZLayer.fromService[ScalciteApplication, ScalciteSimulateApi](app => ScalciteSimulateApi(app))
+    ZLayer.fromService[ScalciteApplication, ScalciteSimulateApi](ScalciteSimulateApi.apply)
 
 }

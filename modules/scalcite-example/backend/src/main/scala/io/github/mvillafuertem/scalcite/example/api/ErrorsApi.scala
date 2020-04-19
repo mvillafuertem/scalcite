@@ -55,6 +55,6 @@ object ErrorsApi {
     ZIO.access[ZErrorsApi](_.get.route)
 
   val live: ZLayer[ZErrorsApplication, Nothing, ZErrorsApi] =
-    ZLayer.fromService[ErrorsApplication, ErrorsApi](app => ErrorsApi(app))
+    ZLayer.fromService[ErrorsApplication, ErrorsApi](ErrorsApi.apply)
 
 }

@@ -40,7 +40,7 @@ object ApplicationConfiguration {
 
   val live: ZLayer[ZInfrastructureConfiguration, Nothing, ZApplicationConfiguration] =
     ZLayer.fromService[InfrastructureConfiguration, ApplicationConfiguration](
-      infrastructureConfiguration => ApplicationConfiguration(infrastructureConfiguration))
+      ApplicationConfiguration.apply)
 
 }
 

@@ -82,6 +82,6 @@ object ScalcitePerformer {
 
   val live: URLayer[ZQueriesApplication with ZCalciteRepository with ZErrorsRepository, ZScalciteApplication] =
     ZLayer.fromServices[QueriesApplication, CalciteRepository, ErrorsRepository[ErrorDBO], ScalciteApplication](
-      (app, repository, errorsRepository) => ScalcitePerformer(app, repository, errorsRepository))
+      ScalcitePerformer.apply)
 
 }

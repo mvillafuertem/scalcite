@@ -44,8 +44,7 @@ object ApiConfiguration {
 
   val live: ZLayer[ZApplicationConfiguration with ZMaterializer, Throwable, ZApiConfiguration] =
     ZLayer.fromServices[ApplicationConfiguration, Materializer, ApiConfiguration](
-      (applicationConfiguration, materializer) => ApiConfiguration(applicationConfiguration, materializer)
-    )
+      ApiConfiguration.apply)
 
 }
 

@@ -1,8 +1,10 @@
 # Scalcite
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HE7K7HLJJBVWN&currency_code=EUR&source=url)
-[![Build Status](https://travis-ci.com/mvillafuertem/scalcite.svg?branch=master)](https://travis-ci.com/mvillafuertem/scalcite)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.mvillafuertem/scalcite_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.mvillafuertem/scalcite_2.12)
+[![Scala CI](https://github.com/mvillafuertem/scalcite/workflows/Scala%20CI/badge.svg)](https://github.com/mvillafuertem/scalcite/actions?query=workflow%3A%22Scala+CI%22)
+[![CircleCI](https://circleci.com/gh/mvillafuertem/scalcite.svg?style=shield)](https://circleci.com/gh/mvillafuertem/scalcite)
+[![Build Status](https://travis-ci.com/mvillafuertem/scalcite.svg?branch=master)](https://travis-ci.com/mvillafuertem/scalcite)
 
 ****
 

@@ -1,0 +1,19 @@
+name: Scala CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up JDK 11.0.6
+      uses: actions/setup-java@v1
+      with:
+        java-version: '11.0.6' # The JDK version to make available on the path.
+        java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+        architecture: x64 # (x64 or x86) - defaults to x64
+    - name: Run tests
+      run: |
+        sudo ls -la
+        ./.cicd/test.sh
