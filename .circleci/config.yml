@@ -14,9 +14,7 @@ jobs:
       - checkout
       - run:
           name: Test
-          command: |
-            sudo ls -la
-            ./.cicd/test.sh
+          command: ./.cicd/test.sh
 #      - setup_remote_docker:
 #          docker_layer_caching: true
 #      - run:

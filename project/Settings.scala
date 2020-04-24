@@ -3,7 +3,7 @@ import sbt.{Def, Tests, _}
 
 object Settings {
 
-  lazy val scala213 = "2.13.1"
+  lazy val scala213 = "2.13.2"
   lazy val scala212 = "2.12.10"
   lazy val supportedScalaVersions = List(scala213, scala212)
 

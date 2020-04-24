@@ -14,6 +14,4 @@ jobs:
         java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
         architecture: x64 # (x64 or x86) - defaults to x64
     - name: Run tests
-      run: |
-        sudo ls -la
-        ./.cicd/test.sh
+      run: ./.cicd/test.sh
