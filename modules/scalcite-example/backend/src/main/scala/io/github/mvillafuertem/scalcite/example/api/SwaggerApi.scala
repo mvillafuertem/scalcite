@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import io.github.mvillafuertem.scalcite.BuildInfoScalcite
-import io.github.mvillafuertem.scalcite.example.api.documentation.{ActuatorEndpoint, ApiEndpoint, ErrorsEndpoint, ScalciteEndpoint}
+import io.github.mvillafuertem.scalcite.example.api.documentation.{ ActuatorEndpoint, ApiEndpoint, ErrorsEndpoint, ScalciteEndpoint }
 import sttp.tapir.docs.openapi._
 import sttp.tapir.openapi.circe.yaml._
 
@@ -22,11 +22,10 @@ trait SwaggerApi {
     ScalciteEndpoint.queriesGetAllEndpoint,
     // S C A L C I T E  S I M U L A T E  E N D P O I N T
     ScalciteEndpoint.simulateEndpoint
-  ).toOpenAPI(BuildInfoScalcite.name, BuildInfoScalcite.version)
-    .toYaml
+  ).toOpenAPI(BuildInfoScalcite.name, BuildInfoScalcite.version).toYaml
 
   private lazy val contextPath = "docs"
-  private lazy val yamlName = "docs.yaml"
+  private lazy val yamlName    = "docs.yaml"
 
   val swagger = s"${ApiEndpoint.apiResource}/${ApiEndpoint.apiVersion}/${contextPath}"
 

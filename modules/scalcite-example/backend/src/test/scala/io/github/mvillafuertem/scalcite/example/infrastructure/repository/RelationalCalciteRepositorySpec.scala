@@ -4,7 +4,7 @@ import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.Unknown
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.ZCalciteRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepositorySpec.RelationalCalciteRepositoryConfigurationSpec
-import zio.{FiberFailure, ULayer, ZLayer}
+import zio.{ FiberFailure, ULayer, ZLayer }
 
 final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryConfigurationSpec {
 
@@ -16,9 +16,12 @@ final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryC
     // see trait
 
     // w h e n
-    val actual: Option[collection.Map[String, Any]] = unsafeRun(RelationalCalciteRepository.queryForMap(map, queryBooleanValue)
-      .runHead
-      .provideLayer(env))
+    val actual: Option[collection.Map[String, Any]] = unsafeRun(
+      RelationalCalciteRepository
+        .queryForMap(map, queryBooleanValue)
+        .runHead
+        .provideLayer(env)
+    )
 
     // t h e n
     actual shouldBe Some(Map("boolean" -> true))
@@ -31,9 +34,12 @@ final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryC
     // see trait
 
     // w h e n
-    val actual = unsafeRun(RelationalCalciteRepository.queryForJson(json, queryBooleanValue)
-      .runHead
-      .provideLayer(env))
+    val actual = unsafeRun(
+      RelationalCalciteRepository
+        .queryForJson(json, queryBooleanValue)
+        .runHead
+        .provideLayer(env)
+    )
     // t h e n
     actual shouldBe Some(json)
 
@@ -45,9 +51,12 @@ final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryC
     // see trait
 
     // w h e n
-    val actual = unsafeRun(RelationalCalciteRepository.queryForJson(jsonTree, queryBooleanTreeValue)
-      .runHead
-      .provideLayer(env))
+    val actual = unsafeRun(
+      RelationalCalciteRepository
+        .queryForJson(jsonTree, queryBooleanTreeValue)
+        .runHead
+        .provideLayer(env)
+    )
 
     // t h e n
     actual shouldBe Some(jsonTree)
@@ -60,14 +69,17 @@ final class RelationalCalciteRepositorySpec extends RelationalCalciteRepositoryC
     // see trait
 
     // w h e n
-    val actual = intercept[FiberFailure](unsafeRun(RelationalCalciteRepository.queryForJson(jsonEmpty, queryBooleanValue)
-      .runHead
-      .provideLayer(env)))
+    val actual = intercept[FiberFailure](
+      unsafeRun(
+        RelationalCalciteRepository
+          .queryForJson(jsonEmpty, queryBooleanValue)
+          .runHead
+          .provideLayer(env)
+      )
+    )
 
     // t h e n
-    actual.cause.map { a =>
-      a shouldBe an[Unknown]
-    }
+    actual.cause.map(a => a shouldBe an[Unknown])
 
   }
 

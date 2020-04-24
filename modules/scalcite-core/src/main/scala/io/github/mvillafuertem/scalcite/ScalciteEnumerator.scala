@@ -2,8 +2,7 @@ package io.github.mvillafuertem.scalcite
 
 import java.util
 
-import org.apache.calcite.linq4j.{Enumerator, Linq4j}
-
+import org.apache.calcite.linq4j.{ Enumerator, Linq4j }
 
 final class ScalciteEnumerator(array: Array[Any]) extends Enumerator[Array[Any]] {
 
@@ -17,11 +16,9 @@ final class ScalciteEnumerator(array: Array[Any]) extends Enumerator[Array[Any]]
 
   override def moveNext: Boolean = this.enumerator.moveNext
 
-  override def reset(): Unit = {
+  override def reset(): Unit =
     this.enumerator.reset()
-  }
 
-  override def close(): Unit = {
+  override def close(): Unit =
     this.enumerator.close()
-  }
 }

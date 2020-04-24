@@ -3,6 +3,6 @@ package io.github.mvillafuertem.scalcite.example.domain.model
 import java.util.UUID
 
 /**
-  * @author Miguel Villafuerte
-  */
+ * @author Miguel Villafuerte
+ */
 final case class Query(uuid: UUID = UUID.randomUUID(), value: String)

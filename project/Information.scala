@@ -1,5 +1,5 @@
 import sbt.Keys._
-import sbt.{Def, Developer, ScmInfo, _}
+import sbt.{ Def, Developer, ScmInfo, _ }
 
 object Information {
 

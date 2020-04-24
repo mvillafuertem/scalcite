@@ -5,35 +5,34 @@ import java.util.UUID
 
 import io.github.mvillafuertem.scalcite.example.domain.QueriesApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
-import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.{DuplicatedEntity, Unknown}
+import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.{ DuplicatedEntity, Unknown }
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
-import io.github.mvillafuertem.scalcite.example.domain.repository.{ErrorsRepository, QueriesRepository}
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.{ErrorDBO, QueryDBO}
+import io.github.mvillafuertem.scalcite.example.domain.repository.{ ErrorsRepository, QueriesRepository }
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.{ ErrorDBO, QueryDBO }
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ZErrorsRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.ZQueriesRepository
 import zio.stream.ZStream
-import zio.{Has, URLayer, ZLayer, stream}
+import zio.{ stream, Has, URLayer, ZLayer }
 
-final class QueriesService(repository: QueriesRepository[QueryDBO],
-                           errorsRepository: ErrorsRepository[ErrorDBO]) extends QueriesApplication {
+final class QueriesService(repository: QueriesRepository[QueryDBO], errorsRepository: ErrorsRepository[ErrorDBO]) extends QueriesApplication {
   override def create(query: Query): stream.Stream[ScalciteError, Query] =
     (for {
       input <- stream.Stream(QueryDBO(query.uuid, query.value))
-      stream <- repository.insert(input).map{
-        case r@_ if r > 0 => query
-        case _  => query.copy(value = ScalciteError.Unknown.toString)
-      }
+      stream <- repository.insert(input).map {
+                 case r @ _ if r > 0 => query
+                 case _              => query.copy(value = ScalciteError.Unknown.toString)
+               }
     } yield stream).mapError {
-      case e: SQLException => e.getSQLState match {
-        case "23505" => DuplicatedEntity()
-        case _ => Unknown()
-      }
+      case e: SQLException =>
+        e.getSQLState match {
+          case "23505" => DuplicatedEntity()
+          case _       => Unknown()
+        }
     }.catchAll(catchErrorAndSaveInDB)
 
   private def catchErrorAndSaveInDB: ScalciteError => stream.Stream[ScalciteError, Query] =
     error =>
-      errorsRepository.insert(ErrorDBO(error.uuid, error.code, error.timestamp))
-        .mapError { case e: SQLException => Unknown(e.getMessage) } *>
+      errorsRepository.insert(ErrorDBO(error.uuid, error.code, error.timestamp)).mapError { case e: SQLException => Unknown(e.getMessage) } *>
         ZStream.fail(error)
 
   override def deleteByUUID(uuid: UUID): stream.Stream[Throwable, Int] =
@@ -41,7 +40,6 @@ final class QueriesService(repository: QueriesRepository[QueryDBO],
 
   override def findByUUID(uuid: UUID): stream.Stream[Throwable, Query] =
     repository.findByUUID(uuid).map(dbo => Query(dbo.uuid, dbo.value))
-
 
   override def findAll(): stream.Stream[Throwable, Query] =
     repository.findAll().map(dbo => Query(dbo.uuid, dbo.value))
@@ -67,7 +65,6 @@ object QueriesService {
     stream.ZStream.accessStream(_.get.findByUUID(uuid))
 
   val live: URLayer[ZQueriesRepository with ZErrorsRepository, ZQueriesApplication] =
-    ZLayer.fromServices[QueriesRepository[QueryDBO], ErrorsRepository[ErrorDBO], QueriesApplication](
-      QueriesService.apply)
+    ZLayer.fromServices[QueriesRepository[QueryDBO], ErrorsRepository[ErrorDBO], QueriesApplication](QueriesService.apply)
 
 }

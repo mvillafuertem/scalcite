@@ -12,23 +12,25 @@ import sttp.tapir._
 trait ErrorsEndpoint extends ApiErrorMapping {
 
   // I N F O R M A T I O N
-  private[api] lazy val errorsResource: String = "errors"
-  private[api] lazy val uuidPath = path[UUID]("uuid")
+  private[api] lazy val errorsResource: String                = "errors"
+  private[api] lazy val uuidPath                              = path[UUID]("uuid")
   private[api] lazy val errorsIdResource: EndpointInput[UUID] = errorsResource / uuidPath
   private[api] lazy val errorsParameter = query[List[UUID]]("uuid")
-    .example(List(
-      UUID.fromString("43bbbc0d-fa14-4003-ad15-ef5fdc6c1732"),
-      UUID.fromString("ec7381a6-11a1-4261-af95-4b84a1a22bf0"),
-      UUID.fromString("dbc20401-2821-44b6-b29d-bbae4313f922"),
-      UUID.fromString("b4e5d685-ee44-4f75-aa57-65d84238ee2b"),
-      UUID.fromString("7097879d-2138-4d68-9bb5-f576a85f80f2"),
-      UUID.fromString("80a309b1-4326-4fac-9e93-6465418d53e5"),
-      UUID.fromString("696d07e5-01a2-455b-8aec-e5eaf6d54c6d"),
-    ))
+    .example(
+      List(
+        UUID.fromString("43bbbc0d-fa14-4003-ad15-ef5fdc6c1732"),
+        UUID.fromString("ec7381a6-11a1-4261-af95-4b84a1a22bf0"),
+        UUID.fromString("dbc20401-2821-44b6-b29d-bbae4313f922"),
+        UUID.fromString("b4e5d685-ee44-4f75-aa57-65d84238ee2b"),
+        UUID.fromString("7097879d-2138-4d68-9bb5-f576a85f80f2"),
+        UUID.fromString("80a309b1-4326-4fac-9e93-6465418d53e5"),
+        UUID.fromString("696d07e5-01a2-455b-8aec-e5eaf6d54c6d")
+      )
+    )
     .description("errors to simulate")
-  private[api] lazy val errorsNameGetResource: String = "errors-get-resource"
-  private[api] lazy val errorsNameGetAllResource: String = "errors-get-all-resource"
-  private[api] lazy val errorsDescriptionGetResource: String = "Errors Get Endpoint"
+  private[api] lazy val errorsNameGetResource: String           = "errors-get-resource"
+  private[api] lazy val errorsNameGetAllResource: String        = "errors-get-all-resource"
+  private[api] lazy val errorsDescriptionGetResource: String    = "Errors Get Endpoint"
   private[api] lazy val errorsDescriptionGetAllResource: String = "Errors Get All Endpoint"
 
   val errorsExample: ScalciteError = DuplicatedEntity()

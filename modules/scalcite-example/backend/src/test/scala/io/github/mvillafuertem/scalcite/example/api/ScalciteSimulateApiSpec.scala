@@ -10,26 +10,27 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.example.BaseData
 import io.github.mvillafuertem.scalcite.example.api.ScalciteSimulateApiSpec.ScalciteSimulateApiConfigurationSpec
-import io.github.mvillafuertem.scalcite.example.api.behavior.{QueriesApiBehaviorSpec, ScalciteSimulateApiBehaviorSpec}
+import io.github.mvillafuertem.scalcite.example.api.behavior.{ QueriesApiBehaviorSpec, ScalciteSimulateApiBehaviorSpec }
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
-import io.github.mvillafuertem.scalcite.example.application.{QueriesService, ScalcitePerformer}
-import io.github.mvillafuertem.scalcite.example.domain.{QueriesApplication, ScalciteApplication}
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
+import io.github.mvillafuertem.scalcite.example.application.{ QueriesService, ScalcitePerformer }
+import io.github.mvillafuertem.scalcite.example.domain.{ QueriesApplication, ScalciteApplication }
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{
+  RelationalCalciteRepository,
+  RelationalErrorsRepository,
+  RelationalQueriesRepository
+}
 import org.scalatest.Succeeded
 
 import scala.concurrent.duration._
 
-
-final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec
-  with ScalciteSimulateApiBehaviorSpec
-  with QueriesApiBehaviorSpec {
+final class ScalciteSimulateApiSpec extends ScalciteSimulateApiConfigurationSpec with ScalciteSimulateApiBehaviorSpec with QueriesApiBehaviorSpec {
 
   override implicit val timeout: RouteTestTimeout = RouteTestTimeout(10.seconds.dilated)
 
   val scalciteApi: QueriesApi =
-    QueriesApi(QueriesService(
-      RelationalQueriesRepository(h2ConfigurationProperties.databaseName),
-      RelationalErrorsRepository(h2ConfigurationProperties.databaseName)))(Materializer(system))
+    QueriesApi(
+      QueriesService(RelationalQueriesRepository(h2ConfigurationProperties.databaseName), RelationalErrorsRepository(h2ConfigurationProperties.databaseName))
+    )(Materializer(system))
 
   behavior of "Scalcite Simulate Api"
 
@@ -105,17 +106,13 @@ object ScalciteSimulateApiSpec {
   trait ScalciteSimulateApiConfigurationSpec extends BaseData {
 
     val queriesApplication: QueriesApplication =
-      QueriesService(
-        RelationalQueriesRepository(h2ConfigurationProperties.databaseName),
-        RelationalErrorsRepository(h2ConfigurationProperties.databaseName))
-
+      QueriesService(RelationalQueriesRepository(h2ConfigurationProperties.databaseName), RelationalErrorsRepository(h2ConfigurationProperties.databaseName))
 
     val env: ScalciteApplication = ScalcitePerformer(
       queriesApplication,
       RelationalCalciteRepository(calciteConfigurationProperties.databaseName),
       RelationalErrorsRepository(calciteConfigurationProperties.databaseName)
     )
-
 
   }
 

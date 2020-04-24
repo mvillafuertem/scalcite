@@ -3,11 +3,11 @@ package io.github.mvillafuertem.scalcite.example.api.behavior
 import akka.http.scaladsl.model.ContentTypes.`application/json`
 import akka.http.scaladsl.model.StatusCode
 import akka.http.scaladsl.model.headers.`Content-Type`
-import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
+import akka.http.scaladsl.testkit.{ RouteTestTimeout, ScalatestRouteTest }
 import akka.testkit.TestDuration
 import io.github.mvillafuertem.scalcite.example.api.ScalciteSimulateApi
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.{Assertion, Suite}
+import org.scalatest.{ Assertion, Suite }
 
 import scala.concurrent.duration._
 

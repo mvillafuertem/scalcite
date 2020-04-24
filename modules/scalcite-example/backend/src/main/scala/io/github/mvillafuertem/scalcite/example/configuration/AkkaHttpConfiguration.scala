@@ -11,35 +11,36 @@ import io.github.mvillafuertem.scalcite.example.configuration.ActorSystemConfigu
 import io.github.mvillafuertem.scalcite.example.configuration.InfrastructureConfiguration.ZInfrastructureConfiguration
 import zio._
 
-
-final class AkkaHttpConfiguration(infrastructureConfiguration: InfrastructureConfiguration,
-                                 actorSystem: ActorSystem[_]) {
+final class AkkaHttpConfiguration(infrastructureConfiguration: InfrastructureConfiguration, actorSystem: ActorSystem[_]) {
 
   def httpServer(route: Route): Task[Unit] =
     for {
       eventualBinding <- Task {
-        implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
-        implicit lazy val materializer: Materializer = Materializer(actorSystem)
-        Http().bindAndHandle(route, infrastructureConfiguration.scalciteConfigurationProperties.interface, infrastructureConfiguration.scalciteConfigurationProperties.port)
-      }
+                          implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
+                          implicit lazy val materializer: Materializer       = Materializer(actorSystem)
+                          Http().bindAndHandle(
+                            route,
+                            infrastructureConfiguration.scalciteConfigurationProperties.interface,
+                            infrastructureConfiguration.scalciteConfigurationProperties.port
+                          )
+                        }
       server <- Task
-        .fromFuture(_ => eventualBinding)
-        .tapError(
-          exception =>
-            UIO(
-              actorSystem.log.error(
-                s"Server could not start with parameters [host:port]=[${infrastructureConfiguration.scalciteConfigurationProperties.interface},${infrastructureConfiguration.scalciteConfigurationProperties.port}]",
-                exception
-              )
-            )
-        )
-        .forever
-        .fork
+                 .fromFuture(_ => eventualBinding)
+                 .tapError(exception =>
+                   UIO(
+                     actorSystem.log.error(
+                       s"Server could not start with parameters [host:port]=[${infrastructureConfiguration.scalciteConfigurationProperties.interface},${infrastructureConfiguration.scalciteConfigurationProperties.port}]",
+                       exception
+                     )
+                   )
+                 )
+                 .forever
+                 .fork
       _ <- UIO(
-        actorSystem.log.info(
-          s"Server online at http://${infrastructureConfiguration.scalciteConfigurationProperties.interface}:${infrastructureConfiguration.scalciteConfigurationProperties.port}/${SwaggerApi.swagger}"
-        )
-      )
+            actorSystem.log.info(
+              s"Server online at http://${infrastructureConfiguration.scalciteConfigurationProperties.interface}:${infrastructureConfiguration.scalciteConfigurationProperties.port}/${SwaggerApi.swagger}"
+            )
+          )
       _ <- server.join
     } yield ()
 
@@ -51,7 +52,7 @@ object AkkaHttpConfiguration {
     new AkkaHttpConfiguration(infrastructureConfiguration, actorSystem)
 
   type ZAkkaHttpConfiguration = Has[AkkaHttpConfiguration]
-  type ZMaterializer = Has[Materializer]
+  type ZMaterializer          = Has[Materializer]
 
   def httpServer(route: Route): RIO[ZAkkaHttpConfiguration with ZActorSystemConfiguration, Unit] =
     ZIO.accessM(_.get.httpServer(route))
@@ -60,8 +61,6 @@ object AkkaHttpConfiguration {
     ZLayer.fromService[ActorSystem[_], Materializer](Materializer.apply)
 
   val live: ZLayer[ZInfrastructureConfiguration with ZActorSystemConfiguration, Nothing, ZAkkaHttpConfiguration] =
-    ZLayer.fromServices[InfrastructureConfiguration, ActorSystem[_], AkkaHttpConfiguration](
-      AkkaHttpConfiguration.apply)
-
+    ZLayer.fromServices[InfrastructureConfiguration, ActorSystem[_], AkkaHttpConfiguration](AkkaHttpConfiguration.apply)
 
 }

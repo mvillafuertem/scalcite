@@ -5,8 +5,8 @@ import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import zio.stream
 
 /**
-  * @author Miguel Villafuerte
-  */
+ * @author Miguel Villafuerte
+ */
 trait CalciteRepository {
 
   def queryForMap(map: collection.Map[String, Any], sql: String): stream.Stream[ScalciteError, collection.Map[String, Any]]

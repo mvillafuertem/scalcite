@@ -10,9 +10,6 @@ object QueryDBO extends SQLSyntaxSupport[QueryDBO] {
 
   override val tableName = "scalcitesql"
 
-  def apply(rs: WrappedResultSet) = new QueryDBO(
-     UUID.fromString(rs.string("uuid")),
-    rs.string("value"),
-    rs.longOpt("id"))
+  def apply(rs: WrappedResultSet) = new QueryDBO(UUID.fromString(rs.string("uuid")), rs.string("value"), rs.longOpt("id"))
 
 }

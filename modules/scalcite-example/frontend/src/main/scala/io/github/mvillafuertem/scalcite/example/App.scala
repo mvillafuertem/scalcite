@@ -21,14 +21,16 @@ object ReactLogo extends js.Object
 
   //private val css = AppCSS
 
-  def render() = {
+  def render() =
     div(className := "App")(
       header(className := "App-header")(
         img(src := ReactLogo.asInstanceOf[String], className := "App-logo", alt := "logo"),
         h1(className := "App-title")("Welcome to React (with Scala.js!)")
       ),
       p(className := "App-intro")(
-        "To get started, edit ", code("App.scala"), " and save to reload."
+        "To get started, edit ",
+        code("App.scala"),
+        " and save to reload."
       ),
       div(className := "App-body")(
         ul()(
@@ -43,5 +45,4 @@ object ReactLogo extends js.Object
         )
       )
     )
-  }
 }

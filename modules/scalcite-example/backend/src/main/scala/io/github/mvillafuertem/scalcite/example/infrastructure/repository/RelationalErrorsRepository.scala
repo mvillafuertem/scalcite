@@ -4,11 +4,11 @@ import java.util.UUID
 
 import io.github.mvillafuertem.scalcite.example.domain.repository.ErrorsRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.ErrorDBO
-import scalikejdbc.streams.{StreamReadySQL, _}
-import scalikejdbc.{HasExtractor, NamedDB, NoExtractor, SQL, SQLUpdate, SQLUpdateWithGeneratedKey, _}
+import scalikejdbc.streams.{ StreamReadySQL, _ }
+import scalikejdbc.{ HasExtractor, NamedDB, NoExtractor, SQL, SQLUpdate, SQLUpdateWithGeneratedKey, _ }
 import zio.interop.reactivestreams._
 import zio.stream.ZStream
-import zio.{Has, Task, ZLayer, stream}
+import zio.{ stream, Has, Task, ZLayer }
 
 import scala.concurrent.ExecutionContext
 
@@ -16,21 +16,19 @@ private final class RelationalErrorsRepository(databaseName: String) extends Err
 
   implicit def executeOperation(sqlUpdateWithGeneratedKey: SQLUpdateWithGeneratedKey): stream.Stream[Throwable, Long] =
     ZStream.fromEffect(
-      Task.effect(
-        NamedDB(Symbol(databaseName)).autoCommit{implicit session => sqlUpdateWithGeneratedKey.apply()})
+      Task.effect(NamedDB(Symbol(databaseName)).autoCommit(implicit session => sqlUpdateWithGeneratedKey.apply()))
     )
 
   implicit def executeUpdateOperation(sqlUpdate: SQLUpdate): stream.Stream[Throwable, Int] =
     ZStream.fromEffect(
-      Task.effect(
-        NamedDB(Symbol(databaseName)).autoCommit{implicit session => sqlUpdate.apply()})
+      Task.effect(NamedDB(Symbol(databaseName)).autoCommit(implicit session => sqlUpdate.apply()))
     )
 
   implicit def executeStreamOperation[T](streamReadySQL: StreamReadySQL[T])(implicit executionContext: ExecutionContext): stream.Stream[Throwable, T] =
     (NamedDB(Symbol(databaseName)) readOnlyStream streamReadySQL).toStream()
 
   implicit def executeSQLOperation[T](sql: SQL[T, HasExtractor]): stream.Stream[Throwable, T] =
-    ZStream.fromIterable(NamedDB(Symbol(databaseName)).autoCommit{implicit session => sql.list().apply()})
+    ZStream.fromIterable(NamedDB(Symbol(databaseName)).autoCommit(implicit session => sql.list().apply()))
 
   private def queryFindById(id: Long): SQL[Nothing, NoExtractor] =
     sql"SELECT * FROM ERRORS WHERE ID = $id"
@@ -91,10 +89,9 @@ object RelationalErrorsRepository {
   def insert(query: ErrorDBO): stream.ZStream[ZErrorsRepository, Throwable, Long] =
     stream.ZStream.accessStream(_.get.insert(query))
 
-  def deleteByUUID(uuid: UUID): stream.ZStream[ZErrorsRepository,Throwable, Int] =
+  def deleteByUUID(uuid: UUID): stream.ZStream[ZErrorsRepository, Throwable, Int] =
     stream.ZStream.accessStream(_.get.deleteByUUID(uuid))
 
   val live: ZLayer[Has[String], Nothing, ZErrorsRepository] =
-    ZLayer.fromService[String, ErrorsRepository[ErrorDBO]](
-      databaseName => RelationalErrorsRepository(databaseName))
+    ZLayer.fromService[String, ErrorsRepository[ErrorDBO]](databaseName => RelationalErrorsRepository(databaseName))
 }

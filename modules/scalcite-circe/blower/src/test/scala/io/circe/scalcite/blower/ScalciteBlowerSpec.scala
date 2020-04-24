@@ -30,11 +30,12 @@ final class ScalciteBlowerSpec extends AnyFlatSpecLike with Matchers {
       ("id", Json.fromString("c730433b-082c-4984-9d66-855c243266f0")),
       ("name", Json.fromString("Foo")),
       ("counts", Json.arr(Json.fromInt(1), Json.fromInt(2), Json.fromInt(3))),
-      ("values",
+      (
+        "values",
         Json.obj(
           ("bar", Json.fromBoolean(true)),
           ("baz", Json.fromDoubleOrNull(100.001)),
-          ("qux", Json.fromString("b")),
+          ("qux", Json.fromString("b"))
         )
       )
     )
