@@ -8,7 +8,7 @@ import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.Unkno
 import io.github.mvillafuertem.scalcite.example.domain.repository.ErrorsRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.ErrorDBO
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ZErrorsRepository
-import zio.{Has, URLayer, ZLayer, stream}
+import zio.{ stream, Has, URLayer, ZLayer }
 
 private final class ErrorsService(repository: ErrorsRepository[ErrorDBO]) extends ErrorsApplication {
 
@@ -40,7 +40,6 @@ object ErrorsService {
     stream.ZStream.accessStream(_.get.findByUUID(uuid))
 
   val live: URLayer[ZErrorsRepository, ZErrorsApplication] =
-    ZLayer.fromService[ErrorsRepository[ErrorDBO], ErrorsApplication](
-      ErrorsService.apply)
+    ZLayer.fromService[ErrorsRepository[ErrorDBO], ErrorsApplication](ErrorsService.apply)
 
 }

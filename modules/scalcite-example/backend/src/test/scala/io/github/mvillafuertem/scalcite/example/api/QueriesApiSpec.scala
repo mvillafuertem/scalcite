@@ -9,15 +9,15 @@ import io.github.mvillafuertem.scalcite.example.api.QueriesApiSpec.QueriesApiCon
 import io.github.mvillafuertem.scalcite.example.api.behavior.QueriesApiBehaviorSpec
 import io.github.mvillafuertem.scalcite.example.api.documentation.ScalciteEndpoint
 import io.github.mvillafuertem.scalcite.example.application.QueriesService
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalErrorsRepository, RelationalQueriesRepository}
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{ RelationalErrorsRepository, RelationalQueriesRepository }
 import org.scalatest.Succeeded
 
 final class QueriesApiSpec extends QueriesApiConfigurationSpec with QueriesApiBehaviorSpec {
 
   val scalciteApi: QueriesApi =
-    QueriesApi(QueriesService(
-      RelationalQueriesRepository(h2ConfigurationProperties.databaseName),
-      RelationalErrorsRepository(h2ConfigurationProperties.databaseName)))(Materializer(system))
+    QueriesApi(
+      QueriesService(RelationalQueriesRepository(h2ConfigurationProperties.databaseName), RelationalErrorsRepository(h2ConfigurationProperties.databaseName))
+    )(Materializer(system))
 
   behavior of "Scalcite Api"
 
@@ -52,7 +52,5 @@ final class QueriesApiSpec extends QueriesApiConfigurationSpec with QueriesApiBe
 
 object QueriesApiSpec {
 
-  trait QueriesApiConfigurationSpec extends BaseData {
-
-  }
+  trait QueriesApiConfigurationSpec extends BaseData {}
 }

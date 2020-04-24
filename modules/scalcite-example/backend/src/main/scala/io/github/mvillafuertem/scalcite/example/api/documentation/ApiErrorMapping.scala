@@ -5,7 +5,7 @@ import io.github.mvillafuertem.scalcite.example.domain.error
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.DuplicatedEntity
 import sttp.model.StatusCode
-import sttp.tapir.{EndpointOutput, _}
+import sttp.tapir.{ EndpointOutput, _ }
 
 trait ApiErrorMapping extends ApiJsonCodec {
 
@@ -27,12 +27,14 @@ trait ApiErrorMapping extends ApiJsonCodec {
   // I N T E R N A L  S E R V E R  E R R O R
   private lazy val internalServerErrorDescription = model.StatusCodes.InternalServerError.defaultMessage
   private[api] lazy val statusInternalServerError: EndpointOutput.StatusMapping[error.ScalciteError.Unknown] =
-    statusMapping(StatusCode.InternalServerError, anyJsonBody[error.ScalciteError.Unknown].example(error.ScalciteError.Unknown()).description(internalServerErrorDescription))
+    statusMapping(
+      StatusCode.InternalServerError,
+      anyJsonBody[error.ScalciteError.Unknown].example(error.ScalciteError.Unknown()).description(internalServerErrorDescription)
+    )
 
   // N O T  F O U N D
 //  private lazy val notFoundDescription = model.StatusCodes.NotFound.defaultMessage
 //  private[api] lazy val statusNotFound: EndpointOutput.StatusMapping[error.ScalciteError.NonExistentEntityError.type] =
 //    statusMapping(StatusCode.NotFound, jsonBody[error.ScalciteError.NonExistentEntityError.type].example(NonExistentEntityError).description(notFoundDescription))
-
 
 }

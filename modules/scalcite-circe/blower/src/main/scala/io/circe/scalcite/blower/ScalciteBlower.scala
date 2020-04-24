@@ -3,9 +3,9 @@ package io.circe.scalcite.blower
 import java.nio.charset.StandardCharsets
 import java.util
 
-import com.github.plokhotnyuk.jsoniter_scala.core.{JsonReader, JsonReaderException, JsonValueCodec, JsonWriter, readFromArray}
-import io.circe.Json.{JArray, JBoolean, JNull, JNumber, JObject, JString}
-import io.circe.{Json, JsonDouble, JsonLong, JsonObject}
+import com.github.plokhotnyuk.jsoniter_scala.core.{ readFromArray, JsonReader, JsonReaderException, JsonValueCodec, JsonWriter }
+import io.circe.Json.{ JArray, JBoolean, JNull, JNumber, JObject, JString }
+import io.circe.{ Json, JsonDouble, JsonLong, JsonObject }
 import io.github.mvillafuertem.scalcite.blower.Blower
 
 object ScalciteBlower {
@@ -23,8 +23,7 @@ object ScalciteBlower {
   private def blowup(flattened: Json): Json = flattened match {
 
     case JObject(tuples) =>
-      tuples.toIterable
-        .map { case (k, v) => _blowup(k.split('.'), v, Vector.empty[Json]) }
+      tuples.toIterable.map { case (k, v) => _blowup(k.split('.'), v, Vector.empty[Json]) }
         .fold(JObject(JsonObject.empty))(_ deepMerge _)
 
     case JArray(_) => throw new RuntimeException("The parser doesn't support array type")
@@ -35,8 +34,9 @@ object ScalciteBlower {
   private def _blowup(keys: Array[String] = Array(), value: Json, vector: Vector[Json]): Json =
     if (keys.isEmpty) value match {
       case JArray(v) => JArray(v)
-      case _ => value
-    } else
+      case _         => value
+    }
+    else
       keys.head match {
         case ArrayElem(k) => {
           val vc = vector.appended(value)
@@ -104,13 +104,13 @@ object ScalciteBlower {
     }
 
     override def encodeValue(x: Json, out: JsonWriter): Unit = x match {
-      case JNull => out.writeNull()
-      case JString(s) => out.writeVal(s)
+      case JNull       => out.writeNull()
+      case JString(s)  => out.writeVal(s)
       case JBoolean(b) => out.writeVal(b)
       case JNumber(n) =>
         n match {
           case JsonLong(l) => out.writeVal(l)
-          case _ => out.writeVal(n.toDouble)
+          case _           => out.writeVal(n.toDouble)
         }
       case JArray(a) =>
         out.writeArrayStart()

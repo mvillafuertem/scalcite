@@ -8,8 +8,7 @@ import io.github.mvillafuertem.scalcite.example.configuration.AkkaHttpConfigurat
 import io.github.mvillafuertem.scalcite.example.configuration.ApplicationConfiguration.ZApplicationConfiguration
 import zio._
 
-final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration,
-                             materializer: Materializer) {
+final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration, materializer: Materializer) {
 
   val errorsApi: ErrorsApi =
     ErrorsApi(applicationConfiguration.errorsApplication)
@@ -22,7 +21,6 @@ final class ApiConfiguration(applicationConfiguration: ApplicationConfiguration,
 
 }
 
-
 object ApiConfiguration {
 
   def apply(applicationConfiguration: ApplicationConfiguration, materializer: Materializer): ApiConfiguration =
@@ -32,8 +30,8 @@ object ApiConfiguration {
 
   val routes: ZIO[ZApiConfiguration, Nothing, Route] =
     for {
-      errorsRoute <- ZIO.access[ZApiConfiguration](_.get.errorsApi.route)
-      queriesRoute <- ZIO.access[ZApiConfiguration](_.get.queriesApi.route)
+      errorsRoute           <- ZIO.access[ZApiConfiguration](_.get.errorsApi.route)
+      queriesRoute          <- ZIO.access[ZApiConfiguration](_.get.queriesApi.route)
       scalciteSimulateRoute <- ZIO.access[ZApiConfiguration](_.get.scalciteSimulateApi.route)
 
     } yield errorsRoute ~
@@ -43,8 +41,6 @@ object ApiConfiguration {
       ActuatorApi.route
 
   val live: ZLayer[ZApplicationConfiguration with ZMaterializer, Throwable, ZApiConfiguration] =
-    ZLayer.fromServices[ApplicationConfiguration, Materializer, ApiConfiguration](
-      ApiConfiguration.apply)
+    ZLayer.fromServices[ApplicationConfiguration, Materializer, ApiConfiguration](ApiConfiguration.apply)
 
 }
-

@@ -11,7 +11,7 @@ addSbtPlugin("org.jmotor.sbt" % "sbt-dependency-updates" % "1.2.2")
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
 
 // M D O C
-addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.1.5" )
+addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.1.5")
 
 // S C O V E R A G E
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
@@ -33,3 +33,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.4.1")
 
 // J A V A  A G E N T
 addSbtPlugin("com.lightbend.sbt" % "sbt-javaagent" % "0.1.5")
+
+// S C A L A  F M T
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.4")

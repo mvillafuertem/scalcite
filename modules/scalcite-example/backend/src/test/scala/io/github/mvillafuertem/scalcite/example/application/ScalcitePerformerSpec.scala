@@ -8,8 +8,12 @@ import io.github.mvillafuertem.scalcite.example.application.ScalcitePerformerSpe
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalCalciteRepository.ZCalciteRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ZErrorsRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.ZQueriesRepository
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
-import zio.{ULayer, ZLayer}
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{
+  RelationalCalciteRepository,
+  RelationalErrorsRepository,
+  RelationalQueriesRepository
+}
+import zio.{ ULayer, ZLayer }
 
 final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
 
@@ -23,12 +27,10 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     // w h e n
     val actual: Option[Json] = unsafeRun(
       (for {
-        _ <- QueriesService.create(queryBoolean)
+        _      <- QueriesService.create(queryBoolean)
         effect <- ScalcitePerformer.performJson(json, uuid2)
-      } yield effect)
-        .runHead
+      } yield effect).runHead
         .provideLayer(env)
-
     )
 
     // t h e n
@@ -44,10 +46,9 @@ final class ScalcitePerformerSpec extends ScalcitePerformerConfigurationSpec {
     // w h e n
     val actual: Option[collection.Map[String, Any]] = unsafeRun(
       (for {
-        _ <- QueriesService.create(queryBoolean)
+        _      <- QueriesService.create(queryBoolean)
         effect <- ScalcitePerformer.performMap(map, uuid2)
-      } yield effect)
-        .runHead
+      } yield effect).runHead
         .provideLayer(env)
     )
 
@@ -82,7 +83,7 @@ object ScalcitePerformerSpec {
       queriesApplicationLayer ++
         errorsRepositoryLayer ++
         calciteRepositoryLayer >>>
-      ScalcitePerformer.live ++ queriesApplicationLayer
+        ScalcitePerformer.live ++ queriesApplicationLayer
 
   }
 

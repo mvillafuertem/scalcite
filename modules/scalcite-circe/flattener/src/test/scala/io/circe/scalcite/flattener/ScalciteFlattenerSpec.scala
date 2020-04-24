@@ -35,11 +35,12 @@ final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
     val json = Json.obj(
       ("id", Json.fromString("c730433b-082c-4984-9d66-855c243266f0")),
       ("name", Json.fromString("Foo")),
-      ("values",
+      (
+        "values",
         Json.obj(
           ("bar", Json.fromBoolean(true)),
           ("baz", Json.fromDoubleOrNull(100.001)),
-          ("qux",Json.fromString("a"))
+          ("qux", Json.fromString("a"))
         )
       )
     )

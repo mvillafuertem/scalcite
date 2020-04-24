@@ -19,25 +19,24 @@ object ActorSystemConfiguration {
   private lazy val actorSystem: ZIO[ZInfrastructureConfiguration, Throwable, ActorSystem[_]] =
     for {
       scalciteConfigurationProperties <- InfrastructureConfiguration.scalciteConfigurationProperties
-      executionContext <- executionContext
+      executionContext                <- executionContext
       actorSystem <- Task(
-        ActorSystem[Done](
-          Behaviors.setup[Done] { context =>
-            context.setLoggerName(this.getClass)
-            context.log.info(s"Starting ${scalciteConfigurationProperties.name}... ${"BuildInfo.toJson"}")
-            Behaviors.receiveMessage {
-              case Done =>
-                context.log.error(s"Server could not start!")
-                Behaviors.stopped
-            }
-          },
-          scalciteConfigurationProperties.name.toLowerCase(),
-          BootstrapSetup().withDefaultExecutionContext(executionContext)
-        )
-      )
+                      ActorSystem[Done](
+                        Behaviors.setup[Done] { context =>
+                          context.setLoggerName(this.getClass)
+                          context.log.info(s"Starting ${scalciteConfigurationProperties.name}... ${"BuildInfo.toJson"}")
+                          Behaviors.receiveMessage {
+                            case Done =>
+                              context.log.error(s"Server could not start!")
+                              Behaviors.stopped
+                          }
+                        },
+                        scalciteConfigurationProperties.name.toLowerCase(),
+                        BootstrapSetup().withDefaultExecutionContext(executionContext)
+                      )
+                    )
     } yield actorSystem
 
   val live: ZLayer[ZInfrastructureConfiguration, Throwable, ZActorSystemConfiguration] = ZLayer
-    .fromAcquireRelease(actorSystem)(
-      actorSystem => UIO.succeed(actorSystem.terminate()).ignore)
+    .fromAcquireRelease(actorSystem)(actorSystem => UIO.succeed(actorSystem.terminate()).ignore)
 }

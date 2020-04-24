@@ -6,8 +6,8 @@ import io.github.mvillafuertem.scalcite.example.application.QueriesServiceSpec.Q
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalErrorsRepository.ZErrorsRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.repository.RelationalQueriesRepository.ZQueriesRepository
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalErrorsRepository, RelationalQueriesRepository}
-import zio.{ULayer, ZLayer}
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{ RelationalErrorsRepository, RelationalQueriesRepository }
+import zio.{ ULayer, ZLayer }
 
 class QueriesServiceSpec extends QueriesServiceConfigurationSpec {
 
@@ -19,9 +19,12 @@ class QueriesServiceSpec extends QueriesServiceConfigurationSpec {
     // see trait
 
     // w h e n
-    val actual: Option[Query] = unsafeRun(QueriesService.create(queryString)
-      .runHead
-      .provideLayer(env))
+    val actual: Option[Query] = unsafeRun(
+      QueriesService
+        .create(queryString)
+        .runHead
+        .provideLayer(env)
+    )
 
     // t h e n
     actual shouldBe Some(queryString)
@@ -36,12 +39,10 @@ class QueriesServiceSpec extends QueriesServiceConfigurationSpec {
     // w h e n
     val actual: Option[Int] = unsafeRun(
       (for {
-        _ <- QueriesService.create(queryString)
+        _      <- QueriesService.create(queryString)
         effect <- QueriesService.deleteByUUID(uuid1)
-      } yield effect)
-        .runHead
+      } yield effect).runHead
         .provideLayer(env)
-
     )
 
     // t h e n
@@ -57,10 +58,9 @@ class QueriesServiceSpec extends QueriesServiceConfigurationSpec {
     // w h e n
     val actual: Option[Query] = unsafeRun(
       (for {
-        _ <- QueriesService.create(queryString)
+        _      <- QueriesService.create(queryString)
         effect <- QueriesService.findByUUID(uuid1)
-      } yield effect)
-        .runHead
+      } yield effect).runHead
         .provideLayer(env)
     )
 
@@ -86,7 +86,7 @@ object QueriesServiceSpec {
     val env: ULayer[ZQueriesApplication] =
       (queriesRepositoryLayer ++
         errorsRepositoryLayer) >>>
-      QueriesService.live
+        QueriesService.live
   }
 
 }

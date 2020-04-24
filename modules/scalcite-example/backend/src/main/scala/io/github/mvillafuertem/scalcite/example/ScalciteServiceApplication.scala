@@ -1,9 +1,9 @@
 package io.github.mvillafuertem.scalcite.example
-import io.github.mvillafuertem.scalcite.example.configuration.{AkkaHttpConfiguration, ApiConfiguration, ScalciteServiceConfiguration}
+import io.github.mvillafuertem.scalcite.example.configuration.{ AkkaHttpConfiguration, ApiConfiguration, ScalciteServiceConfiguration }
 import zio._
 import zio.clock.Clock
 import zio.console.Console
-import zio.logging.{Logging, log}
+import zio.logging.{ log, Logging }
 
 /**
  * @author Miguel Villafuerte
@@ -16,7 +16,7 @@ object ScalciteServiceApplication extends ScalciteServiceConfiguration with zio.
   private val program: ZIO[Logging, Nothing, Int] =
     (for {
       routes <- ApiConfiguration.routes
-      _ <- AkkaHttpConfiguration.httpServer(routes)
+      _      <- AkkaHttpConfiguration.httpServer(routes)
     } yield ())
       .provideLayer(ZScalciteEnv)
       .foldM(e => log.throwable("", e).as(1), _ => UIO.effectTotal(0))

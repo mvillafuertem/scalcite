@@ -1,15 +1,24 @@
 package io.github.mvillafuertem.scalcite.example.configuration
 
-import io.github.mvillafuertem.scalcite.example.configuration.properties.{CalciteConfigurationProperties, H2ConfigurationProperties, ScalciteConfigurationProperties}
-import io.github.mvillafuertem.scalcite.example.domain.repository.{CalciteRepository, ErrorsRepository, QueriesRepository}
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.{ErrorDBO, QueryDBO}
-import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{RelationalCalciteRepository, RelationalErrorsRepository, RelationalQueriesRepository}
-import scalikejdbc.{ConnectionPool, ConnectionPoolSettings}
+import io.github.mvillafuertem.scalcite.example.configuration.properties.{
+  CalciteConfigurationProperties,
+  H2ConfigurationProperties,
+  ScalciteConfigurationProperties
+}
+import io.github.mvillafuertem.scalcite.example.domain.repository.{ CalciteRepository, ErrorsRepository, QueriesRepository }
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.{ ErrorDBO, QueryDBO }
+import io.github.mvillafuertem.scalcite.example.infrastructure.repository.{
+  RelationalCalciteRepository,
+  RelationalErrorsRepository,
+  RelationalQueriesRepository
+}
+import scalikejdbc.{ ConnectionPool, ConnectionPoolSettings }
 import zio._
 
 final class InfrastructureConfiguration() {
 
-  ConnectionPool.add(Symbol(h2ConfigurationProperties.databaseName),
+  ConnectionPool.add(
+    Symbol(h2ConfigurationProperties.databaseName),
     h2ConfigurationProperties.url,
     h2ConfigurationProperties.user,
     h2ConfigurationProperties.password,
@@ -22,7 +31,8 @@ final class InfrastructureConfiguration() {
     )
   )
 
-  ConnectionPool.add(Symbol(calciteConfigurationProperties.databaseName),
+  ConnectionPool.add(
+    Symbol(calciteConfigurationProperties.databaseName),
     calciteConfigurationProperties.url,
     calciteConfigurationProperties.user,
     calciteConfigurationProperties.password,
@@ -31,7 +41,8 @@ final class InfrastructureConfiguration() {
       maxSize = calciteConfigurationProperties.maxSize,
       connectionTimeoutMillis = calciteConfigurationProperties.connectionTimeoutMillis,
       validationQuery = calciteConfigurationProperties.validationQuery,
-      driverName = calciteConfigurationProperties.driverName)
+      driverName = calciteConfigurationProperties.driverName
+    )
   )
 
   lazy val h2ConfigurationProperties: H2ConfigurationProperties = H2ConfigurationProperties()
@@ -48,7 +59,6 @@ final class InfrastructureConfiguration() {
 
   lazy val calciteRepository: CalciteRepository =
     RelationalCalciteRepository(calciteConfigurationProperties.databaseName)
-
 
 }
 

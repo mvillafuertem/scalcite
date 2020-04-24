@@ -1,14 +1,13 @@
 Global / onLoad := {
-  sLog.value.info(
-    s"""*
-       |*    ███████╗  ██████╗  █████╗  ██╗       ██████╗ ██╗ ████████╗ ███████╗
-       |*    ██╔════╝ ██╔════╝ ██╔══██╗ ██║      ██╔════╝ ██║ ╚══██╔══╝ ██╔════╝
-       |*    ███████╗ ██║      ███████║ ██║      ██║      ██║    ██║    █████╗
-       |*    ╚════██║ ██║      ██╔══██║ ██║      ██║      ██║    ██║    ██╔══╝
-       |*    ███████║ ╚██████╗ ██║  ██║ ███████╗ ╚██████╗ ██║    ██║    ███████╗
-       |*    ╚══════╝  ╚═════╝ ╚═╝  ╚═╝ ╚══════╝  ╚═════╝ ╚═╝    ╚═╝    ╚══════╝
-       |*    v.${version.value}
-       |*""".stripMargin)
+  sLog.value.info(s"""*
+                     |*    ███████╗  ██████╗  █████╗  ██╗       ██████╗ ██╗ ████████╗ ███████╗
+                     |*    ██╔════╝ ██╔════╝ ██╔══██╗ ██║      ██╔════╝ ██║ ╚══██╔══╝ ██╔════╝
+                     |*    ███████╗ ██║      ███████║ ██║      ██║      ██║    ██║    █████╗
+                     |*    ╚════██║ ██║      ██╔══██║ ██║      ██║      ██║    ██║    ██╔══╝
+                     |*    ███████║ ╚██████╗ ██║  ██║ ███████╗ ╚██████╗ ██║    ██║    ███████╗
+                     |*    ╚══════╝  ╚═════╝ ╚═╝  ╚═╝ ╚══════╝  ╚═════╝ ╚═╝    ╚═╝    ╚══════╝
+                     |*    v.${version.value}
+                     |*""".stripMargin)
   (Global / onLoad).value
 }
 
@@ -35,7 +34,7 @@ lazy val `scalcite` = (project in file("."))
     `scalcite-example-backend`,
     `scalcite-example-console`,
     `scalcite-example-frontend`,
-    `scalcite-flattener`,
+    `scalcite-flattener`
   )
   .settings(commands ++= Commands.value)
 
@@ -96,7 +95,7 @@ lazy val `scalcite-example-frontend` = (project in file("modules/scalcite-exampl
   .settings(fastOptJS / webpackConfigFile := Some(baseDirectory.value / "webpack" / "webpack-fastopt.config.js"))
   .settings(fastOptJS / webpackDevServerExtraArgs := Seq("--inline", "--hot"))
   .settings(fullOptJS / webpackConfigFile := Some(baseDirectory.value / "webpack" / "webpack-opt.config.js"))
-  .settings(startWebpackDevServer / version  := "3.10.3")
+  .settings(startWebpackDevServer / version := "3.10.3")
   .settings(Test / requireJsDomEnv := true)
   .settings(Test / webpackConfigFile := Some(baseDirectory.value / "webpack" / "webpack-core.config.js"))
   .settings(webpack / version := "4.41.6")
