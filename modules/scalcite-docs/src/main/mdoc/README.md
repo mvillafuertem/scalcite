@@ -79,13 +79,12 @@ Is a UI project created with React using Slinky
 !pragma graphviz_dot jdot
 
 skinparam sequence {
-ArrowColor #A1A1A1
-LifeLineBorderColor #A1A1A1
-LifeLineBackgroundColor #F2F2F2
-ActorBorderColor #A1A1A1
-ParticipantBorderColor #A1A1A1
-DatabaseBorderColor #A1A1A1
-
+    ArrowColor #A1A1A1
+    LifeLineBorderColor #A1A1A1
+    LifeLineBackgroundColor #F2F2F2
+    ActorBorderColor #A1A1A1
+    ParticipantBorderColor #A1A1A1
+    DatabaseBorderColor #A1A1A1
 }
 actor User as u #F0F0F0
 participant "Frontend" as sap #FBBBB1
@@ -108,9 +107,9 @@ ws -> ad : Get queries
 autonumber stop
 ad --> ws : Return queries data
 ws -> lo : Perform queries to json
-
+lo --> ws : Transformed json or error
 autonumber 3 "<back:gold><b> 0 </back>"
-ws -> sap : Return transformed json data or error
+ws -> sap : Response transformed json data or error
 autonumber stop
 
 sap --> u
@@ -120,6 +119,7 @@ deactivate sap
 deactivate ws
 deactivate lo
 deactivate ad
+
 @enduml
 
 
