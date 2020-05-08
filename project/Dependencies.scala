@@ -57,9 +57,7 @@ object Dependencies {
       .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.6.5")
 
   val `scalcite-docs`: Seq[ModuleID] = Seq(
-    // P R O D U C T I O N
-
-    // T E S T
+    "io.github.mvillafuertem" %% "mdoc-modifier-plantuml" % "0.1"
   )
 
   val `scalcite-blower`: Seq[ModuleID] = Seq(

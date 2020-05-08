@@ -1,5 +1,5 @@
 import mdoc.MdocPlugin.autoImport._
-import sbt.Keys.{ baseDirectory, sbtVersion, scalaVersion, version }
+import sbt.Keys.{baseDirectory, sbtVersion, scalaVersion, version}
 import sbt._
 
 object MdocSettings {
@@ -8,6 +8,7 @@ object MdocSettings {
     mdocIn := baseDirectory.value / "src/main/mdoc/",
     mdocOut := file("."),
     mdocVariables := Map(
+      "PROJECT_NAME"  -> "Scalcite",
       "VERSION"       -> version.value,
       "SCALA_VERSION" -> scalaVersion.value,
       "SBT_VERSION"   -> sbtVersion.value
