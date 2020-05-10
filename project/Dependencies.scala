@@ -150,7 +150,7 @@ object Dependencies {
     val scalaLogging              = "3.9.2"
     val scalaTest                 = "3.1.2"
     val scalcite                  = "0.1.1"
-    val scalikejdbc               = "3.4.1"
+    val scalikejdbc               = "3.4.2"
     val sqlline                   = "1.9.0"
     val tapir                     = "0.14.5"
     val zio                       = "1.0.0-RC18-2"
