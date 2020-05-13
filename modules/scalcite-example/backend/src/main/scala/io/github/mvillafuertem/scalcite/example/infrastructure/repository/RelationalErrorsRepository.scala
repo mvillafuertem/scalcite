@@ -4,11 +4,11 @@ import java.util.UUID
 
 import io.github.mvillafuertem.scalcite.example.domain.repository.ErrorsRepository
 import io.github.mvillafuertem.scalcite.example.infrastructure.model.ErrorDBO
-import scalikejdbc.streams.{ StreamReadySQL, _ }
-import scalikejdbc.{ HasExtractor, NamedDB, NoExtractor, SQL, SQLUpdate, SQLUpdateWithGeneratedKey, _ }
+import scalikejdbc.streams.{StreamReadySQL, _}
+import scalikejdbc.{HasExtractor, NamedDB, NoExtractor, SQL, SQLUpdate, SQLUpdateWithGeneratedKey, _}
 import zio.interop.reactivestreams._
 import zio.stream.ZStream
-import zio.{ stream, Has, Task, ZLayer }
+import zio.{Has, Task, ULayer, ZLayer, stream}
 
 import scala.concurrent.ExecutionContext
 
@@ -30,40 +30,28 @@ private final class RelationalErrorsRepository(databaseName: String) extends Err
   implicit def executeSQLOperation[T](sql: SQL[T, HasExtractor]): stream.Stream[Throwable, T] =
     ZStream.fromIterable(NamedDB(Symbol(databaseName)).autoCommit(implicit session => sql.list().apply()))
 
-  private def queryFindById(id: Long): SQL[Nothing, NoExtractor] =
-    sql"SELECT * FROM ERRORS WHERE ID = $id"
-
-  private def queryFindByUUID(uuid: UUID): SQL[Nothing, NoExtractor] =
-    sql"SELECT * FROM ERRORS WHERE UUID = $uuid"
-
-  private val queryFindAll: SQL[Nothing, NoExtractor] =
-    sql"SELECT * FROM ERRORS"
-
   private def queryCreate(queryDBO: ErrorDBO): SQL[Nothing, NoExtractor] =
     sql"INSERT INTO ERRORS(UUID, VALUE, DATE) VALUES (${queryDBO.uuid}, ${queryDBO.code}, ${queryDBO.timestamp})"
-
-  private def queryDeleteByUUID(uuid: UUID): SQL[Nothing, NoExtractor] =
-    sql"DELETE FROM ERRORS WHERE UUID = $uuid"
 
   override def insert(dbo: ErrorDBO): stream.Stream[Throwable, Long] =
     queryCreate(dbo).updateAndReturnGeneratedKey()
 
   override def deleteByUUID(uuid: UUID): stream.Stream[Throwable, Int] =
-    queryDeleteByUUID(uuid).update()
+    queryDeleteByUUID(ErrorDBO.table, uuid).update()
 
-  override def findById(id: Long): stream.Stream[Throwable, ErrorDBO] =
-    queryFindById(id)
+  override def findById(id: Long): stream.Stream[Throwable, ErrorDBO]     =
+    queryFindById(ErrorDBO.table, id)
       .map(rs => ErrorDBO(rs))
   // https://github.com/scalikejdbc/scalikejdbc/issues/1050
   //.iterator()
   override def findByUUID(uuid: UUID): stream.Stream[Throwable, ErrorDBO] =
-    queryFindByUUID(uuid)
+    queryFindByUUID(ErrorDBO.table, uuid)
       .map(rs => ErrorDBO(rs))
   // https://github.com/scalikejdbc/scalikejdbc/issues/1050
   //.iterator()
 
   override def findAll(): stream.Stream[Throwable, ErrorDBO] =
-    queryFindAll
+    queryFindAll(ErrorDBO.table)
       .map(rs => ErrorDBO(rs))
   // https://github.com/scalikejdbc/scalikejdbc/issues/1050
   //.iterator()
@@ -94,4 +82,8 @@ object RelationalErrorsRepository {
 
   val live: ZLayer[Has[String], Nothing, ZErrorsRepository] =
     ZLayer.fromService[String, ErrorsRepository[ErrorDBO]](databaseName => RelationalErrorsRepository(databaseName))
+
+  def make(databaseName: String): ULayer[ZErrorsRepository] =
+    ZLayer.succeed(databaseName) >>> live
+
 }

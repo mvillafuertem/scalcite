@@ -9,7 +9,7 @@ case class ErrorDBO(uuid: UUID, code: String, timestamp: Instant, id: Option[Lon
 
 object ErrorDBO extends SQLSyntaxSupport[ErrorDBO] {
 
-  override val tableName = "scalcitesql"
+  override val tableName = "ERRORS"
 
   def apply(rs: WrappedResultSet) = new ErrorDBO(UUID.fromString(rs.string("uuid")), rs.string("value"), rs.timestamp("date").toInstant, rs.longOpt("id"))
 

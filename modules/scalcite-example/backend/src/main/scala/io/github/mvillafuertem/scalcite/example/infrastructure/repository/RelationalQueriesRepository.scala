@@ -3,12 +3,12 @@ package io.github.mvillafuertem.scalcite.example.infrastructure.repository
 import java.util.UUID
 
 import io.github.mvillafuertem.scalcite.example.domain.repository.QueriesRepository
-import io.github.mvillafuertem.scalcite.example.infrastructure.model.QueryDBO
+import io.github.mvillafuertem.scalcite.example.infrastructure.model.{ErrorDBO, QueryDBO}
 import scalikejdbc._
 import scalikejdbc.streams._
 import zio.interop.reactivestreams._
 import zio.stream.ZStream
-import zio.{ stream, Has, Task, ZLayer }
+import zio.{Has, Task, ULayer, ZLayer, stream}
 
 import scala.concurrent.ExecutionContext
 
@@ -33,40 +33,28 @@ private final class RelationalQueriesRepository(databaseName: String) extends Qu
   implicit def executeSQLOperation[T](sql: SQL[T, HasExtractor]): stream.Stream[Throwable, T] =
     ZStream.fromIterable(NamedDB(Symbol(databaseName)).autoCommit(implicit session => sql.list().apply()))
 
-  private def queryFindById(id: Long): SQL[Nothing, NoExtractor] =
-    sql"SELECT * FROM QUERIES WHERE ID = $id"
-
-  private def queryFindByUUID(uuid: UUID): SQL[Nothing, NoExtractor] =
-    sql"SELECT * FROM QUERIES WHERE UUID = $uuid"
-
-  private val queryFindAll: SQL[Nothing, NoExtractor] =
-    sql"SELECT * FROM QUERIES"
-
   private def queryCreate(queryDBO: QueryDBO): SQL[Nothing, NoExtractor] =
     sql"INSERT INTO QUERIES(UUID, VALUE) VALUES (${queryDBO.uuid}, ${queryDBO.value})"
-
-  private def queryDeleteByUUID(uuid: UUID): SQL[Nothing, NoExtractor] =
-    sql"DELETE FROM QUERIES WHERE UUID = $uuid"
 
   override def insert(dbo: QueryDBO): stream.Stream[Throwable, Long] =
     queryCreate(dbo).updateAndReturnGeneratedKey()
 
   override def deleteByUUID(uuid: UUID): stream.Stream[Throwable, Int] =
-    queryDeleteByUUID(uuid).update()
+    queryDeleteByUUID(QueryDBO.table, uuid).update()
 
   override def findById(id: Long): stream.Stream[Throwable, QueryDBO] =
-    queryFindById(id)
+    queryFindById(QueryDBO.table, id)
       .map(rs => QueryDBO(rs))
   // https://github.com/scalikejdbc/scalikejdbc/issues/1050
   //.iterator()
   override def findByUUID(uuid: UUID): stream.Stream[Throwable, QueryDBO] =
-    queryFindByUUID(uuid)
+    queryFindByUUID(QueryDBO.table, uuid)
       .map(rs => QueryDBO(rs))
   // https://github.com/scalikejdbc/scalikejdbc/issues/1050
   //.iterator()
 
   override def findAll(): stream.Stream[Throwable, QueryDBO] =
-    queryFindAll
+    queryFindAll(QueryDBO.table)
       .map(rs => QueryDBO(rs))
   // https://github.com/scalikejdbc/scalikejdbc/issues/1050
   //.iterator()
@@ -96,5 +84,8 @@ object RelationalQueriesRepository {
 
   val live: ZLayer[Has[String], Nothing, ZQueriesRepository] =
     ZLayer.fromService[String, QueriesRepository[QueryDBO]](databaseName => RelationalQueriesRepository(databaseName))
+
+  def make(databaseName: String): ULayer[ZQueriesRepository] =
+    ZLayer.succeed(databaseName) >>> live
 
 }
