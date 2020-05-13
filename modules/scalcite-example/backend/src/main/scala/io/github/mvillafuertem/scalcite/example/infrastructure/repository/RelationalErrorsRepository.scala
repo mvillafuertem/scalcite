@@ -81,7 +81,7 @@ object RelationalErrorsRepository {
     stream.ZStream.accessStream(_.get.deleteByUUID(uuid))
 
   val live: ZLayer[Has[String], Nothing, ZErrorsRepository] =
-    ZLayer.fromService[String, ErrorsRepository[ErrorDBO]](databaseName => RelationalErrorsRepository(databaseName))
+    ZLayer.fromService[String, ErrorsRepository[ErrorDBO]](RelationalErrorsRepository(_))
 
   def make(databaseName: String): ULayer[ZErrorsRepository] =
     ZLayer.succeed(databaseName) >>> live

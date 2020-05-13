@@ -61,6 +61,6 @@ object AkkaHttpConfiguration {
     ZLayer.fromService[ActorSystem[_], Materializer](Materializer.apply)
 
   val live: ZLayer[ZInfrastructureConfiguration with ZActorSystemConfiguration, Nothing, ZAkkaHttpConfiguration] =
-    ZLayer.fromServices[InfrastructureConfiguration, ActorSystem[_], AkkaHttpConfiguration](AkkaHttpConfiguration.apply)
+    ZLayer.fromServices[InfrastructureConfiguration, ActorSystem[_], AkkaHttpConfiguration](AkkaHttpConfiguration(_, _))
 
 }

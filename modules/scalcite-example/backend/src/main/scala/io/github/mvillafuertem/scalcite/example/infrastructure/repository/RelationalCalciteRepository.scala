@@ -9,9 +9,9 @@ import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.Unknown
 import io.github.mvillafuertem.scalcite.example.domain.repository.CalciteRepository
 import org.apache.calcite.jdbc.CalciteConnection
-import scalikejdbc.{ WrappedResultSet, _ }
+import scalikejdbc.{WrappedResultSet, _}
 import zio.stream.ZStream
-import zio.{ stream, Has, Task, ZLayer }
+import zio.{Has, Task, ULayer, ZLayer, stream}
 
 /**
  * @author Miguel Villafuerte
@@ -102,6 +102,9 @@ object RelationalCalciteRepository {
     stream.ZStream.accessStream(_.get.queryForJson(json, query))
 
   val live: ZLayer[Has[String], Nothing, ZCalciteRepository] =
-    ZLayer.fromService[String, CalciteRepository](databaseName => RelationalCalciteRepository(databaseName))
+    ZLayer.fromService[String, CalciteRepository](RelationalCalciteRepository(_))
+
+  def make(databaseName: String): ULayer[ZCalciteRepository] =
+    ZLayer.succeed(databaseName) >>> live
 
 }

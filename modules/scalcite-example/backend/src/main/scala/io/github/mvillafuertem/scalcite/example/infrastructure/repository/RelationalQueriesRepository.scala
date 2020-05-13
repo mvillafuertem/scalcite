@@ -83,7 +83,7 @@ object RelationalQueriesRepository {
     stream.ZStream.accessStream(_.get.deleteByUUID(uuid))
 
   val live: ZLayer[Has[String], Nothing, ZQueriesRepository] =
-    ZLayer.fromService[String, QueriesRepository[QueryDBO]](databaseName => RelationalQueriesRepository(databaseName))
+    ZLayer.fromService[String, QueriesRepository[QueryDBO]](RelationalQueriesRepository(_))
 
   def make(databaseName: String): ULayer[ZQueriesRepository] =
     ZLayer.succeed(databaseName) >>> live
