@@ -35,7 +35,7 @@ services:
   apm:
     container_name: apm
     hostname: "apm.local"
-    image: docker.elastic.co/apm/apm-server:7.6.2
+    image: docker.elastic.co/apm/apm-server:7.7.0
     volumes:
       - ./apm-server.yml:/etc/apm-server.yml
     ports:
@@ -51,7 +51,7 @@ services:
   kibana:
     container_name: kibana
     hostname: "kibana.local"
-    image: docker.elastic.co/kibana/kibana:7.6.2
+    image: docker.elastic.co/kibana/kibana:7.7.0
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
     ports:
@@ -65,7 +65,7 @@ services:
   elasticsearch:
     container_name: elasticsearch
     hostname: "elasticsearch.local"
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
     environment:
       discovery.type: single-node
     ports:
