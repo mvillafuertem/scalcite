@@ -35,7 +35,7 @@ trait SwaggerApi {
         redirect(s"$contextPath/index.html?url=/${ApiEndpoint.apiResource}/${ApiEndpoint.apiVersion}/$contextPath/$yamlName", StatusCodes.PermanentRedirect)
       } ~ path(yamlName) {
         complete(openApi)
-      } ~ getFromResourceDirectory("META-INF/resources/webjars/swagger-ui/3.25.2/")
+      } ~ getFromResourceDirectory("META-INF/resources/webjars/swagger-ui/3.25.3/")
     }
   }
 
