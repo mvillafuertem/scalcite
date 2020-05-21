@@ -12,11 +12,23 @@ object Commands {
 
   val FmtSbtCheckCommand = Command.command("check")(state => "scalafmtSbtCheck" :: "scalafmtCheck" :: "test:scalafmtCheck" :: state)
 
+  val UpInfrastructureCommand = Command.command("upinfra") { state =>
+    Infrastructure.up(state)
+    state
+  }
+
+  val DownInfrastructureCommand = Command.command("downinfra") { state =>
+    Infrastructure.down(state)
+    state
+  }
+
   val value = Seq(
     FrontendDevCommand,
     FrontendBuildCommand,
     FmtSbtCommand,
-    FmtSbtCheckCommand
+    FmtSbtCheckCommand,
+    UpInfrastructureCommand,
+    DownInfrastructureCommand
   )
 
 }
