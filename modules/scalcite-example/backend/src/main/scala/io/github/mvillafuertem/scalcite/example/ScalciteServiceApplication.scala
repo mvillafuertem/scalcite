@@ -13,15 +13,18 @@ object ScalciteServiceApplication extends ScalciteServiceConfiguration with zio.
   private val loggingLayer: URLayer[Console with Clock, Logging] =
     Logging.console((_, logEntry) => logEntry)
 
-  private val program: ZIO[Logging, Nothing, Int] =
+  private val program: ZIO[Logging, Nothing, ExitCode] =
     (for {
       routes <- ApiConfiguration.routes
       _      <- AkkaHttpConfiguration.httpServer(routes)
     } yield ())
       .provideLayer(ZScalciteEnv)
-      .foldM(e => log.throwable("", e).as(1), _ => UIO.effectTotal(0))
+      .foldM(
+        e => log.throwable("", e) as ExitCode.failure,
+        _ => UIO.effectTotal(ExitCode.success)
+      )
 
-  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
+  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, ExitCode] =
     program.provideLayer(loggingLayer)
 
 }
