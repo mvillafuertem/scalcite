@@ -93,6 +93,7 @@ lazy val `scalcite-example-frontend` = (project in file("modules/scalcite-exampl
   .configure(Dependencies.`scalcite-example-frontend`)
   // S E T T I N G S
   .settings(scalacOptions += "-Ymacro-annotations")
+  .settings(useYarn := true)
   .settings(fastOptJS / webpackBundlingMode := BundlingMode.LibraryOnly())
   .settings(fastOptJS / webpackConfigFile := Some(baseDirectory.value / "webpack" / "webpack-fastopt.config.js"))
   .settings(fastOptJS / webpackDevServerExtraArgs := Seq("--inline", "--hot"))
