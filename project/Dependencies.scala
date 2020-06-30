@@ -153,7 +153,7 @@ object Dependencies {
     val scalikejdbc               = "3.4.2"
     val sqlline                   = "1.9.0"
     val tapir                     = "0.15.3"
-    val zio                       = "1.0.0-RC20"
+    val zio                       = "1.0.0-RC21-2"
     val zioLogging                = "0.3.0"
     val zioInteropReactiveStreams = "1.0.3.5-RC10"
   }
