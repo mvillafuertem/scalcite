@@ -11,7 +11,7 @@ addSbtPlugin("org.jmotor.sbt" % "sbt-dependency-updates" % "1.2.2")
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
 
 // M D O C
-addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.2.0")
+addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.2.3")
 
 // S C O V E R A G E
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
@@ -20,7 +20,7 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.1")
 
 // S C A L A J S
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.1.0")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.1.1")
 
 // S C A L A J S  B U N D L E R
 addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.18.0")
@@ -29,7 +29,7 @@ addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.18.0")
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10")
 
 // N A T I V E  P A C K A G E R
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.7.2")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.7.4")
 
 // J A V A  A G E N T
 addSbtPlugin("com.lightbend.sbt" % "sbt-javaagent" % "0.1.5")
