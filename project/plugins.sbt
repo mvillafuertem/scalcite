@@ -35,4 +35,4 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.7.4")
 addSbtPlugin("com.lightbend.sbt" % "sbt-javaagent" % "0.1.5")
 
 // S C A L A  F M T
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.0")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2")
