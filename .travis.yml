@@ -20,3 +20,7 @@ jobs:
 #      script: ./.cicd/release.sh
 #    - stage: publish
 #      script: ./.cicd/publish.sh
+cache:
+  yarn: true
+  directories:
+    - node_modules
