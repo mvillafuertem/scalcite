@@ -18,11 +18,10 @@ final class AkkaHttpConfiguration(infrastructureConfiguration: InfrastructureCon
       eventualBinding <- Task {
                           implicit lazy val untypedSystem: actor.ActorSystem = actorSystem.toClassic
                           implicit lazy val materializer: Materializer       = Materializer(actorSystem)
-                          Http().bindAndHandle(
-                            route,
+                          Http().newServerAt(
                             infrastructureConfiguration.scalciteConfigurationProperties.interface,
                             infrastructureConfiguration.scalciteConfigurationProperties.port
-                          )
+                          ).bind(route)
                         }
       server <- Task
                  .fromFuture(_ => eventualBinding)
