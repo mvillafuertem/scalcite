@@ -6,8 +6,11 @@ scala:
 jdk:
   - openjdk11
 
-node:
-  - 12.18.3
+env:
+  - NODE_VERSION="12.18.3"
+
+before_install:
+  - nvm install $NODE_VERSION
 
 install:
   - node --version
