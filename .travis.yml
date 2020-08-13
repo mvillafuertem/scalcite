@@ -7,7 +7,7 @@ jdk:
   - openjdk11
 
 node_js:
-  - "node"
+  - 12.18.3
 
 jobs:
   include:
