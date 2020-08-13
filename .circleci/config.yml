@@ -13,6 +13,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install yarn
+          command: curl -o- -L https://yarnpkg.com/install.sh | bash
+      - run:
           name: Test
           command: ./.cicd/test.sh
 #      - setup_remote_docker:
