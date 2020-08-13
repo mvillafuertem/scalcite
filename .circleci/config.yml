@@ -13,6 +13,15 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install  Node.js 8.9.1 with build in nvm tool
+          # https://www.cloudesire.com/how-to-upgrade-node-on-circleci-machine-executor/
+          command: |
+            export NODE_VERSION="v12.18.3"
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm install "$NVM_DIR/nvm.sh" && nvm use "$NVM_DIR/nvm.sh" && nvm alias default "$NVM_DIR/nvm.sh"
+            node --version
+      - run:
           name: Install yarn
           command: curl -o- -L https://yarnpkg.com/install.sh | bash
       - run:
