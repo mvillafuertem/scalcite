@@ -16,14 +16,12 @@ Global / onLoad := {
 lazy val configurationPublish: Project => Project =
   _.settings(Information.value)
     .settings(Settings.value)
-    .settings(Settings.noAssemblyTest)
     .settings(crossScalaVersions := Settings.supportedScalaVersions)
 
 lazy val configurationNoPublish: Project => Project =
   _.settings(Information.value)
     .settings(Settings.value)
     .settings(Settings.noPublish)
-    .settings(Settings.noAssemblyTest)
 
 lazy val `scalcite` = (project in file("."))
   .configure(configurationNoPublish)

@@ -20,11 +20,11 @@ object Settings {
         // "-Xfatal-warnings",
         "-Xlint"
       )
-      if (version.value.endsWith("SNAPSHOT")) {
+      if (version.value.endsWith("SNAPSHOT"))
         default :+ "-Xcheckinit"
-      } else {
+      else
         default
-      } // check against early initialization
+      // check against early initialization
     },
     javaOptions += "-Duser.timezone=UTC",
     Test / fork := false,
@@ -40,10 +40,6 @@ object Settings {
 
   val noPublish: Seq[Def.Setting[_]] = Seq(
     publish / skip := true
-  )
-
-  val noAssemblyTest: Seq[Def.Setting[_]] = Seq(
-    //assembly / test := {}
   )
 
   ThisBuild / useCoursier := false
