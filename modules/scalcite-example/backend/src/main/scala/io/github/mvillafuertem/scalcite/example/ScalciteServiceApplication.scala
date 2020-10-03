@@ -1,17 +1,20 @@
 package io.github.mvillafuertem.scalcite.example
-import io.github.mvillafuertem.scalcite.example.configuration.{ AkkaHttpConfiguration, ApiConfiguration, ScalciteServiceConfiguration }
+import io.github.mvillafuertem.scalcite.example.configuration.{AkkaHttpConfiguration, ApiConfiguration, ScalciteServiceConfiguration}
 import zio._
 import zio.clock.Clock
 import zio.console.Console
-import zio.logging.{ log, Logging }
+import zio.logging.{LogFormat, LogLevel, Logging, log}
 
 /**
  * @author Miguel Villafuerte
  */
 object ScalciteServiceApplication extends ScalciteServiceConfiguration with zio.App {
 
-  private val loggingLayer: URLayer[Console with Clock, Logging] =
-    Logging.console((_, logEntry) => logEntry)
+  private lazy val loggingLayer: URLayer[Console with Clock, Logging] =
+    Logging.console(
+      logLevel = LogLevel.Info,
+      format = LogFormat.ColoredLogFormat()
+    ) >>> Logging.withRootLoggerName("ScalciteServiceApplication")
 
   private val program: ZIO[Logging, Nothing, ExitCode] =
     (for {

@@ -15,6 +15,7 @@ object Dependencies {
   val `scalcite-example-backend`: Seq[ModuleID] = Seq(
     // P R O D U C T I O N
     akkaActorTyped,
+    akkaStream, // Explicit Dependency https://doc.akka.io/docs/akka/current/common/binary-compatibility-rules.html#mixed-versioning-is-not-allowed
     akkaHttp,
     h2,
     logback,
@@ -106,8 +107,8 @@ object Dependencies {
   lazy val akkaActorTestkitTyped     = "com.typesafe.akka"                     %% "akka-actor-testkit-typed"    % Version.akka
   lazy val akkaHttp                  = "com.typesafe.akka"                     %% "akka-http"                   % Version.akkaHttp
   lazy val akkaHttpTestkit           = "com.typesafe.akka"                     %% "akka-http-testkit"           % Version.akkaHttp
-  lazy val akkaStreams               = "com.typesafe.akka"                     %% "akka-stream-typed"           % Version.akka
-  lazy val akkaStreamsTesKit         = "com.typesafe.akka"                     %% "akka-stream-testkit"         % Version.akka
+  lazy val akkaStream               = "com.typesafe.akka"                     %% "akka-stream-typed"           % Version.akka
+  lazy val akkaStreamTesKit         = "com.typesafe.akka"                     %% "akka-stream-testkit"         % Version.akka
   lazy val calcite                   = "org.apache.calcite"                    % "calcite-core"                 % Version.calcite
   lazy val circeCore                 = "io.circe"                              %% "circe-core"                  % Version.circe
   lazy val circeGeneric              = "io.circe"                              %% "circe-generic"               % Version.circe
@@ -137,24 +138,24 @@ object Dependencies {
   lazy val zioStreams                = "dev.zio"                               %% "zio-streams"                 % Version.zio
 
   object Version {
-    val akka                      = "2.6.8"
-    val akkaHttp                  = "10.2.0"
-    val calcite                   = "1.24.0"
+    val akka                      = "2.6.9"
+    val akkaHttp                  = "10.2.1"
+    val calcite                   = "1.25.0"
     val circe                     = "0.13.0"
-    val elasticApm                = "1.17.0"
+    val elasticApm                = "1.18.0"
     val h2                        = "1.4.200"
-    val json4s                    = "3.6.9"
+    val json4s                    = "3.6.10"
     val jsoniter                  = "2.6.0"
     val logback                   = "1.2.3"
     val mapflablup                = "0.1.1"
     val scalaLogging              = "3.9.2"
-    val scalaTest                 = "3.2.1"
+    val scalaTest                 = "3.2.2"
     val scalcite                  = "0.1.1"
     val scalikejdbc               = "3.5.0"
     val sqlline                   = "1.9.0"
-    val tapir                     = "0.16.12"
-    val zio                       = "1.0.0"
-    val zioLogging                = "0.4.0"
+    val tapir                     = "0.16.16"
+    val zio                       = "1.0.1"
+    val zioLogging                = "0.5.2"
     val zioInteropReactiveStreams = "1.0.3.5"
   }
 }
