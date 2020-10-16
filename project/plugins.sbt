@@ -20,10 +20,10 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.1")
 
 // S C A L A J S
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.1.1")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.2.0")
 
 // S C A L A J S  B U N D L E R
-addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.18.0")
+addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.19.0")
 
 // A S S E M B L Y
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10")
