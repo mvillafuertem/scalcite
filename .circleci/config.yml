@@ -13,7 +13,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install node@v12.18.3 with build in nvm tool
+          name: Test
           command: |
             set +e
 
@@ -31,9 +31,7 @@ jobs:
             node --version
             curl -o- -L https://yarnpkg.com/install.sh | bash
             export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-      - run:
-          name: Test
-          command: ./.cicd/test.sh
+            ./.cicd/test.sh
 #      - setup_remote_docker:
 #          docker_layer_caching: true
 #      - run:
