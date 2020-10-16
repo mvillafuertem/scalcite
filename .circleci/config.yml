@@ -31,7 +31,10 @@ jobs:
             node --version
       - run:
           name: Install yarn
-          command: curl -o- -L https://yarnpkg.com/install.sh | bash
+          command: |
+            set +e
+            curl -o- -L https://yarnpkg.com/install.sh | bash
+            export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
       - run:
           name: Test
           command: ./.cicd/test.sh
