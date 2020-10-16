@@ -13,13 +13,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install node@v12.18.3 with build in nvm tool
+          name: Test
           command: |
             set +e
 
             curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion            
 
             export NODE_VERSION="v12.18.3"
 
@@ -28,12 +29,9 @@ jobs:
             nvm alias default "$NODE_VERSION"
 
             node --version
-      - run:
-          name: Install yarn
-          command: curl -o- -L https://yarnpkg.com/install.sh | bash
-      - run:
-          name: Test
-          command: ./.cicd/test.sh
+            curl -o- -L https://yarnpkg.com/install.sh | bash
+            export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+            ./.cicd/test.sh
 #      - setup_remote_docker:
 #          docker_layer_caching: true
 #      - run:
