@@ -4,16 +4,37 @@ WITH THE COMMAND `sbt scalcite-docs/mdoc`
 
 ---
 
-# Scalcite 0.1.1
-
-[![Donate](https://img.shields.io/badge/donate-PayPal-green.svg?logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HE7K7HLJJBVWN&currency_code=EUR&source=url)
-[![Scala](https://img.shields.io/badge/scala-2.13.3-red.svg?logo=scala&logoColor=red)](https://github.com/scala/scala/releases)
-[![Java](https://img.shields.io/badge/jdk-11.0.7-orange.svg?logo=java&logoColor=white)](https://www.oracle.com/technetwork/java/javase/11all-relnotes-5013287.html)
-[![Sbt](https://img.shields.io/badge/sbt-1.3.13-blue.svg?logo=sbt)](https://github.com/sbt/sbt/releases)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.mvillafuertem/scalcite_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.mvillafuertem/scalcite_2.12)
-[![Scala CI](https://github.com/mvillafuertem/scalcite/workflows/scalaci/badge.svg)](https://github.com/mvillafuertem/scalcite/actions?query=workflow%3A%22scalaci%22)
-[![CircleCI](https://circleci.com/gh/mvillafuertem/scalcite.svg?style=shield)](https://circleci.com/gh/mvillafuertem/scalcite)
-[![Build Status](https://travis-ci.com/mvillafuertem/scalcite.svg?branch=master)](https://travis-ci.com/mvillafuertem/scalcite)
+<!--- <p align="center"><img width="200" src="https://raw.githubusercontent.com/mvillafuertem/scala/master/scala-lang-icon.svg"/></p>--->
+<h1 align="center">Scalcite</h1>
+<p align="center">
+  <a href="https://maven-badges.herokuapp.com/maven-central/io.github.mvillafuertem/scalcite_2.12">
+    <img src="https://maven-badges.herokuapp.com/maven-central/io.github.mvillafuertem/scalcite_2.12/badge.svg"/>
+  </a>  
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HE7K7HLJJBVWN&currency_code=EUR&source=url">
+    <img src="https://img.shields.io/badge/donate-PayPal-green.svg?logo=paypal"/>
+  </a>
+  <a href="https://github.com/scala/scala/releases">
+    <img src="https://img.shields.io/badge/scala-2.13.3-red.svg?logo=scala&logoColor=red"/>
+  </a>  
+  <a href="https://www.oracle.com/technetwork/java/javase/11all-relnotes-5013287.html">
+    <img src="https://img.shields.io/badge/jdk-11.0.8-orange.svg?logo=java&logoColor=white"/>
+  </a>  
+  <a href="https://github.com/sbt/sbt/releases">
+    <img src="https://img.shields.io/badge/sbt-1.4.1-blue.svg?logo=sbt"/>
+  </a>
+  <a href="https://github.com/mvillafuertem/scalcite/actions?query=workflow%3A%22scalaci%22">
+    <img src="https://github.com/mvillafuertem/scalcite/workflows/scalaci/badge.svg"/>
+  </a>  
+  <a href="https://circleci.com/gh/mvillafuertem/scalcite">
+    <img src="https://img.shields.io/circleci/build/github/mvillafuertem/scalcite?logo=circleci&style=flat"/>
+  </a>  
+  <a href="https://travis-ci.com/mvillafuertem/scalcite">
+    <img src="https://img.shields.io/travis/mvillafuertem/scalcite/master.svg?logo=travis&style=flat"/>
+  </a>  
+  <a href="https://github.com/scala-steward-org/scala-steward">
+    <img src="https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII="/>
+  </a>
+</p> 
 
 ****
 
@@ -22,7 +43,6 @@ Scalcite is a library to query 💬 and update ✏️ JSON data 📄
 This library use https://github.com/apache/calcite
 
 ****
-
 
 ## Scalcite Example
 
@@ -70,7 +90,7 @@ SELECT "personalinfo.address" FROM scalcite;
 Is a UI project created with React using Slinky 
 
 
-## Sequence Diagram
+## Diagram Sequence 
 
 ![modules/scalcite-docs/src/main/resources/diagram-sequence.png](modules/scalcite-docs/src/main/resources/diagram-sequence.png)
 
