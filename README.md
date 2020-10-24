@@ -90,7 +90,7 @@ SELECT "personalinfo.address" FROM scalcite;
 Is a UI project created with React using Slinky 
 
 
-## Diagram Sequence 
+## Sequence Diagram
 
 ![modules/scalcite-docs/src/main/resources/diagram-sequence.png](modules/scalcite-docs/src/main/resources/diagram-sequence.png)
 
