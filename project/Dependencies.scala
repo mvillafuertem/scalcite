@@ -156,6 +156,6 @@ object Dependencies {
     val tapir                     = "0.16.16"
     val zio                       = "1.0.3"
     val zioLogging                = "0.5.3"
-    val zioInteropReactiveStreams = "1.0.3.5"
+    val zioInteropReactiveStreams = "1.3.0.7-2"
   }
 }
