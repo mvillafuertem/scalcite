@@ -29,12 +29,12 @@ lazy val `scalcite` = (project in file("."))
     `scalcite-blower`,
     `scalcite-circe-blower`,
     `scalcite-circe-flattener`,
+    `scalcite-console`,
     `scalcite-core`,
     `scalcite-docs`,
-    `scalcite-example-backend`,
-    `scalcite-example-console`,
-    `scalcite-example-frontend`,
-    `scalcite-flattener`
+    `scalcite-flattener`,
+    `scalcite-server`,
+    `scalcite-ui`
   )
   .settings(commands ++= Commands.value)
 
@@ -47,7 +47,7 @@ lazy val `scalcite-core` = (project in file("modules/scalcite-core"))
   .dependsOn(`scalcite-blower`)
   .dependsOn(`scalcite-flattener`)
 
-lazy val `scalcite-example-backend` = (project in file("modules/scalcite-example/backend"))
+lazy val `scalcite-server` = (project in file("modules/scalcite-server"))
   .configure(configurationNoPublish)
   // S E T T I N G S
   .settings(AssemblySettings.value)
@@ -56,7 +56,7 @@ lazy val `scalcite-example-backend` = (project in file("modules/scalcite-example
   .settings(NativePackagerSettings.value)
   .settings(NexusSettings.value)
   .settings(crossScalaVersions := Nil)
-  .settings(libraryDependencies ++= Dependencies.`scalcite-example-backend`)
+  .settings(libraryDependencies ++= Dependencies.`scalcite-server`)
   .settings(javaAgents += JavaAgent(Dependencies.elasticApm))
   // D E P E N D S  O N
   .dependsOn(`scalcite-core`)
@@ -70,12 +70,12 @@ lazy val `scalcite-example-backend` = (project in file("modules/scalcite-example
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(GitVersioning)
 
-lazy val `scalcite-example-console` = (project in file("modules/scalcite-example/console"))
+lazy val `scalcite-console` = (project in file("modules/scalcite-console"))
   .configure(configurationNoPublish)
   // S E T T I N G S
   .settings(BuildInfoSettings.value)
   .settings(crossScalaVersions := Nil)
-  .settings(libraryDependencies ++= Dependencies.`scalcite-example-console`)
+  .settings(libraryDependencies ++= Dependencies.`scalcite-console`)
   // D E P E N D S  O N
   .dependsOn(`scalcite-core`)
   .dependsOn(`scalcite-circe-blower`)
@@ -86,9 +86,9 @@ lazy val `scalcite-example-console` = (project in file("modules/scalcite-example
   .enablePlugins(DockerPlugin)
   .enablePlugins(GitVersioning)
 
-lazy val `scalcite-example-frontend` = (project in file("modules/scalcite-example/frontend"))
+lazy val `scalcite-ui` = (project in file("modules/scalcite-ui"))
   .configure(configurationNoPublish)
-  .configure(Dependencies.`scalcite-example-frontend`)
+  .configure(Dependencies.`scalcite-ui`)
   // S E T T I N G S
   .settings(scalacOptions += "-Ymacro-annotations")
   .settings(useYarn := true)
@@ -111,7 +111,7 @@ lazy val `scalcite-docs` = (project in file("modules/scalcite-docs"))
   .settings(MdocSettings.value)
   .settings(libraryDependencies ++= Dependencies.`scalcite-docs`)
   // D E P E N D S  O N
-  .dependsOn(`scalcite-example-backend` % "compile->test")
+  .dependsOn(`scalcite-server` % "compile->test")
   // P L U G I N S
   .enablePlugins(MdocPlugin)
 

@@ -29,7 +29,7 @@ object DockerSettings {
         Cmd("EXPOSE", "8080"),
         Cmd("COPY", "/opt/docker/configuration/", "/opt/scalcite/configuration/"),
         Cmd("COPY", "/opt/docker/elastic-apm-agent/", "/opt/scalcite/elastic-apm-agent/"),
-        Cmd("COPY", "/opt/docker/lib/", "/opt/scalcite/"),
+        Cmd("COPY", "/1/opt/docker/lib/", "/opt/scalcite/"),
         Cmd(
           "CMD",
           s"""

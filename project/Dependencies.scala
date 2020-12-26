@@ -12,7 +12,7 @@ object Dependencies {
     scalaTest % Test
   )
 
-  val `scalcite-example-backend`: Seq[ModuleID] = Seq(
+  val `scalcite-server`: Seq[ModuleID] = Seq(
     // P R O D U C T I O N
     akkaActorTyped,
     akkaStream, // Explicit Dependency https://doc.akka.io/docs/akka/current/common/binary-compatibility-rules.html#mixed-versioning-is-not-allowed
@@ -39,12 +39,12 @@ object Dependencies {
     scalaTest             % Test
   )
 
-  val `scalcite-example-console`: Seq[ModuleID] = Seq(
+  val `scalcite-console`: Seq[ModuleID] = Seq(
     // P R O D U C T I O N
     sqlline
   )
 
-  val `scalcite-example-frontend`: Project => Project =
+  val `scalcite-ui`: Project => Project =
     _.settings(Compile / npmDependencies += "react" -> "16.13.0")
       .settings(Compile / npmDependencies += "react-dom" -> "16.13.0")
       .settings(Compile / npmDependencies += "react-proxy" -> "1.1.8")

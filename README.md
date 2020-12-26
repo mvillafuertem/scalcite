@@ -44,20 +44,30 @@ This library use https://github.com/apache/calcite
 
 ****
 
-## Scalcite Example
+## Components
 
 
-### Backend
+### Server
 
-Is an Akka Microservices using DDD with ZIO ZStreams Tapir
+Is an Akka Microservices using DDD with ZStreams Tapir
 
 ```bash
 
 
-sbt scalcite-example-backend/run
+sbt scalcite-server/run
 
 http://0.0.0.0:8080/api/v1.0/docs
 
+
+
+```
+
+#### Docker
+
+```shell script
+
+sbt "scalcite-server/docker:publishLocal" && \
+docker run --rm -p 8080:8080 mvillafuertem/scalcite-server:0.1.1
 
 ```
 
@@ -70,9 +80,9 @@ Is an util project to play with json through SQL
 
 sbt clean compile
 
-./modules/scalcite-example/console/sqlline
+./modules/scalcite-console/sqlline
 
-!connect jdbc:calcite:model=modules/scalcite-example/console/target/scala-2.13/classes/model.json admin admin
+!connect jdbc:calcite:model=modules/scalcite-console/target/scala-2.13/classes/model.json admin admin
 
 !tables
 
@@ -85,7 +95,7 @@ SELECT "personalinfo.address" FROM scalcite;
 ```
 
 
-### Frontend
+### UI
 
 Is a UI project created with React using Slinky 
 

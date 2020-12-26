@@ -2,7 +2,7 @@ import sbt.Def
 import sbt.Keys._
 import sbtassembly.AssemblyKeys._
 import sbtassembly.AssemblyPlugin.autoImport.assemblyJarName
-import sbtassembly.MergeStrategy
+import sbtassembly.{ MergeStrategy, PathList }
 
 object AssemblySettings {
 
@@ -10,8 +10,9 @@ object AssemblySettings {
     assembly / assemblyJarName := s"${name.value}-${version.value}.jar",
     assembly / test := {},
     assembly / assemblyMergeStrategy := {
-      case "module-info.class" => MergeStrategy.last
-      case x =>
+      case "module-info.class"                  => MergeStrategy.last
+      case PathList("google", "protobuf", xs @ _*) => MergeStrategy.discard
+      case x                                    =>
         val oldStrategy = (assembly / assemblyMergeStrategy).value
         oldStrategy(x)
     }
