@@ -1,24 +1,26 @@
 package io.github.mvillafuertem.scalcite.example.api.documentation
 
-import java.util.UUID
-
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import io.circe.Json
 import io.circe.generic.auto._
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
+import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir._
+import sttp.tapir.generic.auto._
 import sttp.tapir.json.circe._
+
+import java.util.UUID
 
 trait ScalciteEndpoint extends ApiErrorMapping {
 
   // I N F O R M A T I O N
-  private[api] lazy val queriesResource: String                = "queries"
-  private[api] lazy val simulateResource: String               = "simulate"
-  private[api] lazy val uuidPath                               = path[UUID]("uuid")
-  private[api] lazy val queriesIdResource: EndpointInput[UUID] = queriesResource / uuidPath
-  private[api] lazy val queriesParameter = query[List[UUID]]("uuid")
+  private[api] lazy val queriesResource: String                            = "queries"
+  private[api] lazy val simulateResource: String                           = "simulate"
+  private[api] lazy val uuidPath                                           = path[UUID]("uuid")
+  private[api] lazy val queriesIdResource: EndpointInput[UUID]             = queriesResource / uuidPath
+  private[api] lazy val queriesParameter                                   = query[List[UUID]]("uuid")
     .example(
       List(
         // see schema.sql
@@ -42,7 +44,7 @@ trait ScalciteEndpoint extends ApiErrorMapping {
   private[api] lazy val queriesDescriptionGetAllResource: String           = "Queries Get All Endpoint"
   private[api] lazy val simulateDescriptionResource: String                = "Simulate Endpoint"
 
-  val queriesExample: Query = Query(UUID.fromString("b7f25fe8-464f-4a91-87d5-830993b2a87d"), "SELECT `personalinfo.address` FROM scalcite")
+  val queriesExample: Query   = Query(UUID.fromString("b7f25fe8-464f-4a91-87d5-830993b2a87d"), "SELECT `personalinfo.address` FROM scalcite")
   val simulateInExample: Json = io.circe.parser.parse("""
                                                         |{
                                                         |  "boolean": true,
@@ -72,38 +74,38 @@ trait ScalciteEndpoint extends ApiErrorMapping {
   }
 
   // E N D P O I N T
-  private[api] lazy val queriesPostEndpoint: Endpoint[Query, ScalciteError, Source[ByteString, Any], Source[ByteString, Any]] =
+  private[api] lazy val queriesPostEndpoint: Endpoint[Query, ScalciteError, Source[ByteString, Any], Any with AkkaStreams] =
     ApiEndpoint.baseEndpoint.post
       .in(queriesResource)
       .name(queriesNamePostResource)
       .description(queriesDescriptionPostResource)
       .in(jsonBody[Query].example(queriesExample))
-      .out(streamBody[Source[ByteString, Any]](schemaFor[Query], CodecFormat.Json()))
+      .out(streamBody(AkkaStreams)(Schema(Schema.derived[Query].schemaType), CodecFormat.Json()))
       .errorOut(oneOf(statusInternalServerError, statusDefault))
 
-  private[api] lazy val queriesGetEndpoint: Endpoint[UUID, ScalciteError, Source[ByteString, Any], Source[ByteString, Any]] =
+  private[api] lazy val queriesGetEndpoint: Endpoint[UUID, ScalciteError, Source[ByteString, Any], Any with AkkaStreams] =
     ApiEndpoint.baseEndpoint.get
       .in(queriesIdResource)
       .name(queriesNameGetResource)
       .description(queriesDescriptionGetResource)
-      .out(streamBody[Source[ByteString, Any]](schemaFor[Query], CodecFormat.Json()))
+      .out(streamBody(AkkaStreams)(Schema(Schema.derived[Query].schemaType), CodecFormat.Json()))
       .errorOut(oneOf(statusInternalServerError, statusDefault))
 
-  private[api] lazy val queriesGetAllEndpoint: Endpoint[Unit, ScalciteError, Source[ByteString, Any], Source[ByteString, Any]] =
+  private[api] lazy val queriesGetAllEndpoint: Endpoint[Unit, ScalciteError, Source[ByteString, Any], Any with AkkaStreams] =
     ApiEndpoint.baseEndpoint.get
       .in(queriesResource)
       .name(queriesNameGetAllResource)
       .description(queriesDescriptionGetAllResource)
-      .out(streamBody[Source[ByteString, Any]](schemaFor[Query], CodecFormat.Json()))
+      .out(streamBody(AkkaStreams)(Schema(Schema.derived[Query].schemaType), CodecFormat.Json()))
       .errorOut(oneOf(statusInternalServerError, statusDefault))
 
-  private[api] lazy val simulateEndpoint: Endpoint[(List[UUID], Json), ScalciteError, Source[ByteString, Any], Source[ByteString, Any]] =
+  private[api] lazy val simulateEndpoint: Endpoint[(List[UUID], Json), ScalciteError, Source[ByteString, Any], Any with AkkaStreams] =
     ApiEndpoint.baseEndpoint.post
       .in(queriesSimulateResource)
       .name(simulateNameResource)
       .description(simulateDescriptionResource)
       .in(jsonBody[Json].example(simulateInExample))
-      .out(streamBody[Source[ByteString, Any]](schemaFor[Json], CodecFormat.Json()))
+      .out(streamBody(AkkaStreams)(Schema(Schema.derived[Query].schemaType), CodecFormat.Json()))
       .errorOut(oneOf(statusInternalServerError, statusDefault))
 
 }

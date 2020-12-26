@@ -12,7 +12,7 @@ trait ApiEndpoint {
   private[api] lazy val baseApiEndpoint: EndpointInput[Unit] = apiResource / apiVersion
 
   // E N D P O I N T
-  private[api] lazy val baseEndpoint: Endpoint[Unit, Unit, Unit, Nothing] =
+  private[api] lazy val baseEndpoint: Endpoint[Unit, Unit, Unit, Any] =
     endpoint
       .in(baseApiEndpoint)
       .name(apiNameResource)

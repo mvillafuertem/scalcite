@@ -17,7 +17,7 @@ trait ActuatorEndpoint {
   private[api] lazy val healthDescriptionResource: String = "Scalcite Service Health Check Endpoint"
 
   // E N D P O I N T
-  private[api] lazy val healthEndpoint: Endpoint[Unit, StatusCode, HealthInfo, Nothing] =
+  private[api] lazy val healthEndpoint: Endpoint[Unit, StatusCode, HealthInfo, Any] =
     ApiEndpoint.baseEndpoint.get
       .in(healthResource)
       .name(healthNameResource)

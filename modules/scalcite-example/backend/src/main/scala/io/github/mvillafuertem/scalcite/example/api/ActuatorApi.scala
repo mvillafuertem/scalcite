@@ -16,7 +16,7 @@ trait ActuatorApi {
 
   // https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/debugging-directives/logRequestResult.html
   val route: Route = DebuggingDirectives.logRequestResult("actuator-logger") {
-    ActuatorEndpoint.healthEndpoint.toRoute(_ => Future.successful(Right(BuildInfoScalcite.toMap)))
+    AkkaHttpServerInterpreter.toRoute(ActuatorEndpoint.healthEndpoint)(_ => Future.successful(Right(BuildInfoScalcite.toMap)))
   }
 
 }

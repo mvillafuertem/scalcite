@@ -1,12 +1,12 @@
 package io.github.mvillafuertem.scalcite.example.api.documentation
 
 import java.util.UUID
-
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError.DuplicatedEntity
 import io.github.mvillafuertem.scalcite.example.domain.model.Query
+import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir._
 
 trait ErrorsEndpoint extends ApiErrorMapping {
@@ -36,20 +36,20 @@ trait ErrorsEndpoint extends ApiErrorMapping {
   val errorsExample: ScalciteError = DuplicatedEntity()
 
   // E N D P O I N T
-  private[api] lazy val errorsGetEndpoint: Endpoint[UUID, ScalciteError, Source[ByteString, Any], Source[ByteString, Any]] =
+  private[api] lazy val errorsGetEndpoint: Endpoint[UUID, ScalciteError, Source[ByteString, Any], Any with AkkaStreams] =
     ApiEndpoint.baseEndpoint.get
       .in(errorsIdResource)
       .name(errorsNameGetResource)
       .description(errorsDescriptionGetResource)
-      .out(streamBody[Source[ByteString, Any]](schemaFor[Query], CodecFormat.Json()))
+      .out(streamBody(AkkaStreams)(Schema(Schema.derived[Query].schemaType), CodecFormat.Json()))
       .errorOut(oneOf(statusInternalServerError, statusDefault))
 
-  private[api] lazy val errorsGetAllEndpoint: Endpoint[Unit, ScalciteError, Source[ByteString, Any], Source[ByteString, Any]] =
+  private[api] lazy val errorsGetAllEndpoint: Endpoint[Unit, ScalciteError, Source[ByteString, Any], Any with AkkaStreams] =
     ApiEndpoint.baseEndpoint.get
       .in(errorsResource)
       .name(errorsNameGetAllResource)
       .description(errorsDescriptionGetAllResource)
-      .out(streamBody[Source[ByteString, Any]](schemaFor[Query], CodecFormat.Json()))
+      .out(streamBody(AkkaStreams)(Schema(Schema.derived[Query].schemaType), CodecFormat.Json()))
       .errorOut(oneOf(statusInternalServerError, statusDefault))
 
 }

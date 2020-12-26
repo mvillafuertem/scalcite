@@ -11,8 +11,8 @@ import io.github.mvillafuertem.scalcite.example.application.ErrorsService.ZError
 import io.github.mvillafuertem.scalcite.example.domain.ErrorsApplication
 import io.github.mvillafuertem.scalcite.example.domain.error.ScalciteError
 import sttp.tapir.server.akkahttp._
-import zio.interop.reactivestreams._
 import zio._
+import zio.interop.reactivestreams._
 
 import scala.concurrent.Future
 
@@ -22,9 +22,11 @@ final class ErrorsApi(app: ErrorsApplication) extends ApiJsonCodec with ApiError
     errorsGetRoute ~
       errorsGetAllRoute
 
-  lazy val errorsGetRoute: Route = ErrorsEndpoint.errorsGetEndpoint.toRoute(uuid => buildResponse(app.findByUUID(uuid).map(_.asJson.noSpaces)))
+  lazy val errorsGetRoute: Route = AkkaHttpServerInterpreter
+    .toRoute(ErrorsEndpoint.errorsGetEndpoint)(uuid => buildResponse(app.findByUUID(uuid).map(_.asJson.noSpaces)))
 
-  lazy val errorsGetAllRoute: Route = ErrorsEndpoint.errorsGetAllEndpoint.toRoute(_ => buildResponse(app.findAll().map(_.asJson.noSpaces)))
+  lazy val errorsGetAllRoute: Route = AkkaHttpServerInterpreter
+    .toRoute(ErrorsEndpoint.errorsGetAllEndpoint)(_ => buildResponse(app.findAll().map(_.asJson.noSpaces)))
 
   private def buildResponse: stream.Stream[Throwable, String] => Future[Either[ScalciteError, Source[ByteString, NotUsed]]] = stream => {
     val value = unsafeRun(
