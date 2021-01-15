@@ -138,7 +138,7 @@ object Dependencies {
   lazy val zioStreams                = "dev.zio"                               %% "zio-streams"                 % Version.zio
 
   object Version {
-    val akka                      = "2.6.10"
+    val akka                      = "2.6.11"
     val akkaHttp                  = "10.2.2"
     val calcite                   = "1.26.0"
     val circe                     = "0.13.0"
