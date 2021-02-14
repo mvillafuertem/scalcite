@@ -54,8 +54,8 @@ object Dependencies {
       .settings(Compile / npmDevDependencies += "html-webpack-plugin" -> "3.2.0")
       .settings(Compile / npmDevDependencies += "style-loader" -> "1.1.3")
       .settings(Compile / npmDevDependencies += "webpack-merge" -> "4.2.2")
-      .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.6.5")
-      .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.6.5")
+      .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.6.7")
+      .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.6.7")
 
   val `scalcite-docs`: Seq[ModuleID] = Seq(
     "io.github.mvillafuertem" %% "mdoc-modifier-plantuml" % "0.1"
@@ -138,11 +138,11 @@ object Dependencies {
   lazy val zioStreams                = "dev.zio"                               %% "zio-streams"                 % Version.zio
 
   object Version {
-    val akka                      = "2.6.10"
-    val akkaHttp                  = "10.2.2"
+    val akka                      = "2.6.12"
+    val akkaHttp                  = "10.2.3"
     val calcite                   = "1.26.0"
     val circe                     = "0.13.0"
-    val elasticApm                = "1.20.0"
+    val elasticApm                = "1.21.0"
     val h2                        = "1.4.200"
     val json4s                    = "3.6.10"
     val jsoniter                  = "2.6.2"
@@ -154,8 +154,8 @@ object Dependencies {
     val scalikejdbc               = "3.5.0"
     val sqlline                   = "1.9.0"
     val tapir                     = "0.17.10"
-    val zio                       = "1.0.3"
-    val zioLogging                = "0.5.4"
+    val zio                       = "1.0.4-2"
+    val zioLogging                = "0.5.6"
     val zioInteropReactiveStreams = "1.3.0.7-2"
   }
 }
