@@ -139,7 +139,7 @@ object Dependencies {
 
   object Version {
     val akka                      = "2.6.12"
-    val akkaHttp                  = "10.2.2"
+    val akkaHttp                  = "10.2.3"
     val calcite                   = "1.26.0"
     val circe                     = "0.13.0"
     val elasticApm                = "1.20.0"
@@ -155,7 +155,7 @@ object Dependencies {
     val sqlline                   = "1.9.0"
     val tapir                     = "0.17.4"
     val zio                       = "1.0.3"
-    val zioLogging                = "0.5.4"
+    val zioLogging                = "0.5.6"
     val zioInteropReactiveStreams = "1.3.0.7-2"
   }
 }
