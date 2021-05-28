@@ -4,7 +4,7 @@ import sbt.{ Def, Tests, _ }
 object Settings {
 
   lazy val scala213               = "2.13.6"
-  lazy val scala212               = "2.12.13"
+  lazy val scala212               = "2.12.14"
   lazy val supportedScalaVersions = List(scala213, scala212)
 
   val value: Seq[Def.Setting[_]] = Seq(
