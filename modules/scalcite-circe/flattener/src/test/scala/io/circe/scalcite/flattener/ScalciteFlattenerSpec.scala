@@ -1,8 +1,11 @@
 package io.circe.scalcite.flattener
 
+import com.github.plokhotnyuk.jsoniter_scala.core.{ readFromArray, JsonValueCodec }
 import io.circe.Json
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
+
+import java.nio.charset.StandardCharsets
 
 final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
 
@@ -10,11 +13,11 @@ final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
 
   it should "flatten a json string of circe" in {
     // g i v e n
-    import io.circe.scalcite.flattener.ScalciteFlattener._
     val json: String = """{"id":"c730433b-082c-4984-9d66-855c243266f0","name":"Foo","values":{"bar":true,"baz":100.001,"qux":"a"}}"""
 
     // w h e n
-    val actual = flatten(json)
+    implicit val codec: JsonValueCodec[Json] = ScalciteFlattener.codec
+    val actual: Json                         = readFromArray(json.getBytes(StandardCharsets.UTF_8))
 
     // t h e n
     val expected = Json.obj(
@@ -25,14 +28,12 @@ final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
       ("values.qux", Json.fromString("a"))
     )
 
-    actual.map(a => a shouldBe expected)
+    actual shouldBe expected
   }
 
   it should "flatten a json of circe" in {
     // g i v e n
-    import io.circe.scalcite.flattener.ScalciteFlattener._
-    import io.github.mvillafuertem.scalcite.flattener.Flattener._
-    val json = Json.obj(
+    val json                                 = Json.obj(
       ("id", Json.fromString("c730433b-082c-4984-9d66-855c243266f0")),
       ("name", Json.fromString("Foo")),
       (
@@ -45,7 +46,8 @@ final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
       )
     )
     // w h e n
-    val actual = json.flatten
+    implicit val codec: JsonValueCodec[Json] = ScalciteFlattener.codec
+    val actual: Json                         = readFromArray(json.noSpaces.getBytes(StandardCharsets.UTF_8))
 
     // t h e n
     val expected = Json.obj(
@@ -56,7 +58,7 @@ final class ScalciteFlattenerSpec extends AnyFlatSpecLike with Matchers {
       ("values.qux", Json.fromString("a"))
     )
 
-    actual.map(a => a shouldBe expected)
+    actual shouldBe expected
   }
 
 }

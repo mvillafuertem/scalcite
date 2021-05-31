@@ -1,135 +1,124 @@
 package io.circe.scalcite.flattener
 
-import java.nio.charset.StandardCharsets
-import java.util
-
 import com.github.plokhotnyuk.jsoniter_scala.core._
-import io.circe.{ Json, JsonDouble, JsonLong, JsonObject }
 import io.circe.Json.{ JArray, JBoolean, JNull, JNumber, JObject, JString }
-import io.github.mvillafuertem.scalcite.flattener.Flattener
+import io.circe.{ Json, JsonDouble, JsonLong, JsonObject }
+
+import java.util
 
 object ScalciteFlattener {
 
-  implicit val flatten: Flattener[Json, Either[Throwable, Json]] =
-    (blownUp: Json) => Right(_flatten(blownUp))
-
-  //implicit val flatten: Flattener[String, Either[Throwable, Json]] =
-  //  (blownUp: String) => Right(_flatten(readFromArray(blownUp.toString.getBytes(StandardCharsets.UTF_8))))
-
-  def flatten(blownUp: String): Either[Throwable, Json] = {
-    val json = readFromArray(blownUp.getBytes(StandardCharsets.UTF_8))
-    flatten.apply(json)
-  }
-
-  private def _flatten(json: Json, path: String = ""): Json =
-    json match {
-      case JObject(value) =>
-        value.toIterable.map { case (k, v) => _flatten(v, buildPath(path, k)) }
-          .fold(JObject(JsonObject.empty))(_ deepMerge _)
-
-      case JArray(value) =>
-        value.zipWithIndex.map { case (j, index) => _flatten(j, buildPath(path, s"[$index]")) }
-          .fold(JObject(JsonObject.empty))(_ deepMerge _)
-
-      case _ => JObject(JsonObject((path, json)))
-    }
-
-  private def buildPath(path: String, key: String): String =
-    if (path.isEmpty) key else s"$path.$key"
-
   implicit val codec: JsonValueCodec[Json] = new JsonValueCodec[Json] {
 
-    override def decodeValue(in: JsonReader, default: Json): Json = in.nextToken() match {
-      case 'n'                                                                   => in.readNullOrError(default, "expected `null` value")
-      case '"'                                                                   => decodeString(in)
-      case 'f' | 't'                                                             => decodeBoolean(in)
-      case n @ ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '-') => decodeNumber(in, n)
-      case '['                                                                   => decodeArray(in, default)
-      case '{'                                                                   => decodeObject(in, default)
-      case _                                                                     => in.decodeError("expected JSON value")
-    }
+    def decodeValueRecursive(k: String, in: JsonReader, default: Json): Json =
+      in.nextToken() match {
+        case 'n'                                                                   => in.readNullOrError(default, "expected `null` value")
+        case '"'                                                                   => decodeString(in)
+        case 'f' | 't'                                                             => decodeBoolean(in)
+        case n @ ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '-') => decodeNumber(in, n)
+        case '['                                                                   => if (k.isEmpty) decodeArray(k, in, default) else decodeArray(k.concat("."), in, default)
+        case '{'                                                                   => if (k.isEmpty) decodeObject(k, in, default) else decodeObject(k.concat("."), in, default)
+        case _                                                                     => in.decodeError("expected JSON value")
+      }
 
-    private def decodeObject(in: JsonReader, default: Json) =
+    override def decodeValue(in: JsonReader, default: Json): Json = decodeValueRecursive("", in, default)
+
+    private def decodeObject(k: String, in: JsonReader, default: Json): JObject =
       JObject(
         if (in.isNextToken('}')) JsonObject.empty
         else {
           val x = new util.LinkedHashMap[String, Json]
           in.rollbackToken()
-          do x.put(in.readKeyAsString(), decodeValue(in, default)) while (in.isNextToken(','))
+          do {
+            val key    = in.readKeyAsString()
+            val str    = k.concat(key)
+            val result = decodeValueRecursive(str, in, default)
+            result match {
+              case JObject(value) =>
+                //x.putAll(result.asObject.get.toMap.asJava) // TODO intentar no usar converters .asJava
+                value.toIterable.foreach { case (str, json) => x.put(str, json) }
+              case _              => x.put(str, result)
+            }
+          } while (in.isNextToken(','))
           if (!in.isCurrentToken('}')) in.objectEndOrCommaError()
           JsonObject.fromLinkedHashMap(x)
         }
       )
 
-    private def decodeArray(in: JsonReader, default: Json) =
-      JArray(
-        if (in.isNextToken(']')) Vector.empty
+    private def decodeArray(k: String, in: JsonReader, default: Json): JObject =
+      JObject(
+        if (in.isNextToken(']')) JsonObject.empty
         else {
+          val m = new util.LinkedHashMap[String, Json]
           in.rollbackToken()
-          var x = new Array[Json](4)
           var i = 0
           do {
-            if (i == x.length) x = java.util.Arrays.copyOf(x, i << 1)
-            x(i) = decodeValue(in, default)
+            val str    = k.concat(s"[$i]")
+            val result = decodeValueRecursive(str, in, default)
+            result match {
+              case JObject(value) =>
+                //m.putAll(result.asObject.get.toMap.asJava) // TODO intentar no usar converters .asJava
+                value.toIterable.foreach { case (str, json) => m.put(str, json) }
+              case _              => m.put(str, result)
+            }
             i += 1
           } while (in.isNextToken(','))
-          val jsons: Array[Json] =
-            if (in.isCurrentToken(']'))
-              if (i == x.length) x
-              else java.util.Arrays.copyOf(x, i)
-            else in.arrayEndOrCommaError()
-          jsons.toVector
+          if (!in.isCurrentToken(']')) in.arrayEndOrCommaError()
+          JsonObject.fromLinkedHashMap(m)
         }
       )
 
-    override def encodeValue(x: Json, out: JsonWriter): Unit = x match {
-      case JNull       => out.writeNull()
-      case JString(s)  => out.writeVal(s)
-      case JBoolean(b) => out.writeVal(b)
-      case JNumber(n) =>
-        n match {
-          case JsonLong(l) => out.writeVal(l)
-          case _           => out.writeVal(n.toDouble)
-        }
-      case JArray(a) =>
-        out.writeArrayStart()
-        a.foreach(v => encodeValue(v, out))
-        out.writeArrayEnd()
-      case JObject(o) =>
-        out.writeObjectStart()
-        o.toIterable.foreach {
-          case (k, v) =>
+    override def encodeValue(x: Json, out: JsonWriter): Unit =
+      x match {
+        case JNull       => out.writeNull()
+        case JString(s)  => out.writeVal(s)
+        case JBoolean(b) => out.writeVal(b)
+        case JNumber(n)  =>
+          n match {
+            case JsonLong(l) => out.writeVal(l)
+            case _           => out.writeVal(n.toDouble)
+          }
+        case JArray(a)   =>
+          out.writeArrayStart()
+          val l = a.size
+          var i = 0
+          while (i < l) {
+            val json: Json = a(i)
+            encodeValue(json, out)
+            i += 1
+          }
+          out.writeArrayEnd()
+        case JObject(o)  =>
+          out.writeObjectStart()
+          val it = o.toIterable.iterator
+          while (it.hasNext) {
+            val (k, v) = it.next()
             out.writeKey(k)
             encodeValue(v, out)
-        }
-        out.writeObjectEnd()
-    }
+          }
+          out.writeObjectEnd()
+      }
 
     override def nullValue: Json = Json.Null
-  }
-
-  private def decodeString(in: JsonReader) = {
-    in.rollbackToken()
-    JString(in.readString(null))
   }
 
   private def decodeNumber(in: JsonReader, n: Byte) =
     JNumber({
       in.rollbackToken()
-      in.setMark() // TODO: add in.readNumberAsString() to Core API of jsoniter-scala
-      var b = n
-      try {
-        do b = in.nextByte() while (b >= '0' && b <= '9')
-      } catch {
-        case _: JsonReaderException => /* ignore end of input error */
-      } finally in.rollbackToMark()
-      if (b == '.' || b == 'e' || b == 'E') JsonDouble(in.readDouble())
-      else JsonLong(in.readLong())
+      val d = in.readDouble()
+      val i = d.toInt
+      if (i.toDouble == d) JsonLong(i)
+      else JsonDouble(d)
     })
 
   private def decodeBoolean(in: JsonReader) = {
     in.rollbackToken()
     if (in.readBoolean()) Json.True
     else Json.False
+  }
+
+  private def decodeString(in: JsonReader) = {
+    in.rollbackToken()
+    JString(in.readString(null))
   }
 }
