@@ -1,18 +1,22 @@
 package io.github.mvillafuertem.scalcite.console
 
-import java.io.File
-import java.util
-
-import io.circe.scalcite.flattener.ScalciteFlattener._
+import com.github.plokhotnyuk.jsoniter_scala.core.{ readFromArray, JsonValueCodec }
+import io.circe.Json
+import io.circe.scalcite.flattener.ScalciteFlattener
 import io.circe.scalcite.table.ScalciteCirceTable
 import io.github.mvillafuertem.scalcite.ScalciteTable
-import io.github.mvillafuertem.scalcite.flattener.Flattener._
 import org.apache.calcite.model.ModelHandler
 import org.apache.calcite.rel.`type`.{ RelDataType, RelDataTypeImpl }
 import org.apache.calcite.schema.{ SchemaPlus, TableFactory }
 import org.apache.calcite.util.Sources
 
+import java.io.File
+import java.nio.charset.StandardCharsets
+import java.util
+
 final class JsonTableFactory extends TableFactory[ScalciteTable] {
+
+  implicit val codec: JsonValueCodec[Json] = ScalciteFlattener.codec
 
   override def create(schema: SchemaPlus, name: String, operand: util.Map[String, AnyRef], rowType: RelDataType): ScalciteTable = {
 
@@ -21,15 +25,8 @@ final class JsonTableFactory extends TableFactory[ScalciteTable] {
     val source   = Sources.file(base, fileName)
     val _        = if (rowType != null) RelDataTypeImpl.proto(rowType) else null
     val json     = scala.io.Source.fromInputStream(source.openStream()).getLines().mkString
-
-    (for {
-      value     <- io.circe.parser.parse(json)
-      flattened <- value.flatten
-
-    } yield flattened) match {
-      case Left(value)  => throw value
-      case Right(value) => ScalciteCirceTable(value)
-    }
+    val value    = readFromArray(json.getBytes(StandardCharsets.UTF_8))
+    ScalciteCirceTable(value)
   }
 
 }

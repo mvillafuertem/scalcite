@@ -25,7 +25,7 @@ class ScalciteCirceTableSpec extends AnyFlatSpecLike {
       ("values.qux", Json.fromString("b"))
     )
     val circeTable = ScalciteCirceTable(json)
-    val connection = createConnection("s", "beatles", circeTable)
+    val connection = createConnection("s", "scalcite", circeTable)
 
 
     val statement = connection.createStatement()

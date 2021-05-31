@@ -1,28 +1,31 @@
 package io.github.mvillafuertem.scalcite.server.application
 
+import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromArray}
 import io.circe.Json
 import io.circe.scalcite.blower.ScalciteBlower._
-import io.circe.scalcite.flattener.ScalciteFlattener._
+import io.circe.scalcite.flattener.ScalciteFlattener
 import io.circe.syntax._
 import io.github.mvillafuertem.scalcite.blower.Blower._
-import io.github.mvillafuertem.scalcite.flattener.Flattener._
 import io.github.mvillafuertem.scalcite.server.api.documentation.ApiJsonCodec._
 import io.github.mvillafuertem.scalcite.server.application.QueriesService.ZQueriesApplication
 import io.github.mvillafuertem.scalcite.server.domain.error.ScalciteError
 import io.github.mvillafuertem.scalcite.server.domain.error.ScalciteError.Unknown
-import io.github.mvillafuertem.scalcite.server.domain.repository.{ CalciteRepository, ErrorsRepository }
-import io.github.mvillafuertem.scalcite.server.domain.{ QueriesApplication, ScalciteApplication }
+import io.github.mvillafuertem.scalcite.server.domain.repository.{CalciteRepository, ErrorsRepository}
+import io.github.mvillafuertem.scalcite.server.domain.{QueriesApplication, ScalciteApplication}
 import io.github.mvillafuertem.scalcite.server.infrastructure.model.ErrorDBO
 import io.github.mvillafuertem.scalcite.server.infrastructure.repository.RelationalCalciteRepository.ZCalciteRepository
 import io.github.mvillafuertem.scalcite.server.infrastructure.repository.RelationalErrorsRepository.ZErrorsRepository
 import zio._
 import zio.stream.ZStream
 
+import java.nio.charset.StandardCharsets
 import java.sql.SQLException
 import java.util.UUID
 
 private final class ScalcitePerformer(app: QueriesApplication, repository: CalciteRepository, errorsRepository: ErrorsRepository[ErrorDBO])
     extends ScalciteApplication {
+
+  implicit val codec: JsonValueCodec[Json] = ScalciteFlattener.codec
 
   override def performMap(map: collection.Map[String, Any], uuid: UUID*): stream.Stream[Throwable, collection.Map[String, Any]] =
     ZStream
@@ -60,7 +63,7 @@ private final class ScalcitePerformer(app: QueriesApplication, repository: Calci
 
   private def flattener(json: Json): stream.Stream[Nothing, Json] =
     ZStream
-      .fromEffect(IO.fromEither(json.flatten))
+      .fromEffect(Task.effect(readFromArray(json.noSpaces.getBytes(StandardCharsets.UTF_8))))
       .either
       .map(_.fold(e => ScalciteError.Unknown(e.getMessage).asJson, identity))
 
