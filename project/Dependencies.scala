@@ -145,7 +145,7 @@ object Dependencies {
     val elasticApm                = "1.26.0"
     val h2                        = "1.4.200"
     val json4s                    = "4.0.3"
-    val jsoniter                  = "2.11.0"
+    val jsoniter                  = "2.11.1"
     val logback                   = "1.2.6"
     val mapflablup                = "0.1.1"
     val scalaLogging              = "3.9.4"
