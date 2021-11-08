@@ -138,24 +138,24 @@ object Dependencies {
   lazy val zioStreams                = "dev.zio"                               %% "zio-streams"                 % Version.zio
 
   object Version {
-    val akka                      = "2.6.16"
-    val akkaHttp                  = "10.2.6"
-    val calcite                   = "1.27.0"
+    val akka                      = "2.6.17"
+    val akkaHttp                  = "10.2.7"
+    val calcite                   = "1.28.0"
     val circe                     = "0.14.1"
     val elasticApm                = "1.26.0"
     val h2                        = "1.4.200"
     val json4s                    = "4.0.3"
-    val jsoniter                  = "2.10.2"
+    val jsoniter                  = "2.11.1"
     val logback                   = "1.2.6"
     val mapflablup                = "0.1.1"
     val scalaLogging              = "3.9.4"
     val scalaTest                 = "3.2.10"
     val scalcite                  = "0.1.1"
     val scalikejdbc               = "3.5.0"
-    val sqlline                   = "1.11.0"
-    val tapir                     = "0.18.3"
+    val sqlline                   = "1.12.0"
+    val tapir                     = "0.17.20"
     val zio                       = "1.0.12"
-    val zioLogging                = "0.5.12"
-    val zioInteropReactiveStreams = "1.3.7"
+    val zioLogging                = "0.5.13"
+    val zioInteropReactiveStreams = "1.3.8"
   }
 }
