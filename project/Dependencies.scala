@@ -146,7 +146,7 @@ object Dependencies {
     val h2                        = "1.4.200"
     val json4s                    = "4.0.3"
     val jsoniter                  = "2.12.0"
-    val logback                   = "1.2.7"
+    val logback                   = "1.2.8"
     val mapflablup                = "0.1.1"
     val scalaLogging              = "3.9.4"
     val scalaTest                 = "3.2.10"
