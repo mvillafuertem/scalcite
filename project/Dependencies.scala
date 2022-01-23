@@ -144,7 +144,7 @@ object Dependencies {
     val circe                     = "0.14.1"
     val elasticApm                = "1.28.4"
     val h2                        = "1.4.200"
-    val json4s                    = "4.0.3"
+    val json4s                    = "4.0.4"
     val jsoniter                  = "2.12.1"
     val logback                   = "1.2.10"
     val mapflablup                = "0.1.1"
