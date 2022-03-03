@@ -139,7 +139,7 @@ object Dependencies {
 
   object Version {
     val akka                      = "2.6.18"
-    val akkaHttp                  = "10.2.8"
+    val akkaHttp                  = "10.2.9"
     val calcite                   = "1.29.0"
     val circe                     = "0.14.1"
     val elasticApm                = "1.29.0"
