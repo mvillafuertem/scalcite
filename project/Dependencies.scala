@@ -54,8 +54,8 @@ object Dependencies {
       .settings(Compile / npmDevDependencies += "html-webpack-plugin" -> "3.2.0")
       .settings(Compile / npmDevDependencies += "style-loader" -> "1.1.3")
       .settings(Compile / npmDevDependencies += "webpack-merge" -> "4.2.2")
-      .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.7.0")
-      .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.7.0")
+      .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.7.2")
+      .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.7.2")
 
   val `scalcite-docs`: Seq[ModuleID] = Seq(
     "io.github.mvillafuertem" %% "mdoc-modifier-plantuml" % "0.1"
@@ -138,15 +138,15 @@ object Dependencies {
   lazy val zioStreams                = "dev.zio"                               %% "zio-streams"                 % Version.zio
 
   object Version {
-    val akka                      = "2.6.18"
-    val akkaHttp                  = "10.2.7"
-    val calcite                   = "1.29.0"
+    val akka                      = "2.6.19"
+    val akkaHttp                  = "10.2.9"
+    val calcite                   = "1.30.0"
     val circe                     = "0.14.1"
-    val elasticApm                = "1.29.0"
+    val elasticApm                = "1.30.0"
     val h2                        = "1.4.200"
     val json4s                    = "4.0.4"
-    val jsoniter                  = "2.13.0"
-    val logback                   = "1.2.10"
+    val jsoniter                  = "2.13.7"
+    val logback                   = "1.2.11"
     val mapflablup                = "0.1.1"
     val scalaLogging              = "3.9.4"
     val scalaTest                 = "3.2.11"
