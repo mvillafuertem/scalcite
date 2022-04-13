@@ -54,8 +54,8 @@ object Dependencies {
       .settings(Compile / npmDevDependencies += "html-webpack-plugin" -> "3.2.0")
       .settings(Compile / npmDevDependencies += "style-loader" -> "1.1.3")
       .settings(Compile / npmDevDependencies += "webpack-merge" -> "4.2.2")
-      .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.6.8")
-      .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.6.8")
+      .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.7.2")
+      .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.7.2")
 
   val `scalcite-docs`: Seq[ModuleID] = Seq(
     "io.github.mvillafuertem" %% "mdoc-modifier-plantuml" % "0.1"
@@ -138,24 +138,24 @@ object Dependencies {
   lazy val zioStreams                = "dev.zio"                               %% "zio-streams"                 % Version.zio
 
   object Version {
-    val akka                      = "2.6.17"
-    val akkaHttp                  = "10.2.7"
-    val calcite                   = "1.28.0"
+    val akka                      = "2.6.19"
+    val akkaHttp                  = "10.2.9"
+    val calcite                   = "1.30.0"
     val circe                     = "0.14.1"
-    val elasticApm                = "1.28.1"
+    val elasticApm                = "1.30.1"
     val h2                        = "1.4.200"
-    val json4s                    = "4.0.3"
-    val jsoniter                  = "2.12.0"
-    val logback                   = "1.2.8"
+    val json4s                    = "4.0.5"
+    val jsoniter                  = "2.13.13"
+    val logback                   = "1.2.11"
     val mapflablup                = "0.1.1"
     val scalaLogging              = "3.9.4"
-    val scalaTest                 = "3.2.10"
+    val scalaTest                 = "3.2.11"
     val scalcite                  = "0.1.1"
     val scalikejdbc               = "3.5.0"
     val sqlline                   = "1.12.0"
     val tapir                     = "0.17.20"
-    val zio                       = "1.0.13"
+    val zio                       = "1.0.14"
     val zioLogging                = "0.5.14"
-    val zioInteropReactiveStreams = "1.3.8"
+    val zioInteropReactiveStreams = "1.3.9"
   }
 }
