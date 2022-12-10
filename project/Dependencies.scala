@@ -143,7 +143,7 @@ object Dependencies {
     val calcite                   = "1.32.0"
     val circe                     = "0.14.2"
     val elasticApm                = "1.34.1"
-    val h2                        = "2.1.214"
+    val h2                        = "1.4.200"
     val json4s                    = "4.0.6"
     val jsoniter                  = "2.17.3"
     val logback                   = "1.4.4"
