@@ -54,8 +54,8 @@ object Dependencies {
       .settings(Compile / npmDevDependencies += "html-webpack-plugin" -> "3.2.0")
       .settings(Compile / npmDevDependencies += "style-loader" -> "1.1.3")
       .settings(Compile / npmDevDependencies += "webpack-merge" -> "4.2.2")
-      .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.7.2")
-      .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.7.2")
+      .settings(libraryDependencies += "me.shadaj" %%% "slinky-hot" % "0.7.3")
+      .settings(libraryDependencies += "me.shadaj" %%% "slinky-web" % "0.7.3")
 
   val `scalcite-docs`: Seq[ModuleID] = Seq(
     "io.github.mvillafuertem" %% "mdoc-modifier-plantuml" % "0.1"
@@ -141,12 +141,12 @@ object Dependencies {
     val akka                      = "2.6.20"
     val akkaHttp                  = "10.2.10"
     val calcite                   = "1.32.0"
-    val circe                     = "0.14.2"
-    val elasticApm                = "1.34.1"
+    val circe                     = "0.14.3"
+    val elasticApm                = "1.35.0"
     val h2                        = "1.4.200"
     val json4s                    = "4.0.6"
-    val jsoniter                  = "2.17.5"
-    val logback                   = "1.4.4"
+    val jsoniter                  = "2.20.6"
+    val logback                   = "1.4.5"
     val mapflablup                = "0.1.1"
     val scalaLogging              = "3.9.5"
     val scalaTest                 = "3.2.14"
